@@ -4,6 +4,7 @@
     <e-sys-bar header="ETestTools" />
     <!-- 左侧导航栏 -->
     <e-top-bar> </e-top-bar>
+    <!-- 路由 -->
     <v-main>
       <router-view />
     </v-main>
