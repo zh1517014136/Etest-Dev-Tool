@@ -1,24 +1,26 @@
 <template>
   <v-app>
+    <!-- <e-sys-bar header="ETestDev" /> -->
     <v-main>
-      <EDeviceEditor/>
+      <EDeviceEditor />
     </v-main>
   </v-app>
 </template>
 <style>
-  ::-webkit-scrollbar {
-    display: none;
-  }
+::-webkit-scrollbar {
+  display: none;
+}
 </style>
 <script>
-
-    import EDeviceEditor from './components/EDeviceEditor';
+// import ESysBar from "./components/ESysBar";
+import EDeviceEditor from "./components/EDeviceEditor";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
     EDeviceEditor,
+    // "e-sys-bar": ESysBar,
   },
 
   data: () => ({
