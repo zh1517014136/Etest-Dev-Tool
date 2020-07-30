@@ -18,7 +18,11 @@
     </v-snackbar>
   </v-app>
 </template>
-
+<style>
+  ::-webkit-scrollbar {
+    display: none;
+  }
+</style>
 <script>
   import ESysBar from "./components/ESysBar";
   import ETopBar from './components/ETopBar';

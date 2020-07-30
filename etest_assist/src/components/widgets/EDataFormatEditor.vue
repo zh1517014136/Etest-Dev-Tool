@@ -1,5 +1,5 @@
 <template>
-    <v-sheet :id="id" width="100%" height="100%" @keydown.stop class="pa-0 ma-0 mb-1" style="border: 1px solid grey"
+    <v-sheet :id="id" width="100%" height="100%" @keydown.stop class="pa-0 ma-0 mb-1" style="border: 2px solid grey"
         v-resize="layout">
     </v-sheet>
 </template>
