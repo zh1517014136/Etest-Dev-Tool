@@ -1,133 +1,132 @@
 <template>
-  <v-container class="pa-0 fill-height" fluid>
-    <e-top-tab> </e-top-tab>
-    <v-card height="100%" width="100%" tile>
-      <div>
+    <v-container class="pa-0 fill-height" fluid>
+        <e-top-tab :selected_index='selected_index' @select="on_select"> </e-top-tab>
+        <v-card height="100%" width="100%" tile>
+            <div>
 
 
-        <v-row class="pa-0 ma-0" style="flex-wrap: nowrap;">
-          <v-col cols="5" md="4">
-            <v-sheet class="pa-0 pt-1">
-              <v-row class="pa-0 ma-0">
-                <v-col cols="12" class="ma-0 pa-0">
-                  <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 142px);">
-                    <e-script-editor id="js" :script="js" type="javascript" @change="on_change" />
-                  </v-sheet>
-                </v-col>
-              </v-row>
-            </v-sheet>
-          </v-col>
+                <v-row class="pa-0 ma-0" style="flex-wrap: nowrap;">
+                    <v-col cols="5" md="4">
+                        <v-sheet class="pa-0 pt-1">
+                            <v-row class="pa-0 ma-0">
+                                <v-col cols="12" class="ma-0 pa-0">
+                                    <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 142px);">
+                                        <e-script-editor id="js" :script="js" type="javascript" @change="on_change" />
+                                    </v-sheet>
+                                </v-col>
+                            </v-row>
+                        </v-sheet>
+                    </v-col>
 
 
 
-          <v-row :align="alignment" :justify="justify" height="100%">
-            <div class="d-flex flex-column">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn v-on="on" class="mx-2" fab dark x-small>
-                    <v-icon color="grey lighten-2" outlined @click="on_js">
-                      mdi-play
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <span>执行js代码</span>
-              </v-tooltip>
+                    <v-row :align="alignment" :justify="justify" height="100%">
+                        <div class="d-flex flex-column">
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn v-on="on" class="mx-2" fab dark x-small>
+                                        <v-icon color="grey lighten-2" outlined @click="on_js">
+                                            mdi-play
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>执行js代码</span>
+                            </v-tooltip>
+                        </div>
+                    </v-row>
+
+
+                    <v-col cols="5" md="4">
+                        <v-sheet class="pa-0 pt-1">
+                            <v-row class="pa-0 ma-0">
+                                <v-col cols="12" class="ma-0 pa-0">
+                                    <v-sheet class="pa-0 ma-0 " style="height: calc(100vh - 142px);">
+                                        <e-script-editor id="json" :script="json" type="json" @change="on_change" />
+                                    </v-sheet>
+                                </v-col>
+                            </v-row>
+                        </v-sheet>
+                    </v-col>
+                    <v-row :align="alignment" :justify="justify" height="100%">
+                        <div class="d-flex flex-column">
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn v-on="on" class="mx-2" fab dark x-small>
+                                        <v-icon color="grey lighten-2" outlined @click="on_yaml">
+                                            mdi-chevron-double-left
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>yaml转js代码</span>
+                            </v-tooltip>
+                            <br />
+                            <br />
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn v-on="on" class="mx-2" fab dark x-small>
+                                        <v-icon color="grey lighten-2" outlined @click="on_json">
+                                            mdi-chevron-double-right
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>json转yaml代码</span>
+                            </v-tooltip>
+                            <br />
+                            <br />
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn v-on="on" class="mx-2" fab dark x-small>
+                                        <v-icon color="grey lighten-2" outlined @click="on_excel">
+                                            mdi-file-excel
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>上传文件</span>
+                            </v-tooltip>
+                        </div>
+                    </v-row>
+                    <v-col cols="5" md="4">
+                        <v-sheet class="pa-0 pt-1">
+                            <v-row class="pa-0 ma-0">
+                                <v-col cols="12" class="ma-0 pa-0">
+                                    <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 142px);">
+                                        <e-script-editor id="yaml" :script="yaml" type="yaml" @change="on_change" />
+                                    </v-sheet>
+                                </v-col>
+                            </v-row>
+                        </v-sheet>
+                    </v-col>
+                </v-row>
             </div>
-          </v-row>
-
-
-          <v-col cols="5" md="4">
-            <v-sheet class="pa-0 pt-1">
-              <v-row class="pa-0 ma-0">
-                <v-col cols="12" class="ma-0 pa-0">
-                  <v-sheet class="pa-0 ma-0 " style="height: calc(100vh - 142px);">
-                    <e-script-editor id="json" :script="json" type="json" @change="on_change" />
-                  </v-sheet>
-                </v-col>
-              </v-row>
-            </v-sheet>
-          </v-col>
-          <v-row :align="alignment" :justify="justify" height="100%">
-            <div class="d-flex flex-column">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn v-on="on" class="mx-2" fab dark x-small>
-                    <v-icon color="grey lighten-2" outlined @click="on_yaml">
-                      mdi-chevron-double-left
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <span>yaml转js代码</span>
-              </v-tooltip>
-              <br />
-              <br />
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn v-on="on" class="mx-2" fab dark x-small>
-                    <v-icon color="grey lighten-2" outlined @click="on_json">
-                      mdi-chevron-double-right
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <span>json转yaml代码</span>
-              </v-tooltip>
-              <br />
-              <br />
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn v-on="on" class="mx-2" fab dark x-small>
-                    <v-icon color="grey lighten-2" outlined @click="on_excel">
-                      mdi-file-excel
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <span>上传文件</span>
-              </v-tooltip>
-            </div>
-          </v-row>
-          <v-col cols="5" md="4">
-            <v-sheet class="pa-0 pt-1">
-              <v-row class="pa-0 ma-0">
-                <v-col cols="12" class="ma-0 pa-0">
-                  <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 142px);">
-                    <e-script-editor id="yaml" :script="yaml" type="yaml" @change="on_change" />
-                  </v-sheet>
-                </v-col>
-              </v-row>
-            </v-sheet>
-          </v-col>
-        </v-row>
-      </div>
-    </v-card>
-  </v-container>
+        </v-card>
+    </v-container>
 </template>
 
 <script>
-  import XLSX from 'xlsx';
-  import EScriptEditor from '../components/widgets/EDataFormatEditor';
-  import ETopTab from '../components/ETopTabs';
+    import XLSX from 'xlsx';
+    import EScriptEditor from '../components/widgets/EDataFormatEditor';
+    import ETopTab from '../components/ETopTabs';
 
-  import yaml from 'js-yaml';
+    import yaml from 'js-yaml';
 
-  export default {
-    components: {
-      'e-script-editor': EScriptEditor,
-      "e-top-tab": ETopTab,
-    },
+    export default {
+        components: {
+            'e-script-editor': EScriptEditor,
+            "e-top-tab": ETopTab,
+        },
 
-    data() {
-      return {
-        // js: '',
-        // json: '',
-        // yaml: '',
-        alignment: 'center',
-        justify: 'center',
-        selected_index: 0,
-      }
-    },
+        data() {
+            return {
+                // js: '',
+                // json: '',
+                // yaml: '',
+                alignment: 'center',
+                justify: 'center',
+            }
+        },
 
         computed: {
-            selected_data:function() {
+            selected_data: function () {
                 return this.$store.state.data_format.items[this.selected_index];
             },
             js: {
@@ -154,9 +153,21 @@
                     return this.selected_data.yaml = v;
                 },
             },
+            selected_index: {
+                get: function () {
+                    return this.$store.state.data_format.select
+                },
+                set: function (v) {
+                    // console.log(v)
+                    return this.$store.commit('data_format/setSelect', v);
+                },
+            }
         },
 
         methods: {
+            on_select(data) {
+                this.selected_index = data
+            },
             on_change(id, script) {
                 this[id] = script;
             },

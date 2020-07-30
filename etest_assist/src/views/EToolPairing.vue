@@ -1,40 +1,15 @@
 <template>
-  <div>
-    <v-container
-      
-      :key="align"
-      class="grey lighten-5 mb-6"
-    >
-      <v-row
-        :align="align"
-        no-gutters
-        style="height: 500px;"
-      >
-        <v-col
-          v-for="n in 3"
-          :key="n"
-        >
-          <v-card
-            class="pa-2"
-            outlined
-            tile
-          >
-            One of three columns
-          </v-card>
-        </v-col>
-      </v-row>
+    <v-container class="pa-0 fill-height" fluid>
+        <v-row align="center" justify="center">
+            <div>
+                <v-row class="mb-6" justify="center">
+                    <img alt="ETestDev" src="../assets/logo.svg" style="display: block;" />
+                </v-row>
+            </div>
+        </v-row>
     </v-container>
-  </div>
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      alignments: [
-        'start',
-        'center',
-        'end',
-      ],
-    }),
-  }
+
 </script>

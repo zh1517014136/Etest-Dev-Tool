@@ -40,7 +40,8 @@ const state = () => ({
         JSON.parse(JSON.stringify(default_script)),
         JSON.parse(JSON.stringify(default_script)),
         JSON.parse(JSON.stringify(default_script)),
-    ]
+    ],
+    select:0
 
 })
 
@@ -57,9 +58,14 @@ const state = () => ({
 //     }
 
 // }
+const mutations = {
+    setSelect(state, value) {
+        state.select = value;
+    }
+}
 
 export default {
     namespaced: true,
     state,
-    // mutations
+    mutations
 }

@@ -2,6 +2,7 @@
   <v-tabs
     @change="change"
     fixed-tabs
+    :value="selected_index"
   >
     <v-tab v-for="item in items" :key="item" >
      {{item}}
@@ -12,6 +13,7 @@
 
 <script>
 export default {
+  props: ['selected_index'],
   data:function(){
     return {
       items:['01','02','03','04','05']

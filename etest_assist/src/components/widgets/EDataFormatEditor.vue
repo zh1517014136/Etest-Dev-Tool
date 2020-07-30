@@ -35,7 +35,7 @@
         watch: {
             script: function (v) {
                 if(!v) {
-                    return;
+                    v = '';
                 }
                 if (!this.model) {
                     return;
