@@ -1,13 +1,13 @@
 <template>
     <v-container class="pa-0 fill-height" fluid>
-        <e-top-tab :selected_index='selected_index' @select="on_select"> </e-top-tab>
-        <v-card height="100%" width="100%" tile>
-            <div>
-
-
-                <v-row class="pa-0 ma-0" style="flex-wrap: nowrap;">
-                    <v-col cols="5" md="4">
-                        <v-sheet class="pa-0 pt-1">
+        <div style="width:100%;height:48px;">
+            <e-top-tab :selected_index='selected_index' @select="on_select"> </e-top-tab>
+        </div>
+        <div style="width:100%;height: calc(100vh - 80px);">
+            <v-card height="100%" width="100%" tile>
+                <div class="px-4 ma-0 pt-4" style="display:flex; flex-wrap: nowrap;height:100%">
+                    <div style="height:100%;width:32%;min-width:300px">
+                        <v-sheet class="pa-0 pt-3">
                             <v-row class="pa-0 ma-0">
                                 <v-col cols="12" class="ma-0 pa-0">
                                     <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 142px);">
@@ -16,28 +16,24 @@
                                 </v-col>
                             </v-row>
                         </v-sheet>
-                    </v-col>
+                    </div>
+                    <div
+                        style="height:100%;width:2%;min-width:50px;max-width:50px;display:flex;justify-content:center;align-items:center;">
 
+                        <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                                <v-btn v-on="on" class="mx-2" fab dark x-small>
+                                    <v-icon color="grey lighten-2" outlined @click="on_js">
+                                        mdi-play
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <span>执行js代码</span>
+                        </v-tooltip>
 
-
-                    <v-row :align="alignment" :justify="justify" height="100%">
-                        <div class="d-flex flex-column">
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn v-on="on" class="mx-2" fab dark x-small>
-                                        <v-icon color="grey lighten-2" outlined @click="on_js">
-                                            mdi-play
-                                        </v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>执行js代码</span>
-                            </v-tooltip>
-                        </div>
-                    </v-row>
-
-
-                    <v-col cols="5" md="4">
-                        <v-sheet class="pa-0 pt-1">
+                    </div>
+                    <div style="height:100%;width:32%;min-width:300px">
+                        <v-sheet class="pa-0 pt-3">
                             <v-row class="pa-0 ma-0">
                                 <v-col cols="12" class="ma-0 pa-0">
                                     <v-sheet class="pa-0 ma-0 " style="height: calc(100vh - 142px);">
@@ -46,47 +42,46 @@
                                 </v-col>
                             </v-row>
                         </v-sheet>
-                    </v-col>
-                    <v-row :align="alignment" :justify="justify" height="100%">
-                        <div class="d-flex flex-column">
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn v-on="on" class="mx-2" fab dark x-small>
-                                        <v-icon color="grey lighten-2" outlined @click="on_yaml">
-                                            mdi-chevron-double-left
-                                        </v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>yaml转js代码</span>
-                            </v-tooltip>
-                            <br />
-                            <br />
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn v-on="on" class="mx-2" fab dark x-small>
-                                        <v-icon color="grey lighten-2" outlined @click="on_json">
-                                            mdi-chevron-double-right
-                                        </v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>json转yaml代码</span>
-                            </v-tooltip>
-                            <br />
-                            <br />
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn v-on="on" class="mx-2" fab dark x-small>
-                                        <v-icon color="grey lighten-2" outlined @click="on_excel">
-                                            mdi-file-excel
-                                        </v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>上传文件</span>
-                            </v-tooltip>
-                        </div>
-                    </v-row>
-                    <v-col cols="5" md="4">
-                        <v-sheet class="pa-0 pt-1">
+                    </div>
+                    <div
+                        style="height:100%;width:2%;min-width:40px;max-width:50px;display:flex;justify-content:center;align-items:center;">
+                        <v-row :align="alignment" :justify="justify" height="100%">
+                            <div class="d-flex flex-column">
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small>
+                                            <v-icon color="grey lighten-2" outlined @click="on_yaml">
+                                                mdi-chevron-double-left
+                                            </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>yaml转js代码</span>
+                                </v-tooltip>
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small>
+                                            <v-icon color="grey lighten-2" outlined @click="on_json">
+                                                mdi-chevron-double-right
+                                            </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>json转yaml代码</span>
+                                </v-tooltip>
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small>
+                                            <v-icon color="grey lighten-2" outlined @click="on_excel">
+                                                mdi-file-excel
+                                            </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>上传文件</span>
+                                </v-tooltip>
+                            </div>
+                        </v-row>
+                    </div>
+                    <div style="height:100%;width:32%;min-width:300px">
+                        <v-sheet class="pa-0 pt-3">
                             <v-row class="pa-0 ma-0">
                                 <v-col cols="12" class="ma-0 pa-0">
                                     <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 142px);">
@@ -95,10 +90,11 @@
                                 </v-col>
                             </v-row>
                         </v-sheet>
-                    </v-col>
-                </v-row>
-            </div>
-        </v-card>
+                    </div>
+                </div>
+            </v-card>
+        </div>
+
     </v-container>
 </template>
 
@@ -115,42 +111,72 @@
             "e-top-tab": ETopTab,
         },
 
+        mounted: async function () {
+            let db_items = await this.$store.dispatch('db_list', {
+                kind: 'dataformat'
+            });
+            if (db_items) {
+                let len = db_items.length
+                for (let index = 0; index < len; index++) {
+                    this.$store.commit('data_format/setItem', {index: index, value:  db_items[index]});
+                }
+            }
+            this.loaded = true;
+        },
+
+        beforeDestroy: async function() {
+            let state_items = this.$store.state.data_format.items;
+            let len = state_items.length
+            for (let index = 0; index < len; index++) {
+                let item = state_items[index];
+                item.id = index;
+                await this.$store.dispatch('db_update', {
+                    kind: 'dataformat',
+                    doc: item
+                })
+            }
+        },
+
         data() {
             return {
-                // js: '',
-                // json: '',
-                // yaml: '',
                 alignment: 'center',
                 justify: 'center',
+                loaded: false,
             }
         },
 
         computed: {
-            selected_data: function () {
-                return this.$store.state.data_format.items[this.selected_index];
-            },
             js: {
                 get: function () {
-                    return this.selected_data.js;
+                    if(!this.loaded) {
+                        return '';
+                    }
+                    return  this.$store.state.data_format.items[this.selected_index].js;
                 },
                 set: function (v) {
-                    return this.selected_data.js = v;
+                    this.$store.commit('data_format/setJs', {index: this.selected_index, value: v})
                 },
             },
             json: {
                 get: function () {
-                    return this.selected_data.json;
+                    if(!this.loaded) {
+                        return '';
+                    }
+                    return  this.$store.state.data_format.items[this.selected_index].json;
                 },
                 set: function (v) {
-                    return this.selected_data.json = v;
+                    this.$store.commit('data_format/setJson', {index: this.selected_index, value: v})
                 },
             },
             yaml: {
                 get: function () {
-                    return this.selected_data.yaml;
+                    if(!this.loaded) {
+                        return '';
+                    }
+                    return  this.$store.state.data_format.items[this.selected_index].yaml;
                 },
                 set: function (v) {
-                    return this.selected_data.yaml = v;
+                    this.$store.commit('data_format/setYaml', {index: this.selected_index, value: v})
                 },
             },
             selected_index: {

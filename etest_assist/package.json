@@ -14,10 +14,12 @@
   "dependencies": {
     "@mdi/font": "^5.3.45",
     "core-js": "^2.6.5",
+    "lokijs": "^1.5.10",
     "mermaid": "^8.6.4",
     "monaco-editor": "^0.20.0",
     "monaco-editor-locales-plugin": "^0.0.3",
     "monaco-editor-webpack-plugin": "^1.9.0",
+    "throttle-debounce": "^2.2.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuetify": "^2.2.11",

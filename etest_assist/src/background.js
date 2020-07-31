@@ -3,17 +3,19 @@
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import ipc from './database/ipc_main'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
-
+// 数据库
+const db_path = app.getPath('userData');
+ipc.open(db_path);
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
-
+ 
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
@@ -42,18 +44,20 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
-
+ 
   win.on('closed', () => {
     win = null
   })
 }
-
+  
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit()
+    ipc.close().then(() =>{
+      app.quit()
+    })
   }
 })
 
@@ -77,9 +81,10 @@ app.on('ready', async () => {
   //     console.error('Vue Devtools failed to install:', e.toString())
   //   }
   // }
+  // db.open(db_path);
   createWindow()
 })
-
+  
 ipcMain.on('close-win', () => {
   if(win) {
     win.close();
@@ -92,12 +97,17 @@ if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {
-        app.quit()
+        ipc.close().then(() =>{
+          app.quit()
+        })
+        
       }
     })
   } else {
     process.on('SIGTERM', () => {
-      app.quit()
+      ipc.close().then(() =>{
+        app.quit()
+      })
     })
   }
 }

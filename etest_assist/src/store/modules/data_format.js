@@ -45,20 +45,19 @@ const state = () => ({
 
 })
 
-// const mutations = {
-//     setYaml(state, info) {
-//         state.items[info.index] = info.
-//         state.yaml = value;
-//     },
-//     setJson(state, value) {
-//         state.json = value;
-//     },
-//     setJs(state, value) {
-//         state.js = value;
-//     }
-
-// }
 const mutations = {
+    setYaml(state, info) {
+        state.items[info.index].yaml = info.value;
+    },
+    setJson(state, info) {
+        state.items[info.index].json = info.value;
+    },
+    setJs(state, info) {
+        state.items[info.index].js = info.value;
+    },
+    setItem(state, info) {
+        state.items[info.index] = info.value;
+    },
     setSelect(state, value) {
         state.select = value;
     }

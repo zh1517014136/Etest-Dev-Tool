@@ -37,6 +37,12 @@ const routes = [{
         name: 'EToolEngineering',
         component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolEngineering'),
     },
+    {
+        // 练习工具
+        path: '/tool/practice',
+        name: 'EToolPractice',
+        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolPractice'),
+    },
 ]
 
 const router = new VueRouter({

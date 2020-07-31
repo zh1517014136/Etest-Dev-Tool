@@ -2,7 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import data_format from './modules/data_format'
 import tool_icons from './modules/tool_icons'
-
+const {
+  ipcRenderer
+} = window.require('electron')
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -32,6 +34,20 @@ export default new Vuex.Store({
     clearMsg: function (state) {
       state.last_tip.tip_msg = '$'
       state.last_tip.tip = false
+    },
+  },
+  actions: {
+    async db_load(_, opt) {
+        return await ipcRenderer.invoke('db_load', opt);
+    },
+    async db_list(_, opt) {
+        return await ipcRenderer.invoke('db_list', opt)
+    },
+    async db_save(_, opt) {
+      return await ipcRenderer.invoke('db_save', opt)
+    },
+    async db_update(_, opt) {
+      return await ipcRenderer.invoke('db_update', opt)
     },
   },
   modules: {

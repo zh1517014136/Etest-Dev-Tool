@@ -31,6 +31,12 @@
                 </v-list-item-icon>
                 <v-list-item-title>陆工大工具</v-list-item-title>
             </v-list-item>
+            <v-list-item :to="{name: 'EToolPractice'}">
+                <v-list-item-icon>
+                    <v-icon>mdi-alpha-p</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>练习工具</v-list-item-title>
+            </v-list-item>
         </v-list>
     </v-navigation-drawer>
 </template>

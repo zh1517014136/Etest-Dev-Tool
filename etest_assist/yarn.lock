@@ -6075,6 +6075,11 @@ loglevel@^1.6.8:
   resolved "https://registry.npm.taobao.org/loglevel/download/loglevel-1.6.8.tgz#8a25fb75d092230ecd4457270d80b54e28011171"
   integrity sha1-iiX7ddCSIw7NRFcnDYC1TigBEXE=
 
+lokijs@^1.5.10:
+  version "1.5.10"
+  resolved "https://registry.npm.taobao.org/lokijs/download/lokijs-1.5.10.tgz#57d729b2694882b4b235c5b34ad3e3831ba4521b"
+  integrity sha1-V9cpsmlIgrSyNcWzStPjgxukUhs=
+
 loose-envify@^1.0.0:
   version "1.4.0"
   resolved "https://registry.npm.taobao.org/loose-envify/download/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
@@ -9123,6 +9128,11 @@ thread-loader@^2.1.2:
     loader-runner "^2.3.1"
     loader-utils "^1.1.0"
     neo-async "^2.6.0"
+
+throttle-debounce@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.npm.taobao.org/throttle-debounce/download/throttle-debounce-2.2.1.tgz#fbd933ae6793448816f7d5b3cae259d464c98137"
+  integrity sha1-+9kzrmeTRIgW99WzyuJZ1GTJgTc=
 
 through2-filter@^3.0.0:
   version "3.0.0"
