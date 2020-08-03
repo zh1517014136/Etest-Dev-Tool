@@ -1,6 +1,7 @@
 {
   "name": "etest_assist",
-  "version": "0.1.0",
+  "version": "0.1.2",
+  "appId": "com.ipp.electronvue",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -32,6 +33,7 @@
     "@vue/cli-service": "^3.0.5",
     "babel-eslint": "^10.0.1",
     "electron": "^9.1.1",
+    "electron-builder": "^22.7.0",
     "electron-devtools-installer": "^3.1.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",

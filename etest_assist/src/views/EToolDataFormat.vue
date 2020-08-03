@@ -1,7 +1,7 @@
 <template>
     <v-container class="pa-0 fill-height" fluid>
         <div style="width:100%;height:48px;">
-            <e-top-tab :selected_index='selected_index' @select="on_select"> </e-top-tab>
+            <e-top-tab :selected_index="selected_index" @select="on_select"></e-top-tab>
         </div>
         <div style="width:100%;height: calc(100vh - 80px);">
             <v-card height="100%" width="100%" tile>
@@ -19,24 +19,20 @@
                     </div>
                     <div
                         style="height:100%;width:2%;min-width:50px;max-width:50px;display:flex;justify-content:center;align-items:center;">
-
                         <v-tooltip top>
                             <template v-slot:activator="{ on }">
-                                <v-btn v-on="on" class="mx-2" fab dark x-small>
-                                    <v-icon color="grey lighten-2" outlined @click="on_js">
-                                        mdi-play
-                                    </v-icon>
+                                <v-btn v-on="on" class="mx-2" fab dark x-small @click="on_js">
+                                    <v-icon color="grey lighten-2" outlined>mdi-play</v-icon>
                                 </v-btn>
                             </template>
                             <span>执行js代码</span>
                         </v-tooltip>
-
                     </div>
                     <div style="height:100%;width:32%;min-width:300px">
                         <v-sheet class="pa-0 pt-3">
                             <v-row class="pa-0 ma-0">
                                 <v-col cols="12" class="ma-0 pa-0">
-                                    <v-sheet class="pa-0 ma-0 " style="height: calc(100vh - 142px);">
+                                    <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 142px);">
                                         <e-script-editor id="json" :script="json" type="json" @change="on_change" />
                                     </v-sheet>
                                 </v-col>
@@ -49,29 +45,26 @@
                             <div class="d-flex flex-column">
                                 <v-tooltip top>
                                     <template v-slot:activator="{ on }">
-                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small>
-                                            <v-icon color="grey lighten-2" outlined @click="on_yaml">
-                                                mdi-chevron-double-left
-                                            </v-icon>
+                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small @click="on_yaml">
+                                            <v-icon color="grey lighten-2" outlined>
+                                                mdi-chevron-double-left</v-icon>
                                         </v-btn>
                                     </template>
                                     <span>yaml转js代码</span>
                                 </v-tooltip>
                                 <v-tooltip top>
                                     <template v-slot:activator="{ on }">
-                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small>
-                                            <v-icon color="grey lighten-2" outlined @click="on_json">
-                                                mdi-chevron-double-right
-                                            </v-icon>
+                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small @click="on_json">
+                                            <v-icon color="grey lighten-2" outlined>
+                                                mdi-chevron-double-right</v-icon>
                                         </v-btn>
                                     </template>
                                     <span>json转yaml代码</span>
                                 </v-tooltip>
                                 <v-tooltip top>
                                     <template v-slot:activator="{ on }">
-                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small>
-                                            <v-icon color="grey lighten-2" outlined @click="on_excel">
-                                                mdi-file-excel
+                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small @click="on_excel">
+                                            <v-icon color="grey lighten-2" outlined>mdi-file-excel
                                             </v-icon>
                                         </v-btn>
                                     </template>
@@ -94,121 +87,120 @@
                 </div>
             </v-card>
         </div>
-
     </v-container>
 </template>
 
 <script>
-    import XLSX from 'xlsx';
-    import EScriptEditor from '../components/widgets/EDataFormatEditor';
-    import ETopTab from '../components/ETopTabs';
+    import XLSX from "xlsx";
+    import EScriptEditor from "../components/widgets/EDataFormatEditor";
+    import ETopTab from "../components/ETopTabs";
 
-    import yaml from 'js-yaml';
+    import yaml from "js-yaml";
 
     export default {
         components: {
-            'e-script-editor': EScriptEditor,
+            "e-script-editor": EScriptEditor,
             "e-top-tab": ETopTab,
         },
 
         mounted: async function () {
-            let db_items = await this.$store.dispatch('db_list', {
-                kind: 'dataformat'
+            let db_items = await this.$store.dispatch("db_list", {
+                kind: "dataformat",
             });
             if (db_items) {
-                let len = db_items.length
+                let len = db_items.length;
                 for (let index = 0; index < len; index++) {
-                    this.$store.commit('data_format/setItem', {index: index, value:  db_items[index]});
+                    this.$store.commit("data_format/setItem", {
+                        index: index,
+                        value: db_items[index],
+                    });
                 }
             }
-            this.loaded = true;
+            this.load_data(this.selected_index)
         },
 
-        beforeDestroy: async function() {
+        beforeDestroy: async function () {
             let state_items = this.$store.state.data_format.items;
-            let len = state_items.length
+            let len = state_items.length;
             for (let index = 0; index < len; index++) {
                 let item = state_items[index];
                 item.id = index;
-                await this.$store.dispatch('db_update', {
-                    kind: 'dataformat',
-                    doc: item
-                })
+                await this.$store.dispatch("db_update", {
+                    kind: "dataformat",
+                    doc: item,
+                });
             }
         },
 
         data() {
             return {
-                alignment: 'center',
-                justify: 'center',
-                loaded: false,
-            }
+                alignment: "center",
+                justify: "center",
+                js: '',
+                yaml: '',
+                json: '',
+            };
         },
 
         computed: {
-            js: {
-                get: function () {
-                    if(!this.loaded) {
-                        return '';
-                    }
-                    return  this.$store.state.data_format.items[this.selected_index].js;
-                },
-                set: function (v) {
-                    this.$store.commit('data_format/setJs', {index: this.selected_index, value: v})
-                },
-            },
-            json: {
-                get: function () {
-                    if(!this.loaded) {
-                        return '';
-                    }
-                    return  this.$store.state.data_format.items[this.selected_index].json;
-                },
-                set: function (v) {
-                    this.$store.commit('data_format/setJson', {index: this.selected_index, value: v})
-                },
-            },
-            yaml: {
-                get: function () {
-                    if(!this.loaded) {
-                        return '';
-                    }
-                    return  this.$store.state.data_format.items[this.selected_index].yaml;
-                },
-                set: function (v) {
-                    this.$store.commit('data_format/setYaml', {index: this.selected_index, value: v})
-                },
-            },
             selected_index: {
                 get: function () {
-                    return this.$store.state.data_format.select
+                    return this.$store.state.data_format.select;
                 },
                 set: function (v) {
-                    // console.log(v)
-                    return this.$store.commit('data_format/setSelect', v);
+                    return this.$store.commit("data_format/setSelect", v);
                 },
+            },
+        },
+
+        watch: {
+            selected_index: function (v) {
+                this.load_data(v);
             }
         },
 
         methods: {
+            save_data(idx) {
+                this.$store.commit("data_format/setYaml", {
+                    index: idx,
+                    value: this.yaml,
+                });
+                this.$store.commit("data_format/setJs", {
+                    index: idx,
+                    value: this.js,
+                });
+                this.$store.commit("data_format/setJson", {
+                    index: idx,
+                    value: this.json,
+                });
+            },
+            load_data(idx) {
+                let o = this.$store.state.data_format.items[idx];
+                this.js = o.js;
+                this.json = o.json;
+                this.yaml = o.yaml;
+            },
             on_select(data) {
-                this.selected_index = data
+                this.selected_index = data;
             },
             on_change(id, script) {
                 this[id] = script;
+                this.save_data(this.selected_index);
             },
             on_json() {
                 try {
                     let jo = JSON.parse(this.json);
                     this.yaml = yaml.dump(jo);
+                    this.save_data(this.selected_index);
                 } catch (error) {
-                    // this.$store.commit("setMsgError", error.message);
+                    this.$store.commit("setMsgError", error.message);
                 }
             },
             on_yaml() {
                 try {
                     let yo = yaml.load(this.yaml);
                     this.json = JSON.stringify(yo, null, 4);
+                    this.save_data(this.selected_index);
                 } catch (error) {
                     this.$store.commit("setMsgError", error.message);
                 }
@@ -218,6 +210,7 @@
                     let jo = eval(this.js);
                     this.json = JSON.stringify(jo, null, 4);
                     this.yaml = yaml.dump(jo);
+                    this.save_data(this.selected_index);
                 } catch (error) {
                     this.$store.commit("setMsgError", error.message);
                 }
@@ -253,6 +246,7 @@
                                 );
                                 self.json = JSON.stringify(data, null, 4);
                                 self.yaml = yaml.dump(data);
+                                self.save_data(self.selected_index);
                             } catch (e) {
                                 self.$store.commit("setMsgError", e.message);
                             }

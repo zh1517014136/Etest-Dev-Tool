@@ -33,15 +33,15 @@ const routes = [{
     },
     {
         // 陆工大工具
-        path: '/tool/engineering',
-        name: 'EToolEngineering',
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolEngineering'),
+        path: '/tool/serialport',
+        name: 'EToolSerialport',
+        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolSerialport'),
     },
     {
         // 练习工具
-        path: '/tool/practice',
-        name: 'EToolPractice',
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolPractice'),
+        path: '/tool/network',
+        name: 'EToolNetwork',
+        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetwork'),
     },
 ]
 

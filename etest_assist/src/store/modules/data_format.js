@@ -1,6 +1,5 @@
 
-let default_script = {
-    js: 'function demo(){\n \
+let default_js = 'function demo(){\n \
         return {\n \
             json: "json格式数据",\n \
             yaml: "yaml格式数据",\n \
@@ -8,8 +7,9 @@ let default_script = {
             items:[1,2,3,4,5,6]\n \
         }\n \
     }\n \
-    demo()',
-    yaml: 'json: json格式数据\n \
+    demo()';
+
+let default_yaml = 'json: json格式数据\n \
     yaml: yaml格式数据\n \
     value: 100\n \
     items:\n \
@@ -19,8 +19,8 @@ let default_script = {
       - 4\n \
       - 5\n \
       - 6\n \
-      ',
-    json: '{\n \
+      ';
+let default_json = '{\n \
         "json": "json格式数据",\n \
         "yaml": "yaml格式数据",\n \
         "value": 100,\n \
@@ -31,15 +31,15 @@ let default_script = {
             4,\n \
             5\n \
         ]\n \
-    }'
-};
+    }';
+
 const state = () => ({
     items: [
-        JSON.parse(JSON.stringify(default_script)),
-        JSON.parse(JSON.stringify(default_script)),
-        JSON.parse(JSON.stringify(default_script)),
-        JSON.parse(JSON.stringify(default_script)),
-        JSON.parse(JSON.stringify(default_script)),
+        {js: default_js, json: default_json, yaml:default_yaml},
+        {js: default_js, json: default_json, yaml:default_yaml},
+        {js: default_js, json: default_json, yaml:default_yaml},
+        {js: default_js, json: default_json, yaml:default_yaml},
+        {js: default_js, json: default_json, yaml:default_yaml},
     ],
     select:0
 

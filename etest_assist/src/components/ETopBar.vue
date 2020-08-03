@@ -25,17 +25,17 @@
                 </v-list-item-icon>
                 <v-list-item-title>组合配对工具</v-list-item-title>
             </v-list-item>
-            <v-list-item :to="{name: 'EToolEngineering'}">
+            <v-list-item :to="{name: 'EToolSerialport'}">
                 <v-list-item-icon>
-                    <v-icon>mdi-tools</v-icon>
+                    <v-icon>mdi-serial-port</v-icon>
                 </v-list-item-icon>
-                <v-list-item-title>陆工大工具</v-list-item-title>
+                <v-list-item-title>串口助手</v-list-item-title>
             </v-list-item>
-            <v-list-item :to="{name: 'EToolPractice'}">
+            <v-list-item :to="{name: 'EToolNetwork'}">
                 <v-list-item-icon>
-                    <v-icon>mdi-alpha-p</v-icon>
+                    <v-icon>mdi-passport</v-icon>
                 </v-list-item-icon>
-                <v-list-item-title>练习工具</v-list-item-title>
+                <v-list-item-title>网络助手</v-list-item-title>
             </v-list-item>
         </v-list>
     </v-navigation-drawer>
