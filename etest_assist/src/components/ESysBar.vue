@@ -2,9 +2,9 @@
   <div v-resize="onResize">
     <v-system-bar window dark id="app_bar" app>
       <v-icon>mdi-ember</v-icon>
-      <span class="nodrag">{{header}}</span>
+      <span class="nodrag" style="user-select:none">{{header}}</span>
       <v-spacer></v-spacer>
-      <span class="nodrag">{{title}}</span>
+      <span class="nodrag" style="user-select:none">{{title}}</span>
       <v-spacer></v-spacer>
       <v-icon class="nodrag" @click.stop="onMin">mdi-minus</v-icon>
       <v-icon class="nodrag" @click.stop="onMax">{{is_max ? 'mdi-checkbox-multiple-blank-outline':'mdi-checkbox-blank-outline'}}</v-icon>

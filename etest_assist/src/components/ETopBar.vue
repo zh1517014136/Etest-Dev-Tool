@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer fixed permanent expand-on-hover  app>
+    <v-navigation-drawer fixed permanent expand-on-hover  app style="z-index:9999">
         <v-list nav dense>
             <v-list-item :to="{name: 'EToolDataFormat'}">
                 <v-list-item-icon>
