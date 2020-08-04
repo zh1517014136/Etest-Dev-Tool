@@ -10,12 +10,13 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let win
 // 数据库
 const db_path = app.getPath('userData');
+// console.log(db_path)
 ipc.open(db_path);
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
- 
+
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({

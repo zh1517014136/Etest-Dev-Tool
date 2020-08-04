@@ -7,7 +7,7 @@ import {
 } from 'throttle-debounce';
 
 // 数据库文件名
-const kinds = ['dataformat', 'statemachine']
+const kinds = ['dataformat', 'statemachine','statecode']
 
 let _db;
 let _init = false; 

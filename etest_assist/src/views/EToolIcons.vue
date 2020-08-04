@@ -1,5 +1,6 @@
 <template>
   <div style="height:100%;">
+
     <div
       style="height:64px; min-width:800px; width:100%;display:flex; flex-wrap: nowrap; position:sticky;top:32px;z-index:888;">
       <v-card width="100%">
@@ -9,20 +10,30 @@
               <v-col cols="8" style="height:64px;display:flex;flex-wrap:nowrap;">
                 <div
                   style="height:64px;width:95%;display:flex;justify-content:center;align-items:center;margin:0px auto;">
-                  <v-text-field v-model="search" @input="input" clearable flat solo-inverted
+                  <v-text-field :value="this.edit_input" @input="input" clearable flat solo-inverted
                     prepend-inner-icon="mdi-search" hide-details label="搜索">
                   </v-text-field>
                 </div>
               </v-col>
               <v-col cols="4" style="height:64px;display:flex;flex-wrap:nowrap;">
                 <div class="ml-2" style="height:64px;display:flex;align-items:center;">
-                  <v-btn-toggle v-model="sortDesc" mandatory>
-                    <v-btn small depressed>
-                      <v-icon>mdi-arrow-up</v-icon>
-                    </v-btn>
-                    <v-btn small depressed>
-                      <v-icon>mdi-arrow-down</v-icon>
-                    </v-btn>
+                  <v-btn-toggle v-model="this._sort" mandatory>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-btn v-on="on" small depressed :value="false" @click="sort(false)">
+                          <v-icon>mdi-arrow-up</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>正序</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-btn v-on="on" small depressed :value="true" @click="sort(true)">
+                          <v-icon>mdi-arrow-down</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>倒序</span>
+                    </v-tooltip>
                   </v-btn-toggle>
                 </div>
               </v-col>
@@ -35,11 +46,25 @@
               <v-col cols="12" style="height:64px;display:flex;flex-wrap:nowrap;">
                 <div style="display:flex;align-items:center;margin:0px auto;">
 
-                  <v-icon style="cursor:pointer" :color="color" class="mx-2" medium>{{'mdi-' + icon}}</v-icon>
 
-                  <v-icon style="cursor:pointer" :color="color" class="mx-2" large>{{'mdi-' + icon}}</v-icon>
 
-                  <v-icon style="cursor:pointer" :color="color" class="mx-2" x-large>{{'mdi-' + icon}}</v-icon>
+<!-- 
+ <v-tooltip bottom>
+      <template v-slot:activator="props"> -->
+                  <v-icon  v-bind="attrs" style="cursor:pointer" :color="this.edit_color" class="mx-3" medium>
+                    {{'mdi-' + this.edit_icon}}
+                    </v-icon>
+ <!-- </template>
+      <span>Tooltip</span>
+    </v-tooltip> -->
+
+
+                  <v-icon style="cursor:pointer" :color="this.edit_color" class="mx-3" large>
+                    {{'mdi-' + this.edit_icon}}</v-icon>
+
+
+                  <v-icon style="cursor:pointer" :color="this.edit_color" class="mx-3" x-large>
+                    {{'mdi-' + this.edit_icon}}</v-icon>
 
                 </div>
               </v-col>
@@ -73,12 +98,12 @@
       </v-card>
     </div>
 
-    <div style="display:flex; flex-wrap: wrap;">
-      <div class="pa-4" v-for="item in icons" :key="item.name" style="width:350px;">
-        <div @click="click(item)">
+    <div style="display:flex; min-width:800px; flex-wrap: wrap;">
+      <div class="pa-4" v-for="item in icons1" :key="item.name" style="width:350px;">
+        <span @click="click(item)">
           <v-icon style="cursor:pointer">{{'mdi-' + item.name}}</v-icon>
           <span :class="item.name" :data-clipboard-text='item.name' style="cursor:pointer"> {{item.name}} </span>
-        </div>
+        </span>
 
       </div>
     </div>
@@ -86,6 +111,10 @@
     <v-pagination style=" position:sticky;buttom:0px;z-index:888;" class="pt-4" v-model="page" :length="page_count">
     </v-pagination>
 
+    <v-snackbar style="margin-top:100px;" width:200 v-model="snackbar" :color="'green'" :timeout="2000" :top="true">
+      复制成功
+    </v-snackbar>
+    <!-- </v-data-iterator> -->
   </div>
 </template>
 
@@ -94,21 +123,64 @@
   import Icons from '../helper/icons'
   import Clipboard from 'clipboard';
   export default {
+    props:["edit_color","edit_icon"],
     mounted: function () {
       this.page = 1;
       this.page_count = Math.floor(Icons.length / per_count);
     },
     computed: {
-      icons: function () {
-        let size = Icons.length;
+      icons1: function () {
+        const newIcons = this._sort == true ? JSON.parse(JSON.stringify(Icons)).reverse() : JSON.parse(JSON.stringify(
+          Icons))
+        var len = newIcons.length;
+        var arr = [];
+        for (var i = 0; i < len; i++) {
+          if (newIcons[i].name.indexOf(this.edit_input) >= 0) {
+            arr.push(newIcons[i]);
+          }
+        }
+        let size = arr.length;
         let begin = (this.page - 1) * per_count;
         let end = this.page * per_count - 1;
+        this.page_count = Math.floor(arr.length / per_count);
         let res = [];
         for (let i = begin; i <= end && i < size; i++) {
-          res.push(Icons[i]);
+          res.push(arr[i]);
         }
         return res;
-      }
+      },
+      edit_icon: {
+        get: function () {
+          return this.$store.state.tool_icons.icon
+        },
+        set: function (v) {
+          return this.$store.commit('tool_icons/icon', v);
+        },
+      },
+      edit_color: {
+        get: function () {
+          return this.$store.state.tool_icons.color
+        },
+        set: function (v) {
+          return this.$store.commit('tool_icons/color', v);
+        },
+      },
+      edit_input: {
+        get: function () {
+          return this.$store.state.tool_icons.input
+        },
+        set: function (v) {
+          return this.$store.commit('tool_icons/input', v);
+        },
+      },
+      _sort: {
+        get: function () {
+          return this.$store.state.tool_icons.sort
+        },
+        set: function (v) {
+          return this.$store.commit('tool_icons/sort', v);
+        },
+      },
     },
     data: () => {
       return {
@@ -119,23 +191,36 @@
         icon: '',
         color: undefined,
         copy: '',
+        snackbar: false,
+        sortBy: 'name',
       }
     },
     methods: {
       click: function (data) {
-        this.icon = data.name
-        const copy = new Clipboard('.'+data.name)
-        copy.on('success',function(e){
-         e.clearSelection();
-        })
-        copy.on('error', () => {
-        })
+        try {
+          this.icon = data.name
+          this.edit_icon = data.name
+          const copy = new Clipboard('.' + data.name)
+          const _this = this
+          copy.on('success', function (e) {
+            e.clearSelection();
+            _this.snackbar = true
+          })
+
+          copy.on('error', () => {})
+        } catch (error) {
+
+        }
+
       },
       input: function (value) {
-        console.log(value)
+        this.edit_input = value
       },
       editcolor: function (data) {
-        this.color = data
+        this.edit_color = data
+      },
+      sort: function (flag) {
+        this._sort = flag
       }
     },
   }

@@ -1,16 +1,14 @@
 <template>
     <v-container class="pa-0 fill-height" fluid>
-        <v-card height="100%" width="100%" tile>
-            <div>
-                <v-row class="pa-0 ma-0" style="flex-wrap: nowrap;">
-                    <v-col cols="5">
+        <div style="width:100%;height:48px;">
+            <e-top-tab :selected_index="selected_index" @select="on_select"></e-top-tab>
+        </div>
+        <div style="width:100%;height: calc(100vh - 80px);">
+            <v-card height="100%" width="100%" tile>
+                <div class="px-4 ma-0 pt-4" style="display:flex; flex-wrap: nowrap;height:100%">
+                    <div style="height:100%;width:33%;min-width:300px">
                         <v-sheet class="pa-2">
                             <v-row class="pa-0 ma-0">
-                                <v-col cols="12" class="ma-0 pa-1" align="center">
-                                    <v-btn color="grey lighten-2" outlined @click="on_create">
-                                        生成
-                                    </v-btn>
-                                </v-col>
                                 <v-col cols="12" class="ma-0 pa-0">
                                     <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 130px);">
                                         <e-script-editor :small="true" id="yaml" :script="yaml" type="yaml"
@@ -19,33 +17,44 @@
                                 </v-col>
                             </v-row>
                         </v-sheet>
-                    </v-col>
-                    <v-col cols="7">
-                        <v-sheet class="pa-2" height="100%" style="height: calc(100vh - 70px);">
-                            <v-row class="pa-0 ma-0">
-                                <v-col cols="12" class="ma-0 pa-1" align="center">
-                                    <v-btn color="grey lighten-2" outlined @click="on_code">
-                                        代码
-                                    </v-btn>
-                                    <v-btn color="grey lighten-2" class="ml-10" outlined @click="on_graph">
-                                        状态图
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="12" class="ma-0 pa-0">
-                                    <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 130px);">
-                                        <e-script-editor v-if="coding" id="lua" :small="true" :script="lua" type='etlua'
-                                            @change="on_change" />
-                                        <v-row v-else align="center" justify="center">
-                                            <div id="graph"></div>
-                                        </v-row>
-                                    </v-sheet>
-                                </v-col>
+                    </div>
+                    <div
+                        style="height:100%;width:2%;min-width:40px;max-width:50px;display:flex;justify-content:center;align-items:center;">
+                        <v-row :align="alignment" :justify="justify" height="100%">
+                            <div class="d-flex flex-column">
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small @click="on_code">
+                                            <v-icon color="grey lighten-2" outlined>
+                                                mdi-code-braces</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>生成代码</span>
+                                </v-tooltip>
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn v-on="on" class="mx-2 my-2" fab dark x-small @click="on_graph">
+                                            <v-icon color="grey lighten-2" outlined>
+                                                mdi-state-machine</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>生成状态图</span>
+                                </v-tooltip>
+                            </div>
+                        </v-row>
+                    </div>
+                    <div style="height:100%;width:65%;min-width:300px">
+                        <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 130px);">
+                            <e-script-editor v-if="coding" id="lua" :small="true" :script="lua" type='etlua'
+                                @change="on_change" />
+                            <v-row v-else align="center" justify="center">
+                                <div id="graph"></div>
                             </v-row>
                         </v-sheet>
-                    </v-col>
-                </v-row>
-            </div>
-        </v-card>
+                    </div>
+                </div>
+            </v-card>
+        </div>
     </v-container>
 </template>
 <style scoped>
@@ -58,12 +67,15 @@
     import EScriptEditor from '../components/widgets/EDataFormatEditor';
     import yaml from 'js-yaml';
     import helper from '../helper/helper';
+    import ETopTab from "../components/ETopTabs";
     import mermaid from 'mermaid';
 
     export default {
         components: {
             'e-script-editor': EScriptEditor,
+            "e-top-tab": ETopTab,
         },
+
 
         created: function () {
             mermaid.mermaidAPI.initialize({
@@ -71,19 +83,91 @@
                 theme: "default",
             });
         },
+        mounted: async function () {
+            let db_items = await this.$store.dispatch("db_list", {
+                kind: "statecode",
+            });
+            if (db_items) {
+                let len = db_items.length;
+                for (let index = 0; index < len; index++) {
+                    this.$store.commit("state_code/setItem", {
+                        index: index,
+                        value: db_items[index],
+                    });
+                }
+            }
+            this.load_data(this.selected_index)
+        },
+
+        beforeDestroy: async function () {
+            let state_items = this.$store.state.state_code.items;
+            let len = state_items.length;
+            for (let index = 0; index < len; index++) {
+                let item = state_items[index];
+                item.id = index;
+                await this.$store.dispatch("db_update", {
+                    kind: "statecode",
+                    doc: item,
+                });
+            }
+        },
 
         data() {
             return {
-                yaml: '- state: 开始 初始化\n  when: $entry\n  then: task1\n- state: 初始化 执行\n  when: event1\n  then: timer1@2000 task2 timer1@\n- state: 执行 结束\n  when: timeout.timer1\n  then: task3',
-                lua: '-- 代码输出\n',
+                alignment: "center",
+                justify: "center",
+                yaml: '',
+                lua: '',
                 coding: true,
                 kind: 'graph',
             }
         },
+        computed: {
+            selected_index: {
+                get: function () {
+                    return this.$store.state.state_code.select;
+                },
+                set: function (v) {
+                    return this.$store.commit("state_code/setSelect", v);
+                },
+            },
+        },
+        watch: {
+            selected_index: function (v) {
+                this.load_data(v);
+            }
+        },
+        lua: {
+            get: function () {
+                return this.selected_data.lua;
+            },
+            set: function (v) {
+                return this.selected_data.lua = v;
+            },
+        },
+        yaml: {
+            get: function () {
+                return this.selected_data.yaml;
+            },
+            set: function (v) {
+                return this.selected_data.yaml = v;
+            },
+        },
+        selected_index: {
+            get: function () {
+                return this.$store.state.state_code.select
+            },
+            set: function (v) {
+                // console.log(v)
+                return this.$store.commit('state_code/setSelect', v);
+            },
+        },
+
 
         methods: {
             on_change(id, value) {
                 this[id] = value;
+                this.save_data(this.selected_index);
             },
             valid_event(e) {
                 if (!e || !e.trim()) {
@@ -97,6 +181,24 @@
                     e = e.substring(8);
                 }
                 return helper.check_name(e);
+            },
+            save_data(idx) {
+                this.$store.commit("state_code/setYaml", {
+                    index: idx,
+                    value: this.yaml,
+                });
+                this.$store.commit("state_code/setLua", {
+                    index: idx,
+                    value: this.lua,
+                });
+            },
+            load_data(idx) {
+                let o = this.$store.state.state_code.items[idx];
+                this.lua = o.lua;
+                this.yaml = o.yaml;
+            },
+            on_select(data) {
+                this.selected_index = data;
             },
             valid_actions(acs) {
                 if (!acs || !acs.trim()) {
@@ -375,24 +477,25 @@
             on_code() {
                 this.kind = 'code';
                 if (this.valid_yaml()) {
-                    
+
                     try {
                         let state_list = this.get_state_list(this.yaml);
                         this.lua = this.make_code(state_list);
                         this.coding = true;
+                        this.save_data(this.selected_index);
 
                     } catch (error) {
                         this.$store.commit('setMsgError', error.message);
                     }
                 }
             },
-            on_create() {
-                if(this.kind === 'graph') {
-                    this.on_graph();
-                } else {
-                    this.on_code();
-                }
-            },
+            // on_create() {
+            //     if (this.kind === 'graph') {
+            //         this.on_graph();
+            //     } else {
+            //         this.on_code();
+            //     }
+            // },
             on_graph() {
                 this.kind = 'graph';
                 if (this.valid_yaml()) {
@@ -404,6 +507,7 @@
                             element.innerHTML = svgCode;
                         });
                     })
+                    this.save_data(this.selected_index);
                 }
             }
         }

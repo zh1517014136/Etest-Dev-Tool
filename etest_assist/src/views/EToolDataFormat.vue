@@ -158,33 +158,32 @@
                 this.load_data(v);
             }
         },
-    
-      json: {
-        get: function () {
-          return this.selected_data.json;
+
+        json: {
+            get: function () {
+                return this.selected_data.json;
+            },
+            set: function (v) {
+                return this.selected_data.json = v;
+            },
         },
-        set: function (v) {
-          return this.selected_data.json = v;
+        yaml: {
+            get: function () {
+                return this.selected_data.yaml;
+            },
+            set: function (v) {
+                return this.selected_data.yaml = v;
+            },
         },
-      },
-      yaml: {
-        get: function () {
-          return this.selected_data.yaml;
+        selected_index: {
+            get: function () {
+                return this.$store.state.data_format.select
+            },
+            set: function (v) {
+                // console.log(v)
+                return this.$store.commit('data_format/setSelect', v);
+            },
         },
-        set: function (v) {
-          return this.selected_data.yaml = v;
-        },
-      },
-      selected_index: {
-        get: function () {
-          return this.$store.state.data_format.select
-        },
-        set: function (v) {
-          // console.log(v)
-          return this.$store.commit('data_format/setSelect', v);
-        },
-      }
-    ,
 
         methods: {
             save_data(idx) {
@@ -243,16 +242,16 @@
                 }
             },
 
-      on_excel: function () {
-        let inputObj = document.createElement("input");
-        inputObj.setAttribute("id", "_ef");
-        inputObj.setAttribute("type", "file");
-        inputObj.setAttribute("accept", ".xlsx");
-        inputObj.setAttribute("style", "visibility:hidden");
-        document.body.appendChild(inputObj);
-        inputObj.addEventListener("change", this.updatePath);
-        inputObj.click();
-      },
+            on_excel: function () {
+                let inputObj = document.createElement("input");
+                inputObj.setAttribute("id", "_ef");
+                inputObj.setAttribute("type", "file");
+                inputObj.setAttribute("accept", ".xlsx");
+                inputObj.setAttribute("style", "visibility:hidden");
+                document.body.appendChild(inputObj);
+                inputObj.addEventListener("change", this.updatePath);
+                inputObj.click();
+            },
 
             updatePath: function () {
                 let inputObj = document.getElementById("_ef");

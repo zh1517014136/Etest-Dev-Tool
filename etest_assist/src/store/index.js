@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import data_format from './modules/data_format'
 import tool_icons from './modules/tool_icons'
+import state_code from './modules/state_code'
 const {
   ipcRenderer
 } = window.require('electron')
@@ -52,7 +53,8 @@ export default new Vuex.Store({
   },
   modules: {
     data_format,
-    tool_icons
+    tool_icons,
+    state_code
   },
 })
 
