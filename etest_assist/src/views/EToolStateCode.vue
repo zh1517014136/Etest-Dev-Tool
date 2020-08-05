@@ -5,7 +5,7 @@
         </div>
         <div style="width:100%;height: calc(100vh - 80px);">
             <v-card height="100%" width="100%" tile>
-                <div class="px-4 ma-0 pt-4" style="display:flex; flex-wrap: nowrap;height:100%">
+                <div class="px-4 ma-0 pt-2" style="display:flex; flex-wrap: nowrap;height:100%">
                     <div style="height:100%;width:33%;min-width:300px">
                         <v-sheet class="pa-2">
                             <v-row class="pa-0 ma-0">
@@ -44,11 +44,17 @@
                         </v-row>
                     </div>
                     <div style="height:100%;width:65%;min-width:300px">
-                        <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 130px);">
-                            <e-script-editor v-if="coding" id="lua" :small="true" :script="lua" type='etlua'
-                                @change="on_change" />
-                            <v-row v-else align="center" justify="center">
-                                <div id="graph"></div>
+                        <v-sheet class="pa-2">
+                            <v-row class="pa-0 ma-0">
+                                <v-col cols="12" class="ma-0 pa-0">
+                                    <v-sheet class="pa-0 ma-0" style="height: calc(100vh - 130px);">
+                                        <e-script-editor v-if="coding" id="lua" :small="true" :script="lua" type='etlua'
+                                            @change="on_change" />
+                                        <v-row v-else align="center" justify="center">
+                                            <div id="graph"></div>
+                                        </v-row>
+                                    </v-sheet>
+                                </v-col>
                             </v-row>
                         </v-sheet>
                     </div>

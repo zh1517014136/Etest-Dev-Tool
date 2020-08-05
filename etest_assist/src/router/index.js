@@ -20,7 +20,7 @@ const routes = [{
         name: 'EToolIcons',
         component: () => import( /* webpackChunkName: "e_tool_icons" */ '../views/EToolIcons'),
     }, {
-        // 转态机生成器
+        // 状态机生成器
         path: '/tool/state_code',
         name: 'EToolStateCode',
         component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolStateCode'),

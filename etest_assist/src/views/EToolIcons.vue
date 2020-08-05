@@ -11,13 +11,13 @@
                 <div
                   style="height:64px;width:95%;display:flex;justify-content:center;align-items:center;margin:0px auto;">
                   <v-text-field :value="this.edit_input" @input="input" clearable flat solo-inverted
-                    prepend-inner-icon="mdi-search" hide-details label="搜索">
+                    prepend-inner-icon="mdi-feature-search-outline" hide-details label="搜索">
                   </v-text-field>
                 </div>
               </v-col>
               <v-col cols="4" style="height:64px;display:flex;flex-wrap:nowrap;">
                 <div class="ml-2" style="height:64px;display:flex;align-items:center;">
-                  <v-btn-toggle v-model="this._sort" mandatory>
+                  <v-btn-toggle v-model="sortstate" mandatory>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <v-btn v-on="on" small depressed :value="false" @click="sort(false)">
@@ -47,30 +47,37 @@
                 <div style="display:flex;align-items:center;margin:0px auto;">
 
 
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-3" medium>
+                        {{'mdi-' + icon}}
+                      </v-icon>
+                    </template>
+                    <span>{{icon}}</span>
+                  </v-tooltip>
 
-<!-- 
- <v-tooltip bottom>
-      <template v-slot:activator="props"> -->
-                  <v-icon  v-bind="attrs" style="cursor:pointer" :color="this.edit_color" class="mx-3" medium>
-                    {{'mdi-' + this.edit_icon}}
-                    </v-icon>
- <!-- </template>
-      <span>Tooltip</span>
-    </v-tooltip> -->
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-3" large>
+                        {{'mdi-' + icon}}
+                      </v-icon>
+                    </template>
+                    <span>{{icon}}</span>
+                  </v-tooltip>
 
-
-                  <v-icon style="cursor:pointer" :color="this.edit_color" class="mx-3" large>
-                    {{'mdi-' + this.edit_icon}}</v-icon>
-
-
-                  <v-icon style="cursor:pointer" :color="this.edit_color" class="mx-3" x-large>
-                    {{'mdi-' + this.edit_icon}}</v-icon>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-3" x-large>
+                        {{'mdi-' + icon}}
+                      </v-icon>
+                    </template>
+                    <span>{{icon}}</span>
+                  </v-tooltip>
 
                 </div>
               </v-col>
 
             </v-row>
-
 
           </v-col>
           <v-col cols="4" style="height:64px;display:flex;flex-wrap:nowrap;">
@@ -110,7 +117,6 @@
 
     <v-pagination style=" position:sticky;buttom:0px;z-index:888;" class="pt-4" v-model="page" :length="page_count">
     </v-pagination>
-
     <v-snackbar style="margin-top:100px;" width:200 v-model="snackbar" :color="'green'" :timeout="2000" :top="true">
       复制成功
     </v-snackbar>
@@ -119,50 +125,66 @@
 </template>
 
 <script>
-  const per_count = 200;
+  const per_count = 200
   import Icons from '../helper/icons'
-  import Clipboard from 'clipboard';
+  import Clipboard from 'clipboard'
   export default {
-    props:["edit_color","edit_icon"],
     mounted: function () {
-      this.page = 1;
-      this.page_count = Math.floor(Icons.length / per_count);
+      this.page = this.click_page
+      var len = Icons.length
+      var arr = []
+      for (var i = 0; i < len; i++) {
+        if (Icons[i].name.indexOf(this.edit_input) >= 0) {
+          arr.push(Icons[i])
+        }
+      }
+
+      this.page_count = Math.floor(arr.length / per_count)
+      this.icon = this.edit_icon
+      this.icolor = this.edit_color
+      this.sortstate = this._sort
+
+    },
+    beforeDestroy: function () {
+      this.click_page = this.page
     },
     computed: {
       icons1: function () {
-        const newIcons = this._sort == true ? JSON.parse(JSON.stringify(Icons)).reverse() : JSON.parse(JSON.stringify(
-          Icons))
-        var len = newIcons.length;
-        var arr = [];
+        const newIcons =
+          this._sort == true ?
+          JSON.parse(JSON.stringify(Icons)).reverse() :
+          JSON.parse(JSON.stringify(Icons))
+        var len = newIcons.length
+        var arr = []
         for (var i = 0; i < len; i++) {
           if (newIcons[i].name.indexOf(this.edit_input) >= 0) {
-            arr.push(newIcons[i]);
+            arr.push(newIcons[i])
           }
         }
-        let size = arr.length;
-        let begin = (this.page - 1) * per_count;
-        let end = this.page * per_count - 1;
-        this.page_count = Math.floor(arr.length / per_count);
-        let res = [];
+        let size = arr.length
+        let begin = (this.page - 1) * per_count
+        let end = this.page * per_count - 1
+        this.page_count = Math.floor(arr.length / per_count)
+        let res = []
         for (let i = begin; i <= end && i < size; i++) {
-          res.push(arr[i]);
+          res.push(arr[i])
         }
-        return res;
+        return res
       },
       edit_icon: {
         get: function () {
           return this.$store.state.tool_icons.icon
         },
         set: function (v) {
-          return this.$store.commit('tool_icons/icon', v);
+          return this.$store.commit('tool_icons/icon', v)
         },
       },
       edit_color: {
         get: function () {
-          return this.$store.state.tool_icons.color
+          return this.$store.state.tool_icons.icolor
         },
         set: function (v) {
-          return this.$store.commit('tool_icons/color', v);
+          return this.$store.commit('tool_icons/icolor', v)
         },
       },
       edit_input: {
@@ -170,7 +192,7 @@
           return this.$store.state.tool_icons.input
         },
         set: function (v) {
-          return this.$store.commit('tool_icons/input', v);
+          return this.$store.commit('tool_icons/input', v)
         },
       },
       _sort: {
@@ -178,9 +200,18 @@
           return this.$store.state.tool_icons.sort
         },
         set: function (v) {
-          return this.$store.commit('tool_icons/sort', v);
+          return this.$store.commit('tool_icons/sort', v)
         },
+
       },
+      click_page: {
+        get: function () {
+          return this.$store.state.tool_icons.page
+        },
+        set: function (v) {
+          return this.$store.commit('tool_icons/page', v)
+        },
+      }
     },
     data: () => {
       return {
@@ -189,10 +220,11 @@
         search: '',
         sortDesc: false,
         icon: '',
-        color: undefined,
+        icolor: '',
         copy: '',
         snackbar: false,
         sortBy: 'name',
+        sortstate: "",
       }
     },
     methods: {
@@ -203,25 +235,24 @@
           const copy = new Clipboard('.' + data.name)
           const _this = this
           copy.on('success', function (e) {
-            e.clearSelection();
+            e.clearSelection()
             _this.snackbar = true
           })
 
           copy.on('error', () => {})
-        } catch (error) {
-
-        }
-
+        } catch (error) {}
       },
       input: function (value) {
+        this.page = 1
         this.edit_input = value
       },
       editcolor: function (data) {
+        this.icolor = data
         this.edit_color = data
       },
       sort: function (flag) {
         this._sort = flag
-      }
+      },
     },
   }
 </script>

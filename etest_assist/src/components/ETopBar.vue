@@ -17,7 +17,7 @@
                 <v-list-item-icon>
                     <v-icon>mdi-state-machine</v-icon>
                 </v-list-item-icon>
-                <v-list-item-title>转态机生成器</v-list-item-title>
+                <v-list-item-title>状态机生成器</v-list-item-title>
             </v-list-item>
             <v-list-item :to="{name: 'EToolPairing'}">
                 <v-list-item-icon>
@@ -33,7 +33,7 @@
             </v-list-item>
             <v-list-item :to="{name: 'EToolNetwork'}">
                 <v-list-item-icon>
-                    <v-icon>mdi-passport</v-icon>
+                    <v-icon>mdi-lan</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title>网络助手</v-list-item-title>
             </v-list-item>
