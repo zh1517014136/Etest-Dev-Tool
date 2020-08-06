@@ -2,7 +2,7 @@
   <div style="height:100%;">
 
     <div
-      style="height:64px; min-width:800px; width:100%;display:flex; flex-wrap: nowrap; position:sticky;top:32px;z-index:888;">
+      style="height:64px; min-width:1100px; width:100%;display:flex; flex-wrap: nowrap; position:sticky;top:32px;z-index:888;">
       <v-card width="100%">
         <v-row no-gutters>
           <v-col cols="4">
@@ -16,7 +16,7 @@
                 </div>
               </v-col>
               <v-col cols="4" style="height:64px;display:flex;flex-wrap:nowrap;">
-                <div class="ml-2" style="height:64px;display:flex;align-items:center;">
+                <div class="ml-1" style="height:64px;display:flex;align-items:center;">
                   <v-btn-toggle v-model="sortstate" mandatory>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
@@ -40,7 +40,7 @@
 
             </v-row>
           </v-col>
-          <v-col cols="4" style="height:64px">
+          <v-col cols="3" style="height:64px">
 
             <v-row no-gutters>
               <v-col cols="12" style="height:64px;display:flex;flex-wrap:nowrap;">
@@ -49,7 +49,7 @@
 
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-3" medium>
+                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-1" medium>
                         {{'mdi-' + icon}}
                       </v-icon>
                     </template>
@@ -58,7 +58,7 @@
 
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-3" large>
+                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-1" large>
                         {{'mdi-' + icon}}
                       </v-icon>
                     </template>
@@ -67,12 +67,25 @@
 
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-3" x-large>
+                      <v-icon v-on="on" style="cursor:pointer" :color="icolor" class="mx-1" x-large>
                         {{'mdi-' + icon}}
                       </v-icon>
                     </template>
                     <span>{{icon}}</span>
                   </v-tooltip>
+
+                  <v-btn class="mx-1" dark x-small fab @click="editcolor('blue')" color="blue">
+                    蓝色
+                  </v-btn>
+                  <v-btn class="mx-1" dark x-small fab @click="editcolor('red')" color="red">
+                    红色
+                  </v-btn>
+                  <v-btn class="mx-1" dark x-small fab @click="editcolor('orange')" color="orange">
+                    橙色
+                  </v-btn>
+                  <v-btn class="mx-1" x-small fab @click="editcolor(undefined)" color="white">
+                    <span style="color:black">白色</span>
+                  </v-btn>
 
                 </div>
               </v-col>
@@ -80,24 +93,12 @@
             </v-row>
 
           </v-col>
-          <v-col cols="4" style="height:64px;display:flex;flex-wrap:nowrap;">
+          <v-col cols="5" style="height:64px;display:flex;flex-wrap:nowrap;">
             <div style="display:flex;justify-content:center;align-items:center;margin:0px auto;">
-              <v-btn class="mx-2" dark small @click="editcolor('blue')" color="blue">
-                蓝色
-
-              </v-btn>
-              <v-btn class="mx-2" dark small @click="editcolor('red')" color="red">
-                红色
-
-              </v-btn>
-              <v-btn class="mx-2" dark small @click="editcolor('orange')" color="orange">
-                橙色
-
-              </v-btn>
-              <v-btn class="mx-2" small @click="editcolor(undefined)" color="white">
-                <span style="color:black">白色</span>
-
-              </v-btn>
+              <v-select class="mt-6" style="width:83px;" v-model="per_count" label="每页条数" dense attach outlined
+                :items="['20','50','100','200','500']">
+              </v-select>
+              <v-pagination :total-visible="5" v-model="page" :length="page_count"></v-pagination>
             </div>
           </v-col>
         </v-row>
@@ -115,8 +116,7 @@
       </div>
     </div>
 
-    <v-pagination style=" position:sticky;buttom:0px;z-index:888;" class="pt-4" v-model="page" :length="page_count">
-    </v-pagination>
+
     <v-snackbar style="margin-top:100px;" width:200 v-model="snackbar" :color="'green'" :timeout="2000" :top="true">
       复制成功
     </v-snackbar>
@@ -125,7 +125,6 @@
 </template>
 
 <script>
-  const per_count = 200
   import Icons from '../helper/icons'
   import Clipboard from 'clipboard'
   export default {
@@ -139,14 +138,16 @@
         }
       }
 
-      this.page_count = Math.floor(arr.length / per_count)
+      this.page_count = Math.floor(arr.length / this.per_count)
       this.icon = this.edit_icon
       this.icolor = this.edit_color
       this.sortstate = this._sort
+      this.per_count = this.edit_per
 
     },
     beforeDestroy: function () {
       this.click_page = this.page
+      this.edit_per = this.per_count
     },
     computed: {
       icons1: function () {
@@ -162,9 +163,9 @@
           }
         }
         let size = arr.length
-        let begin = (this.page - 1) * per_count
-        let end = this.page * per_count - 1
-        this.page_count = Math.floor(arr.length / per_count)
+        let begin = (this.page - 1) * this.per_count
+        let end = this.page * this.per_count - 1
+        this.page_count = Math.floor(arr.length / this.per_count)
         let res = []
         for (let i = begin; i <= end && i < size; i++) {
           res.push(arr[i])
@@ -211,11 +212,21 @@
         set: function (v) {
           return this.$store.commit('tool_icons/page', v)
         },
+      },
+      edit_per: {
+        get: function () {
+          return this.$store.state.tool_icons.per
+        },
+        set: function (v) {
+          return this.$store.commit('tool_icons/per', v)
+        },
       }
+
     },
     data: () => {
       return {
         page: 1,
+        per_count: '50',
         page_count: 0,
         search: '',
         sortDesc: false,
@@ -229,7 +240,7 @@
     },
     methods: {
       click: function (data) {
-        try {
+        
           this.icon = data.name
           this.edit_icon = data.name
           const copy = new Clipboard('.' + data.name)
@@ -240,7 +251,7 @@
           })
 
           copy.on('error', () => {})
-        } catch (error) {}
+       
       },
       input: function (value) {
         this.page = 1
