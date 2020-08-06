@@ -5,7 +5,7 @@ const state = () => ({
   input: '',
   sort: false,
   page: 1,
-
+  per:'50'
 })
 
 const mutations = {
@@ -22,8 +22,12 @@ const mutations = {
     state.sort = value
   },
   page(state, value) {
-    console.log(value)
+
     state.page = value
+  },
+  per(state, value) {
+   
+    state.per = value
   },
 }
 
