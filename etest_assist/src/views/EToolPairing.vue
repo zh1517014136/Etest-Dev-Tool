@@ -1,15 +1,18 @@
 <template>
-  <v-card>
-    <span style="margin-right:1px;" v-for="item in items"
-      :key="item.name">
-      <v-chip class="pr-4" style="border-radius:0" label :light="item.light" :close="item.close" v-if="item.name"
-        @click="change(item)" @click:close="item.name = false">
-        <v-icon left>{{ item.icon }}</v-icon>
-        <strong>{{ item.name }}</strong>&nbsp;
-      </v-chip>
-    </span>
-  </v-card>
+  <div>
+    <v-card>
+      <span v-for="item in items" :key="item.name">
+        <v-chip
+          :style="{borderRadius:'0px', borderRight:'1px solid #111',backgroundColor:(item.light==true?'#111':'#333') ,color:(item.light==true?'white':'#999')}"
+          close close-icon="mdi-close" color="#999" @click="change(item)" @click:close="close(item.name)">
+          <v-icon :style="{color:(item.light==true?'white':'#999')}" left>{{ item.icon }}</v-icon>
+          <strong>{{ item.name }}</strong>
+        </v-chip>
+      </span>
+    </v-card> 
+  </div>
 </template>
+
 
 
 <script>
@@ -18,42 +21,129 @@
       return {
 
         items: [{
-          name: 11212,
-          icon: "mdi-account",
-          light: false,
-          close: false,
-          router: "EToolDataFormat"
-        }, {
-          name: 22323,
-          icon: "mdi-account-circle",
-          light: false,
-          close: false,
-          router: "EToolIcons"
-        }, {
-          name: 34343,
-          icon: "mdi-alert-box",
-          light: false,
-          close: false,
-          router: "EToolStateCode"
-        }, {
-          name: 45454,
-          icon: "mdi-alien",
-          light: false,
-          close: false,
-          router: "EToolSerialport"
-        }, {
-          name: 56565,
-          icon: "mdi-qqchat",
-          light: false,
-          close: false,
-          router: "EToolNetwork"
-        }, {
-          name: 676767,
-          icon: "mdi-wifi",
-          light: false,
-          close: false,
+            name: "数据转换工具",
+            icon: "mdi-account",
+            light: false,
 
-        }]
+            router: "EToolDataFormat"
+          }, {
+            name: "图形库",
+            icon: "mdi-account-circle",
+            light: false,
+
+            router: "EToolIcons"
+          }, {
+            name: "状态生成器",
+            icon: "mdi-alert-box",
+            light: false,
+
+            router: "EToolStateCode"
+          }, {
+            name: "串口助手",
+            icon: "mdi-alien",
+            light: false,
+
+            router: "EToolSerialport"
+          }, {
+            name: "网络助手",
+            icon: "mdi-qqchat",
+            light: false,
+
+            router: "EToolNetwork"
+          },
+          {
+            name: "数据转换工具1",
+            icon: "mdi-account",
+            light: false,
+
+            router: "EToolDataFormat"
+          }, {
+            name: "图形库1",
+            icon: "mdi-account-circle",
+            light: false,
+
+            router: "EToolIcons"
+          }, {
+            name: "状态生成器1",
+            icon: "mdi-alert-box",
+            light: false,
+
+            router: "EToolStateCode"
+          }, {
+            name: "串口助手1",
+            icon: "mdi-alien",
+            light: false,
+
+            router: "EToolSerialport"
+          }, {
+            name: "网络助手1",
+            icon: "mdi-qqchat",
+            light: false,
+
+            router: "EToolNetwork"
+          },
+          {
+            name: "数据转换工具2",
+            icon: "mdi-account",
+            light: false,
+
+            router: "EToolDataFormat"
+          }, {
+            name: "图形库2",
+            icon: "mdi-account-circle",
+            light: false,
+
+            router: "EToolIcons"
+          }, {
+            name: "状态生成器2",
+            icon: "mdi-alert-box",
+            light: false,
+
+            router: "EToolStateCode"
+          }, {
+            name: "串口助手2",
+            icon: "mdi-alien",
+            light: false,
+
+            router: "EToolSerialport"
+          }, {
+            name: "网络助手2",
+            icon: "mdi-qqchat",
+            light: false,
+
+            router: "EToolNetwork"
+          }, {
+            name: "数据转换工具3",
+            icon: "mdi-account",
+            light: false,
+
+            router: "EToolDataFormat"
+          }, {
+            name: "图形库3",
+            icon: "mdi-account-circle",
+            light: false,
+
+            router: "EToolIcons"
+          }, {
+            name: "状态生成器3",
+            icon: "mdi-alert-box",
+            light: false,
+
+            router: "EToolStateCode"
+          }, {
+            name: "串口助手3",
+            icon: "mdi-alien",
+            light: false,
+
+            router: "EToolSerialport"
+          }, {
+            name: "网络助手3",
+            icon: "mdi-qqchat",
+            light: false,
+
+            router: "EToolNetwork"
+          },
+        ]
       }
     },
     methods: {
@@ -61,15 +151,17 @@
         this.items.map((item, i) => {
           if (item.name == data.name) {
             item.light = true
-            item.close = true
           } else {
             item.light = false
-            item.close = false
           }
         })
       },
+      close(data) {
+           this.items = this.items.filter((item,i)=>{
+              return item.name != data
+            })
+      }
 
-     
     },
   }
 </script>

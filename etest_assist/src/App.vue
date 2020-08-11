@@ -7,7 +7,7 @@
     <!-- 路由 -->
 
     <v-main>
-      <e-card></e-card>
+      <!-- <e-card></e-card> -->
       <router-view />
     </v-main>
     <v-snackbar top :timeout="touts" :color="tip_color" v-model="tip">
