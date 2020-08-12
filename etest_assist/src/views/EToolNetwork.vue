@@ -14,7 +14,7 @@
               </v-select>
               <v-text-field class="my-0" v-model="dk" attach dense label="(3)本地主机端口"></v-text-field>
               <div style="text-align:center;">
-                <v-btn block small @click="click">打开</v-btn>
+                <v-btn block small @click="click">{{this.flag==false?'打开':'关闭'}}</v-btn>
               </div>
             </v-card>
           </div>
@@ -83,7 +83,8 @@
                   </v-sheet>
                 </v-col>
                 <v-col class="pa-0  pr-3" cols="2">
-                  <v-btn class="ma-0 px-0 " style="height:calc(9vh);min-height:60px;" block outlined>发送</v-btn>
+                  <v-btn class="ma-0 px-0 " style="height:calc(9vh);min-height:60px;" block @click="fasong" outlined>发送
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-card>
@@ -108,17 +109,20 @@
           var iface = interfaces[devName];
           for (var i = 0; i < iface.length; i++) {
             var alias = iface[i];
-            // if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
-            //   return alias.address;
-            // }
             if (alias.family === 'IPv4') {
               this.ipdz.push(alias.address)
-              this.zjdz=alias.address
-              return alias.address;
+              //return alias.address;
             }
           }
 
         }
+        this.zjdz = this.ipdz[0]
+        const dgram = window.require('dgram');
+        const server = dgram.createSocket('udp4');
+        server.close(function () {
+          console.log('关闭服务')
+        })
+
       } catch (error) {
         console.log(error)
       }
@@ -127,9 +131,10 @@
 
     data() {
       return {
+        flag: false,
         ms: 1000,
         dk: 8080,
-        xylx: '',
+        xylx: 'UDP',
         zjdz: '',
         row: 1,
         row1: 1,
@@ -148,25 +153,68 @@
       }
     },
     methods: {
-      on_change(id, script) {
+      on_change() {
 
       },
       click() {
-        // console.log(this.xylx, this.zjdz, this.dk)
-        var net = window.require('net');
-        var server = net.createServer(function (connection) {
-          console.log('client connected');
-          connection.on('end', function () {
-            console.log('client close connect');
-          });
-          connection.write('Hello World!\r\n');
-          connection.pipe(connection);
+        const dgram = window.require('dgram');
+        const server = dgram.createSocket('udp4');
+        server.bind({
+          address: this.zjdz,
+          port: this.dk,
+          exclusive: true
         });
-        server.listen(this.dk, function () {
-          console.log('server is listening');
+        server.on('error', (err) => {
+          console.log(`服务器异常：\n${err.stack}`);
+          server.close();
         });
 
+        server.on('message', (msg, rinfo) => {
+          console.log(`服务器收到：${msg} 来自 ${rinfo.address}:${rinfo.port}`);
+        });
+
+        server.on('listening', () => {
+          const address = server.address();
+          console.log(`服务器监听 ${address.address}:${address.port}`);
+        });
+
+
+      },
+
+      fasong() {
+        const dgram = window.require('dgram')
+        const client = dgram.createSocket('udp4')
+       
+        client.on('close', function () {
+          console.log('udp client closed.')
+        })
+
+        // 当绑定端口好启动成功后触发
+
+        client.on('listening', () => {
+          const address = client.address()
+          console.log(`client running ${address.address}: ${address.port}`)
+        })
+
+
+        // 当收到消息时触发
+        client.on('message', function (msg, rinfo) {
+          console.log(`receive message from ${rinfo.address}:${rinfo.port}：${msg}`);
+        })
+        // 发生异常触发
+        client.on('error', function () {
+          console.log('some error on udp client.')
+        })
+        // 发送消息
+        var SendBuff = '你好,这是我发送过来的数据';
+        var SendLen = SendBuff.length;
+        client.send(SendBuff, 0, SendLen, this.dk, this.zjdz , function(){
+          console.log('数据发送成功')
+        });
+
+
       }
+
     }
 
   }
