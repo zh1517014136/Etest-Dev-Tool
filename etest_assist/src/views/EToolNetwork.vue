@@ -7,14 +7,16 @@
             <v-card tile :elevation="0" style="width:100%; height:100%;">
               <v-subheader style="height:26px">网络设置</v-subheader>
               <v-divider></v-divider>
-              <v-select class="mb-0 mt-4" v-model="xylx" label="(1)协议类型" dense attach
+              <v-select :disabled="bind" class="mb-0 mt-4" v-model="xylx" label="(1)协议类型" dense attach
                 :items="['UDP','TCP Client','TCP Server']">
               </v-select>
-              <v-select class="my-0" v-model="zjdz" label="(2)本地主机地址" dense attach :items="ipdz">
+              <v-select :disabled="bind" class="my-0" v-model="zjdz" label="(2)本地主机地址" dense attach :items="ipdz">
               </v-select>
-              <v-text-field class="my-0" v-model="dk" attach dense label="(3)本地主机端口"></v-text-field>
+              <v-text-field :disabled="bind" class="my-0" v-model="dk" attach dense label="(3)本地主机端口"></v-text-field>
               <div style="text-align:center;">
-                <v-btn block small @click="click">{{this.flag==false?'打开':'关闭'}}</v-btn>
+                <v-btn block small @click="click">
+                  <v-icon left :color="bind==true?'red':undefined">mdi-lightbulb</v-icon>{{this.bind==false?'打开':'关闭'}}
+                </v-btn>
               </div>
             </v-card>
           </div>
@@ -61,29 +63,61 @@
             </v-card>
           </div>
         </div>
-        <div class="py-2 pl-2 pr-4" style="height:100%;width:75%;min-height:698px ">
-          <div style="background-color:yellow;width:100%;height:79%;min-width:500px;">
+        <div class="py-2 pl-2 pr-4" style="height:100%;width:75%;min-height:650px ">
+          <div style="background-color:yellow;width:100%;height:75%;min-width:500px;">
             <v-card tile :elevation="0" style="width:100%; height:100%;">
               <v-subheader style="height:26px">数据日志</v-subheader>
               <v-divider></v-divider>
               <v-sheet width="100%" class="pa-0 ma-0 mb-1" @keydown.stop
-                style="height: calc(75vh - 52px);min-height:460px;">
-                <e-script-editor id="jsdata" :script="jsdata" type="jsdata" @change="on_change" />
+                style="height: calc(72vh - 52px);min-height:470px;">
+                <e-script-editor id="js_data" v-html="jsdata" :script="jsdata"  type="jsdata" @change="on_change" />
               </v-sheet>
             </v-card>
           </div>
-          <div class="mt-2" style="background-color:red;width:100%;height:20%;min-width:500px">
+          <div class="mt-2" style="background-color:red;width:100%;height:25%;min-width:500px">
             <v-card tile :elevation="0" style="width:100%; height:100%;">
-              <v-subheader style="height:26px">数据发送</v-subheader>
+              <v-row class="py-0">
+                <v-col class="pa-0" cols="2">
+                  <v-subheader style="height:44px">数据发送</v-subheader>
+                </v-col>
+                <v-col class="pa-0" cols="6">
+
+                  <v-row v-if="bind == true" class="py-0">
+                    <v-col class="pa-0" cols="6">
+                      <v-text-field class="my-0" v-model="yczjip" attach dense label="远程主机IP地址">
+                      </v-text-field>
+                    </v-col>
+                    <v-col class="pa-0" cols="6">
+                      <v-text-field class="my-0" v-model="yczjdk" attach dense label="远程主机端口号">
+                      </v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col class="pa-0 ml-6" cols="3">
+                  <v-row v-if="bind == true" class="py-0">
+                    <v-col class="pa-0" cols="6" style="text-align:center;">
+                      <v-btn small @click="on_change()">
+                        <v-icon left>mdi-arrow-bottom-left</v-icon>清除
+                      </v-btn>
+                    </v-col>
+                    <v-col class="pa-0" cols="6" style="text-align:center;">
+                      <v-btn  small @click="closejs">
+                        <v-icon left>mdi-arrow-top-left</v-icon>清除
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
               <v-divider></v-divider>
-              <v-row class="pt-4">
+              <v-row class="pt-4 mt-2">
                 <v-col class="pa-0  pl-3 pr-2" cols="10">
                   <v-sheet width="100%" class="pa-0 ma-0 mb-1" @keydown.stop style="height: calc(9vh);min-height:65px;">
-                    <e-script-editor id="push" :script="push" type="push" @change="on_change" />
+                    <e-script-editor id="push_data" :script="push" type="push"  @change="on_change" />
                   </v-sheet>
                 </v-col>
                 <v-col class="pa-0  pr-3" cols="2">
-                  <v-btn class="ma-0 px-0 " style="height:calc(9vh);min-height:60px;" block @click="fasong" outlined>发送
+                  <v-btn class="ma-0 px-0 " style="height:calc(9vh);min-height:60px;" block @click="fasong"
+                    :disabled="!bind" outlined>发送
                   </v-btn>
                 </v-col>
               </v-row>
@@ -96,6 +130,9 @@
 </template>
 <script>
   import EScriptEditor from "../components/widgets/EDataFormatEditor";
+  var dgram = window.require('dgram');
+  var server = dgram.createSocket('udp4');
+
   export default {
     components: {
       "e-script-editor": EScriptEditor,
@@ -117,23 +154,30 @@
 
         }
         this.zjdz = this.ipdz[0]
-        const dgram = window.require('dgram');
-        const server = dgram.createSocket('udp4');
-        server.close(function () {
-          console.log('关闭服务')
-        })
-
       } catch (error) {
         console.log(error)
       }
 
     },
+    computed: {
+      push_data: {
+        // get: function () {
+        //   return this.selected_data.yaml;
+        // },
+        set: function (v) {
+          console.log(v)
+          this.push = v;
+        },
+      },
+    },
 
     data() {
       return {
-        flag: false,
+        bind: false,
         ms: 1000,
         dk: 8080,
+        yczjip: '192.168.10.154',
+        yczjdk: 8000,
         xylx: 'UDP',
         zjdz: '',
         row: 1,
@@ -153,69 +197,86 @@
       }
     },
     methods: {
-      on_change() {
-
+      on_change(id, script) {
+        this[id] = script
       },
+
       click() {
-        const dgram = window.require('dgram');
-        const server = dgram.createSocket('udp4');
-        server.bind({
-          address: this.zjdz,
-          port: this.dk,
-          exclusive: true
-        });
-        server.on('error', (err) => {
-          console.log(`服务器异常：\n${err.stack}`);
-          server.close();
-        });
+        if (this.bind == false) {
+          const _this = this
+          server.bind({
+            address: this.zjdz,
+            port: this.dk,
+            exclusive: true
+          });
+          server.on('error', (err) => {
+            console.log(`服务器异常：\n${err.stack}`);
+            server.close();
+          });
+          server.on('message', (msg, rinfo) => {
+            console.log(`服务器收到：${msg} 来自 ${rinfo.address}:${rinfo.port}`);
 
-        server.on('message', (msg, rinfo) => {
-          console.log(`服务器收到：${msg} 来自 ${rinfo.address}:${rinfo.port}`);
-        });
+            if (_this.jsdata == "") {
+              _this.jsdata = `${msg} 来自 ${rinfo.address}:${rinfo.port}`
+            } else {
+              // let reg = new RegExp("\n", "g");
+              // let str = result.data.replace(reg, "<br>")
+              _this.jsdata = _this.jsdata + `<br/>` + `${msg} 来自 ${rinfo.address}:${rinfo.port}`
+            }
 
-        server.on('listening', () => {
-          const address = server.address();
-          console.log(`服务器监听 ${address.address}:${address.port}`);
-        });
+          });
+          server.on('listening', () => {
+            const address = server.address();
+            console.log(`服务器监听 ${address.address}:${address.port}`);
+          });
+          this.bind = true
+        } else {
+          server.close(function () {
+            console.log('关闭服务')
+          });
+          this.bind = false
+        }
 
 
       },
 
       fasong() {
-        const dgram = window.require('dgram')
-        const client = dgram.createSocket('udp4')
-       
-        client.on('close', function () {
+
+        server.on('close', function () {
           console.log('udp client closed.')
         })
-
-        // 当绑定端口好启动成功后触发
-
-        client.on('listening', () => {
-          const address = client.address()
-          console.log(`client running ${address.address}: ${address.port}`)
-        })
-
-
         // 当收到消息时触发
-        client.on('message', function (msg, rinfo) {
-          console.log(`receive message from ${rinfo.address}:${rinfo.port}：${msg}`);
-        })
+        // server.on('message', function (msg, rinfo) {
+        //   console.log(`receive message from ${rinfo.address}:${rinfo.port}：${msg}`);
+        // })
         // 发生异常触发
-        client.on('error', function () {
+        server.on('error', function () {
           console.log('some error on udp client.')
         })
         // 发送消息
-        var SendBuff = '你好,这是我发送过来的数据';
-        var SendLen = SendBuff.length;
-        client.send(SendBuff, 0, SendLen, this.dk, this.zjdz , function(){
-          console.log('数据发送成功')
-        });
+        var SendBuff = this.push;
+        var _this = this
+        if (SendBuff != "") {
+          var SendLen = SendBuff.length;
+          server.send(SendBuff, 0, SendLen, this.yczjdk, this.yczjip, function () {
+            console.log('数据发送成功')
+            if (_this.jsdata == "") {
+              _this.jsdata = `${SendBuff} 发送至 ${_this.yczjip}:${_this.yczjdk}`
+            } else {
+              _this.jsdata = _this.jsdata + `<br/>` + `${SendBuff} 发送至 ${_this.yczjip}:${_this.yczjdk}`
+            }
+          });
+        } else {
+          console.log('无法发送空数据')
+        }
 
-
-      }
-
+      },
+      closefs: function () {
+        this.js_data = ""
+      },
+      closejs: function () {
+        this.push_data = ""
+      },
     }
-
   }
 </script>
