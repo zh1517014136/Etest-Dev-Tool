@@ -57,7 +57,8 @@
               <v-checkbox style="height:15px" v-model="checkbox7" :label="`打开文件数据源`">
               </v-checkbox>
               <v-row class="px-3" align="center">
-                <v-checkbox v-model="checkbox8" :label="`循环周期:`" hide-details class="shrink mr-2 mt-0"></v-checkbox>
+                <v-checkbox v-model="checkbox8" @change="closeSetInitval" :label="`循环周期:`" hide-details
+                  class="shrink mr-2 mt-0"></v-checkbox>
                 <v-text-field style="width:80px;" v-model="ms" :disabled="!checkbox8"></v-text-field>ms
               </v-row>
             </v-card>
@@ -70,7 +71,7 @@
               <v-divider></v-divider>
               <v-sheet width="100%" class="pa-0 ma-0 mb-1" @keydown.stop
                 style="height: calc(72vh - 52px);min-height:470px;">
-                <e-script-editor id="js_data" v-html="jsdata" :script="jsdata"  type="jsdata" @change="on_change" />
+                <e-script-editor id="js_data" :script="jsdata" type="jsdata" @change="on_change" />
               </v-sheet>
             </v-card>
           </div>
@@ -101,7 +102,7 @@
                       </v-btn>
                     </v-col>
                     <v-col class="pa-0" cols="6" style="text-align:center;">
-                      <v-btn  small @click="closejs">
+                      <v-btn small @click="closejs">
                         <v-icon left>mdi-arrow-top-left</v-icon>清除
                       </v-btn>
                     </v-col>
@@ -112,12 +113,12 @@
               <v-row class="pt-4 mt-2">
                 <v-col class="pa-0  pl-3 pr-2" cols="10">
                   <v-sheet width="100%" class="pa-0 ma-0 mb-1" @keydown.stop style="height: calc(9vh);min-height:65px;">
-                    <e-script-editor id="push_data" :script="push" type="push"  @change="on_change" />
+                    <e-script-editor id="push_data" :script="push" type="push" @change="on_change" />
                   </v-sheet>
                 </v-col>
                 <v-col class="pa-0  pr-3" cols="2">
                   <v-btn class="ma-0 px-0 " style="height:calc(9vh);min-height:60px;" block @click="fasong"
-                    :disabled="!bind" outlined>发送
+                    :disabled="!bind" outlined>{{this.zidong==false?'发送':'停止发送'}}
                   </v-btn>
                 </v-col>
               </v-row>
@@ -132,13 +133,11 @@
   import EScriptEditor from "../components/widgets/EDataFormatEditor";
   var dgram = window.require('dgram');
   var server = dgram.createSocket('udp4');
-
   export default {
     components: {
       "e-script-editor": EScriptEditor,
 
     },
-
     mounted() {
       try {
         var interfaces = window.require('os').networkInterfaces();
@@ -151,13 +150,11 @@
               //return alias.address;
             }
           }
-
         }
         this.zjdz = this.ipdz[0]
       } catch (error) {
         console.log(error)
       }
-
     },
     computed: {
       push_data: {
@@ -165,7 +162,7 @@
         //   return this.selected_data.yaml;
         // },
         set: function (v) {
-          console.log(v)
+
           this.push = v;
         },
       },
@@ -193,7 +190,8 @@
         checkbox6: false,
         checkbox7: false,
         checkbox8: false,
-
+        zidong: false,
+        zidongfasong: undefined,
       }
     },
     methods: {
@@ -202,7 +200,10 @@
       },
 
       click() {
+        console.log(server)
+
         if (this.bind == false) {
+          console.log(server)
           const _this = this
           server.bind({
             address: this.zjdz,
@@ -210,66 +211,97 @@
             exclusive: true
           });
           server.on('error', (err) => {
-            console.log(`服务器异常：\n${err.stack}`);
+            // console.log(`服务器异常：\n${err.stack}`);
             server.close();
           });
           server.on('message', (msg, rinfo) => {
-            console.log(`服务器收到：${msg} 来自 ${rinfo.address}:${rinfo.port}`);
 
             if (_this.jsdata == "") {
-              _this.jsdata = `${msg} 来自 ${rinfo.address}:${rinfo.port}`
+              _this.jsdata = ` 收到来自: ${rinfo.address}:${rinfo.port}\n ${msg}`
             } else {
-              // let reg = new RegExp("\n", "g");
-              // let str = result.data.replace(reg, "<br>")
-              _this.jsdata = _this.jsdata + `<br/>` + `${msg} 来自 ${rinfo.address}:${rinfo.port}`
+              _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${msg}`
             }
-
           });
           server.on('listening', () => {
             const address = server.address();
-            console.log(`服务器监听 ${address.address}:${address.port}`);
+            // console.log(`服务器监听 ${address.address}:${address.port}`);
           });
+
           this.bind = true
         } else {
+          console.log(server)
+
+
           server.close(function () {
             console.log('关闭服务')
+            server.unref()
           });
+
+          console.log(server)
           this.bind = false
+          this.zidong = false
+          clearInterval(this.zidongfasong)
+          this.zidongfasong = undefined
         }
-
-
       },
 
       fasong() {
-
-        server.on('close', function () {
-          console.log('udp client closed.')
-        })
-        // 当收到消息时触发
-        // server.on('message', function (msg, rinfo) {
-        //   console.log(`receive message from ${rinfo.address}:${rinfo.port}：${msg}`);
-        // })
-        // 发生异常触发
-        server.on('error', function () {
-          console.log('some error on udp client.')
-        })
-        // 发送消息
-        var SendBuff = this.push;
-        var _this = this
-        if (SendBuff != "") {
-          var SendLen = SendBuff.length;
-          server.send(SendBuff, 0, SendLen, this.yczjdk, this.yczjip, function () {
-            console.log('数据发送成功')
-            if (_this.jsdata == "") {
-              _this.jsdata = `${SendBuff} 发送至 ${_this.yczjip}:${_this.yczjdk}`
-            } else {
-              _this.jsdata = _this.jsdata + `<br/>` + `${SendBuff} 发送至 ${_this.yczjip}:${_this.yczjdk}`
-            }
-          });
+        if (this.checkbox8 == true && this.zidongfasong != undefined) {
+          this.zidong = false
+          clearInterval(this.zidongfasong)
+          this.zidongfasong = undefined
         } else {
-          console.log('无法发送空数据')
+          // server.on('close', function () {
+          //   // console.log('udp client closed.')
+          // })
+          // 发生异常触发
+          server.on('error', function () {
+            // console.log('some error on udp client.')
+          })
+          // 发送消息
+          
+          var SendBuff = new Buffer.from(this.push).toString('hex')
+         
+          console.log(SendBuff)
+      
+          
+          var _this = this
+          if (SendBuff != "") {
+            if (this.checkbox8 == false) {
+              var SendLen = SendBuff.length;
+              server.send(SendBuff, 0, SendLen, this.yczjdk, this.yczjip, function () {
+                // console.log('数据发送成功')
+                if (_this.jsdata == "") {
+                  _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${SendBuff} `
+                } else {
+                  _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${SendBuff} `
+                }
+              });
+            } else {
+              this.zidongfasong = setInterval(function () {
+                _this.zidong = true
+                var SendLen = SendBuff.length;
+                server.send(SendBuff, 0, SendLen, _this.yczjdk, _this.yczjip, function () {
+                  // console.log('数据发送成功')
+                  if (_this.jsdata == "") {
+                    _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${SendBuff} `
+                  } else {
+                    _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${SendBuff} `
+                  }
+                });
+              }, _this.ms);
+            }
+          } else {
+            console.log('无法发送空数据')
+          }
         }
-
+      },
+      closeSetInitval: function (item) {
+        if (item == false) {
+          this.zidong = false
+          clearInterval(this.zidongfasong)
+          this.zidongfasong = undefined
+        }
       },
       closefs: function () {
         this.js_data = ""
