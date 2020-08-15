@@ -200,10 +200,7 @@
       },
 
       click() {
-        console.log(server)
-
         if (this.bind == false) {
-          console.log(server)
           const _this = this
           server.bind({
             address: this.zjdz,
@@ -211,60 +208,59 @@
             exclusive: true
           });
           server.on('error', (err) => {
-            // console.log(`服务器异常：\n${err.stack}`);
             server.close();
-          });
-          server.on('message', (msg, rinfo) => {
-
-            if (_this.jsdata == "") {
-              _this.jsdata = ` 收到来自: ${rinfo.address}:${rinfo.port}\n ${msg}`
-            } else {
-              _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${msg}`
-            }
           });
           server.on('listening', () => {
             const address = server.address();
-            // console.log(`服务器监听 ${address.address}:${address.port}`);
+          });
+          server.on('message', (msg, rinfo) => {
+            console.log(rinfo, msg);
+            if (_this.jsdata == "") {
+              if (_this.row == 1) {
+                var BuffMsg = new Buffer(msg).toString('utf-8')
+                _this.jsdata = ` 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              } else if(_this.row == 2){
+                var BuffMsg = new Buffer(msg).toString('hex')
+                _this.jsdata = ` 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              }
+
+            } else {
+              if (_this.row == 1) {
+                var BuffMsg = new Buffer(msg).toString('utf-8')
+                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+
+              } else if(_this.row == 2) {
+                var BuffMsg = new Buffer(msg).toString('hex')
+                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              }
+            }
           });
 
           this.bind = true
         } else {
-          console.log(server)
-
-
           server.close(function () {
             console.log('关闭服务')
             server.unref()
           });
-
-          console.log(server)
           this.bind = false
           this.zidong = false
           clearInterval(this.zidongfasong)
           this.zidongfasong = undefined
         }
       },
-
       fasong() {
         if (this.checkbox8 == true && this.zidongfasong != undefined) {
           this.zidong = false
           clearInterval(this.zidongfasong)
           this.zidongfasong = undefined
         } else {
-          // server.on('close', function () {
-          //   // console.log('udp client closed.')
-          // })
           // 发生异常触发
           server.on('error', function () {
             // console.log('some error on udp client.')
           })
           // 发送消息
-          
-          var SendBuff = new Buffer.from(this.push).toString('hex')
-         
+          var SendBuff = new Buffer(this.push).toString('hex')
           console.log(SendBuff)
-      
-          
           var _this = this
           if (SendBuff != "") {
             if (this.checkbox8 == false) {
@@ -295,6 +291,7 @@
             console.log('无法发送空数据')
           }
         }
+
       },
       closeSetInitval: function (item) {
         if (item == false) {
