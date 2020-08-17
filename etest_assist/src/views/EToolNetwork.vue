@@ -97,7 +97,7 @@
                 <v-col class="pa-0 ml-6" cols="3">
                   <v-row v-if="bind == true" class="py-0">
                     <v-col class="pa-0" cols="6" style="text-align:center;">
-                      <v-btn small @click="on_change()">
+                      <v-btn small @click="closefs">
                         <v-icon left>mdi-arrow-bottom-left</v-icon>清除
                       </v-btn>
                     </v-col>
@@ -166,6 +166,12 @@
           this.push = v;
         },
       },
+      js_data:{
+         set: function (v) {
+
+          this.jsdata = v;
+        },
+      }
     },
 
     data() {
@@ -198,7 +204,6 @@
       on_change(id, script) {
         this[id] = script
       },
-
       click() {
         if (this.bind == false) {
           const _this = this
@@ -214,28 +219,35 @@
             const address = server.address();
           });
           server.on('message', (msg, rinfo) => {
-            console.log(rinfo, msg);
-            if (_this.jsdata == "") {
-              if (_this.row == 1) {
-                var BuffMsg = new Buffer(msg).toString('utf-8')
-                _this.jsdata = ` 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              } else if(_this.row == 2){
-                var BuffMsg = new Buffer(msg).toString('hex')
-                _this.jsdata = ` 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              }
 
-            } else {
-              if (_this.row == 1) {
-                var BuffMsg = new Buffer(msg).toString('utf-8')
+            if (_this.row == 1) {
+              if (_this.row1 == 1) {
+                var data = `${msg}`
+                console.log(data)
+                var BuffMsg = new Buffer(data, 'ascii').toString('utf8')
+                console.log(BuffMsg)
                 _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-
-              } else if(_this.row == 2) {
-                var BuffMsg = new Buffer(msg).toString('hex')
+              } else if (_this.row1 == 2) {
+                var data = `${msg}`
+                var BuffMsg = new Buffer(data, 'hex').toString('utf8')
+                console.log(BuffMsg)
+                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              }
+            } else if (_this.row == 2) {
+              if (_this.row1 == 1) {
+                var data = `${msg}`
+                var BuffMsg = new Buffer(data, 'ascii').toString('utf8')
+                console.log(BuffMsg)
+                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              } else if (_this.row1 == 2) {
+                var data = `${msg}`
+                console.log(data)
+                var BuffMsg = new Buffer(data, 'hex').toString('utf8')
+                console.log(BuffMsg)
                 _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
               }
             }
           });
-
           this.bind = true
         } else {
           server.close(function () {
@@ -255,11 +267,18 @@
           this.zidongfasong = undefined
         } else {
           // 发生异常触发
-          server.on('error', function () {
-            // console.log('some error on udp client.')
-          })
+          server.on('error', function () {})
           // 发送消息
-          var SendBuff = new Buffer(this.push).toString('hex')
+          var SendBuff
+          if (this.row1 == 1) {
+            var SendBuff1 = new Buffer(this.push).toString('utf8')
+            console.log(SendBuff1)
+            SendBuff = new Buffer(SendBuff1, 'ascii')
+          } else {
+            var SendBuff1 = new Buffer(this.push).toString('utf8')
+            console.log(SendBuff1)
+            SendBuff = new Buffer(SendBuff1, 'hex')
+          }
           console.log(SendBuff)
           var _this = this
           if (SendBuff != "") {
@@ -268,9 +287,9 @@
               server.send(SendBuff, 0, SendLen, this.yczjdk, this.yczjip, function () {
                 // console.log('数据发送成功')
                 if (_this.jsdata == "") {
-                  _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${SendBuff} `
+                  _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
                 } else {
-                  _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${SendBuff} `
+                  _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
                 }
               });
             } else {
@@ -280,9 +299,9 @@
                 server.send(SendBuff, 0, SendLen, _this.yczjdk, _this.yczjip, function () {
                   // console.log('数据发送成功')
                   if (_this.jsdata == "") {
-                    _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${SendBuff} `
+                    _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
                   } else {
-                    _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${SendBuff} `
+                    _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
                   }
                 });
               }, _this.ms);
@@ -301,10 +320,11 @@
         }
       },
       closefs: function () {
-        this.js_data = ""
+        this.push_data = ""
       },
       closejs: function () {
-        this.push_data = ""
+
+        this.js_data = ""
       },
     }
   }
