@@ -61,6 +61,22 @@ const routes = [
         icon:'mdi-lan',
         component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetwork'),
     },
+    {
+      // 练习工具
+      path: '/tool/lrMoveMindows',
+      name: 'lrMoveMindows',
+      title:'左右移动窗口',
+      icon:'mdi-dock-window',
+      component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/lrMoveMindows'),
+  },
+  {
+    // 练习工具
+    path: '/tool/tbMoveMindows',
+    name: 'tbMoveMindows',
+    title:'上下移动窗口',
+    icon:'mdi-dock-window',
+    component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/tbMoveMindows'),
+},
 ]
 
 const router = new VueRouter({
