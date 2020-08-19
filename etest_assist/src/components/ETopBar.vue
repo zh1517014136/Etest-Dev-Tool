@@ -49,6 +49,12 @@
                 </v-list-item-icon>
                 <v-list-item-title>上下移动窗口</v-list-item-title>
             </v-list-item>
+            <v-list-item :to="{name: 'EToolCloseCard'}">
+                <v-list-item-icon>
+                    <v-icon>mdi-dock-window</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>可关闭卡片</v-list-item-title>
+            </v-list-item>
         </v-list>
     </v-navigation-drawer>
 </template>

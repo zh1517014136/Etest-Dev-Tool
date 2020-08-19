@@ -76,6 +76,13 @@ const routes = [
     title:'上下移动窗口',
     icon:'mdi-dock-window',
     component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/tbMoveMindows'),
+}, {
+    // 练习工具
+    path: '/tool/EToolCloseCard',
+    name: 'EToolCloseCard',
+    title:'可关闭卡片',
+    icon:'mdi-dock-window',
+    component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolCloseCard'),
 },
 ]
 
