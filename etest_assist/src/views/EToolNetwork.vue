@@ -208,8 +208,8 @@
         if (this.bind == false) {
           const _this = this
           server.bind({
-            address: this.zjdz,
-            port: this.dk,
+            address: _this.zjdz,
+            port: _this.dk,
             exclusive: true
           });
           server.on('error', (err) => {

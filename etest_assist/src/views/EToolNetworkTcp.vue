@@ -131,8 +131,13 @@
 </template>
 <script>
   import EScriptEditor from "../components/widgets/EDataFormatEditor";
-  var dgram = window.require('dgram');
-  var server = dgram.createSocket('udp4');
+  // var dgram = window.require('dgram');
+  // var server = dgram.createSocket('udp4');
+  var net = window.require('net');
+  var tcp_server = net.createServer();
+  var Sockets = {};
+  var SocketID = 1;
+  var tcp_client = net.Socket();
   export default {
     components: {
       "e-script-editor": EScriptEditor,
@@ -166,8 +171,8 @@
           this.push = v;
         },
       },
-      js_data:{
-         set: function (v) {
+      js_data: {
+        set: function (v) {
 
           this.jsdata = v;
         },
@@ -205,113 +210,81 @@
         this[id] = script
       },
       click() {
-        if (this.bind == false) {
+        if (this.xylx == 'TCP Client') {
+          var options = {
+            host: this.zjdz,
+            port: this.dk
+          }
+
+          var tcp_client = net.Socket();
+
+          // 连接 tcp server
+          tcp_client.connect(options, function () {
+            console.log('connected to Server');
+            tcp_client.write('I am tcp_client of node!');
+          })
+
+          // 接收数据
+          tcp_client.on('data', function (data) {
+            console.log('received data: %s from server', data.toString());
+          })
+
+          tcp_client.on('end', function () {
+            console.log('data end!');
+          })
+
+          tcp_client.on('error', function () {
+            console.log('tcp_client error!');
+          })
+
+        } else if (this.xylx == 'TCP Server') {
           const _this = this
-          server.bind({
-            address: this.zjdz,
-            port: this.dk,
+
+          tcp_server.listen({
+            host: _this.zjdz,
+            port: _this.dk,
             exclusive: true
+          }, function () {
+            console.log(`tcp_server listening ${_this.zjdz}:${_this.dk}`);
           });
-          server.on('error', (err) => {
-            server.close();
-          });
-          server.on('listening', () => {
-            const address = server.address();
-          });
-          server.on('message', (msg, rinfo) => {
+          // 处理客户端连接
+          tcp_server.on('connection', function (socket) {
+            console.log(socket.address());
+            Sockets[SocketID] = socket;
+            SocketID++;
+            _this.$options.methods.DealConnect(socket)
+          })
 
-            if (_this.row == 1) {
-              if (_this.row1 == 1) {
-                var data = `${msg}`
-                console.log(data)
-                var BuffMsg = new Buffer(data, 'ascii').toString('utf8')
-                console.log(BuffMsg)
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              } else if (_this.row1 == 2) {
-                var data = `${msg}`
-                var BuffMsg = new Buffer(data, 'hex').toString('utf8')
-                console.log(BuffMsg)
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              }
-            } else if (_this.row == 2) {
-              if (_this.row1 == 1) {
-                var data = `${msg}`
-                var BuffMsg = new Buffer(data, 'ascii').toString('utf8')
-                console.log(BuffMsg)
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              } else if (_this.row1 == 2) {
-                var data = `${msg}`
-                console.log(data)
-                var BuffMsg = new Buffer(data, 'hex').toString('utf8')
-                console.log(BuffMsg)
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              }
-            }
-          });
-          this.bind = true
-        } else {
-          server.close(function () {
-            console.log('关闭服务')
-            server.unref()
-          });
-          this.bind = false
-          this.zidong = false
-          clearInterval(this.zidongfasong)
-          this.zidongfasong = undefined
+          tcp_server.on('error', function () {
+            console.log('tcp_server error!');
+          })
+
+          tcp_server.on('close', function () {
+            console.log('tcp_server close!');
+          })
         }
       },
-      fasong() {
-        if (this.checkbox8 == true && this.zidongfasong != undefined) {
-          this.zidong = false
-          clearInterval(this.zidongfasong)
-          this.zidongfasong = undefined
-        } else {
-          // 发生异常触发
-          server.on('error', function () {})
-          // 发送消息
-          var SendBuff
-          if (this.row1 == 1) {
-            var SendBuff1 = new Buffer(this.push).toString('utf8')
-            console.log(SendBuff1)
-            SendBuff = new Buffer(SendBuff1, 'ascii')
-          } else {
-            var SendBuff1 = new Buffer(this.push).toString('utf8')
-            console.log(SendBuff1)
-            SendBuff = new Buffer(SendBuff1, 'hex')
+      DealConnect(socket) {
+        socket.on('data', function (data) {
+          data = data.toString();
+          // 向所有客户端广播消息
+          for (var i in Sockets) {
+            Sockets[i].write(data);
           }
-          console.log(SendBuff)
-          var _this = this
-          if (SendBuff != "") {
-            if (this.checkbox8 == false) {
-              var SendLen = SendBuff.length;
-              server.send(SendBuff, 0, SendLen, this.yczjdk, this.yczjip, function () {
-                // console.log('数据发送成功')
-                if (_this.jsdata == "") {
-                  _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
-                } else {
-                  _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
-                }
-              });
-            } else {
-              this.zidongfasong = setInterval(function () {
-                _this.zidong = true
-                var SendLen = SendBuff.length;
-                server.send(SendBuff, 0, SendLen, _this.yczjdk, _this.yczjip, function () {
-                  // console.log('数据发送成功')
-                  if (_this.jsdata == "") {
-                    _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
-                  } else {
-                    _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
-                  }
-                });
-              }, _this.ms);
-            }
-          } else {
-            console.log('无法发送空数据')
-          }
-        }
+          // socket.write(data);
+          console.log('received data %s', data);
+        })
 
+        // // 客户端正常断开时执行
+        // socket.on('close', function () {
+        //   console.log('client disconneted!');
+        // })
+        // // 客户端正异断开时执行
+        // socket.on("error", function (err) {
+        //   console.log('client error disconneted!');
+        // });
       },
+      fasong() {},
       closeSetInitval: function (item) {
         if (item == false) {
           this.zidong = false
