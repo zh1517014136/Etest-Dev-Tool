@@ -221,35 +221,30 @@
               port: this.dk
             }
 
-            const _this = this
+            var _this = this
 
 
 
             // 连接 tcp server
             tcp_client.connect(options, function () {
               console.log('connected to Server');
-              tcp_client.write('I am tcp_client of node!');
+              _this.bind = true
             })
-
-
             // 接收数据
             tcp_client.on('data', function (data) {
-
               console.log('received data: %s from server', data.toString());
               _this.jsdata = _this.jsdata + `\n 收到: \n ${data.toString()}`
             })
             tcp_client.on('end', function () {
               console.log('data end!');
             })
-
             tcp_client.on('error', function () {
               console.log('tcp_client error!');
-
             })
             tcp_client.on('close', function () {
               console.log('tcp_server close!');
             })
-            this.bind = true
+
           } else {
 
             tcp_client.on('close', function () {
@@ -261,7 +256,7 @@
 
         } else if (this.xylx == 'TCP Server') {
           if (this.bind == false) {
-            const _this = this
+            var _this = this
 
             tcp_server.listen({
               host: _this.zjdz,
@@ -272,11 +267,21 @@
             });
             // 处理客户端连接
             tcp_server.on('connection', function (socket) {
-              _this.bind = true
-              // console.log(socket.address());
+              // console.log(socket.);
               Sockets[SocketID] = socket;
               SocketID++;
-              _this.$options.methods.DealConnect(socket)
+              // _this.$options.methods.DealConnect(socket)
+              
+              socket.on('data', function (data) {
+                data = data.toString();
+                // 向所有客户端广播消息
+                for (var i in Sockets) {
+                  Sockets[i].write(data);
+                }
+                console.log(socket.remoteAddress) 
+                // socket.write(data);
+                _this.jsdata = _this.jsdata + `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${data}`
+              })
             })
 
             tcp_server.on('error', function () {
@@ -287,31 +292,22 @@
               console.log('tcp_server close!');
               _this.bind = false
             })
-          }
-        } else {
-          const _this = this
-          tcp_server.on('close', function () {
-            console.log('tcp_server close!');
+            _this.bind = true
+          } else {
+            const _this = this
+            tcp_server.on('close', function () {
+              console.log('tcp_server close!');
 
-          })
-          _this.bind = false
+            })
+            _this.bind = false
+
+          }
 
         }
       },
       DealConnect(socket) {
-        const _this = this
-        const rinfo = socket.address()
-        socket.on('data', function (data) {
-          data = data.toString();
-          // 向所有客户端广播消息
-          for (var i in Sockets) {
-            Sockets[i].write(data);
-          }
-          // socket.write(data);
-          console.log(rinfo)
-          console.log('received data %s', data);
-          _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${data}`
-        })
+        var _this = this
+
 
         // // 客户端正常断开时执行
         // socket.on('close', function () {
@@ -322,7 +318,15 @@
         //   console.log('client error disconneted!');
         // });
       },
-      fasong() {},
+      fasong() {
+        var _this = this
+        if (this.xylx == 'TCP Client') {
+          tcp_client.write(this.push);
+          _this.jsdata = _this.jsdata + `\n 发送:\n ${data}`
+        } else {
+
+        }
+      },
       closeSetInitval: function (item) {
         if (item == false) {
           this.zidong = false
