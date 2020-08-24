@@ -83,7 +83,7 @@
                 <v-col class="pa-0" cols="2">
                   <v-subheader style="height:44px">数据发送</v-subheader>
                 </v-col>
-                <v-col v-if="this.xylx != 'TCP Client'" class="pa-0" cols="6">
+                <v-col v-if="this.xylx == 'UDP'" class="pa-0" cols="6">
 
                   <v-row v-if="bind == true" class="py-0">
                     <v-col class="pa-0" cols="6">
@@ -95,6 +95,11 @@
                       </v-text-field>
                     </v-col>
                   </v-row>
+                </v-col>
+                <v-col v-else-if="this.xylx == 'TCP Server'" class="pa-0" cols="6">
+                  <v-select class="my-0" v-model="changeip" :label="'客户端'" :items="clentip" item-text="ip"
+                    item-value="value" dense attach>
+                  </v-select>
                 </v-col>
                 <v-col class="pa-0 ml-6" cols="3">
                   <v-row v-if="bind == true" class="py-0">
@@ -193,7 +198,9 @@
         row: 1,
         row1: 1,
         ipdz: [],
+        clentip: [],
         push: "",
+        changeip: '',
         jsdata: "",
         checkbox1: true,
         checkbox2: true,
@@ -205,6 +212,7 @@
         checkbox8: false,
         zidong: false,
         zidongfasong: undefined,
+        socket: undefined,
       }
     },
     methods: {
@@ -212,6 +220,7 @@
         this[id] = script
       },
       click() {
+        var _this = this
         if (this.xylx == 'TCP Client') {
           if (this.bind == false) {
 
@@ -221,13 +230,14 @@
               port: this.dk
             }
 
-            var _this = this
+
 
 
 
             // 连接 tcp server
             tcp_client.connect(options, function () {
               console.log('connected to Server');
+              tcp_client.write('hello server');
               _this.bind = true
             })
             // 接收数据
@@ -256,8 +266,6 @@
 
         } else if (this.xylx == 'TCP Server') {
           if (this.bind == false) {
-            var _this = this
-
             tcp_server.listen({
               host: _this.zjdz,
               port: _this.dk,
@@ -265,21 +273,37 @@
             }, function () {
               console.log(`tcp_server listening ${_this.zjdz}:${_this.dk}`);
             });
-            // 处理客户端连接
-            tcp_server.on('connection', function (socket) {
-              // console.log(socket.);
+
+            tcp_server.on('connections', function (socket) {
               Sockets[SocketID] = socket;
               SocketID++;
-              // _this.$options.methods.DealConnect(socket)
-              
+              _this.socket = Sockets
+               _this.clentip = []
+              for (var i in Sockets) {
+                console.log(i)
+                _this.clentip.push({
+                  ip: `${Sockets[i].remoteAddress}:${Sockets[i].remotePort}`,
+                  value: i
+                })
+              }
+            })
+            // 处理客户端连接
+            tcp_server.on('connection', function (socket) {
+
+              Sockets[SocketID] = socket;
+              SocketID++;
+
+              _this.socket = Sockets
+              for (var i in Sockets) {
+                
+                _this.clentip.push({
+                  ip: `${Sockets[i].remoteAddress}:${Sockets[i].remotePort}`,
+                  value: i
+                })
+              }
               socket.on('data', function (data) {
+                console.log(Sockets)
                 data = data.toString();
-                // 向所有客户端广播消息
-                for (var i in Sockets) {
-                  Sockets[i].write(data);
-                }
-                console.log(socket.remoteAddress) 
-                // socket.write(data);
                 _this.jsdata = _this.jsdata + `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${data}`
               })
             })
@@ -292,39 +316,23 @@
               console.log('tcp_server close!');
               _this.bind = false
             })
-            _this.bind = true
+            this.bind = true
           } else {
-            const _this = this
             tcp_server.on('close', function () {
               console.log('tcp_server close!');
-
             })
-            _this.bind = false
-
+            this.bind = false
           }
-
         }
-      },
-      DealConnect(socket) {
-        var _this = this
-
-
-        // // 客户端正常断开时执行
-        // socket.on('close', function () {
-        //   console.log('client disconneted!');
-        // })
-        // // 客户端正异断开时执行
-        // socket.on("error", function (err) {
-        //   console.log('client error disconneted!');
-        // });
       },
       fasong() {
         var _this = this
         if (this.xylx == 'TCP Client') {
           tcp_client.write(this.push);
-          _this.jsdata = _this.jsdata + `\n 发送:\n ${data}`
-        } else {
-
+          _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push}`
+        } else if (this.xylx == 'TCP Server') {
+          this.socket[this.changeip].write(this.push);
+          _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push}`
         }
       },
       closeSetInitval: function (item) {
