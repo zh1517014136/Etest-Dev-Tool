@@ -166,8 +166,8 @@
           this.push = v;
         },
       },
-      js_data:{
-         set: function (v) {
+      js_data: {
+        set: function (v) {
 
           this.jsdata = v;
         },
@@ -180,7 +180,7 @@
         ms: 1000,
         dk: 8080,
         yczjip: '192.168.10.154',
-        yczjdk: 8000,
+        yczjdk: 8080,
         xylx: 'UDP',
         zjdz: '',
         row: 1,
@@ -212,40 +212,23 @@
             port: _this.dk,
             exclusive: true
           });
-          server.on('error', (err) => {
+          server.on('error', () => {
             server.close();
           });
           server.on('listening', () => {
-            const address = server.address();
+
           });
           server.on('message', (msg, rinfo) => {
-
+            console.log(msg)
+            console.log(`${msg}`)
             if (_this.row == 1) {
-              if (_this.row1 == 1) {
-                var data = `${msg}`
-                console.log(data)
-                var BuffMsg = new Buffer(data, 'ascii').toString('utf8')
-                console.log(BuffMsg)
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              } else if (_this.row1 == 2) {
-                var data = `${msg}`
-                var BuffMsg = new Buffer(data, 'hex').toString('utf8')
-                console.log(BuffMsg)
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              }
+              let BuffMsg = msg.toString('ascii')
+              console.log(BuffMsg)
+              _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
             } else if (_this.row == 2) {
-              if (_this.row1 == 1) {
-                var data = `${msg}`
-                var BuffMsg = new Buffer(data, 'ascii').toString('utf8')
-                console.log(BuffMsg)
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              } else if (_this.row1 == 2) {
-                var data = `${msg}`
-                console.log(data)
-                var BuffMsg = new Buffer(data, 'hex').toString('utf8')
-                console.log(BuffMsg)
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-              }
+              let BuffMsg = msg.toString('hex')
+              console.log(BuffMsg)
+              _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
             }
           });
           this.bind = true
@@ -271,21 +254,24 @@
           // 发送消息
           var SendBuff
           if (this.row1 == 1) {
-            var SendBuff1 = new Buffer(this.push).toString('utf8')
-            console.log(SendBuff1)
-            SendBuff = new Buffer(SendBuff1, 'ascii')
+
+
+            SendBuff = Buffer.from(this.push, 'ascii')
+            console.log(SendBuff)
           } else {
-            var SendBuff1 = new Buffer(this.push).toString('utf8')
-            console.log(SendBuff1)
-            SendBuff = new Buffer(SendBuff1, 'hex')
+            SendBuff = Buffer.from(this.push, 'hex')
+            //  SendBuff =new Buffer(String, 'base64').toString('hex')
+            console.log(SendBuff)
           }
-          console.log(SendBuff)
+          var d = Buffer.from('的', 'utf8')
+          console.log(SendBuff.toString('ascii'))
+          console.log(SendBuff.toString('hex')) 
+          console.log(d.toString('hex'))
           var _this = this
           if (SendBuff != "") {
             if (this.checkbox8 == false) {
               var SendLen = SendBuff.length;
               server.send(SendBuff, 0, SendLen, this.yczjdk, this.yczjip, function () {
-                // console.log('数据发送成功')
                 if (_this.jsdata == "") {
                   _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
                 } else {

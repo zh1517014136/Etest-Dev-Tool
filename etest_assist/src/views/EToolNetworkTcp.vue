@@ -97,8 +97,8 @@
                   </v-row>
                 </v-col>
                 <v-col v-else-if="this.xylx == 'TCP Server'" class="pa-0" cols="6">
-                  <v-select class="my-0" v-model="changeip" :label="'客户端'" :items="clentip" item-text="ip"
-                    item-value="value" dense attach>
+                  <v-select class="my-0" v-model="changeip" :label="'客户端'+clentip.length" :items="clentip"
+                    item-text="ip" item-value="value" dense attach>
                   </v-select>
                 </v-col>
                 <v-col class="pa-0 ml-6" cols="3">
@@ -138,6 +138,7 @@
 </template>
 <script>
   import EScriptEditor from "../components/widgets/EDataFormatEditor";
+
   // var dgram = window.require('dgram');
   // var server = dgram.createSocket('udp4');
   var net = window.require('net');
@@ -223,17 +224,10 @@
         var _this = this
         if (this.xylx == 'TCP Client') {
           if (this.bind == false) {
-
-
             var options = {
               host: this.zjdz,
               port: this.dk
             }
-
-
-
-
-
             // 连接 tcp server
             tcp_client.connect(options, function () {
               console.log('connected to Server');
@@ -242,26 +236,15 @@
             })
             // 接收数据
             tcp_client.on('data', function (data) {
-              console.log('received data: %s from server', data.toString());
               _this.jsdata = _this.jsdata + `\n 收到: \n ${data.toString()}`
             })
-            tcp_client.on('end', function () {
-              console.log('data end!');
-            })
-            tcp_client.on('error', function () {
-              console.log('tcp_client error!');
-            })
-            tcp_client.on('close', function () {
-              console.log('tcp_server close!');
-            })
-
+            tcp_client.on('end', function () {})
+            tcp_client.on('error', function () {})
+            tcp_client.on('close', function () {})
           } else {
 
-            tcp_client.on('close', function () {
-              console.log('tcp_server close!');
-            })
+            tcp_client.on('close', function () {})
             this.bind = false
-
           }
 
         } else if (this.xylx == 'TCP Server') {
@@ -270,56 +253,44 @@
               host: _this.zjdz,
               port: _this.dk,
               exclusive: true
-            }, function () {
-              console.log(`tcp_server listening ${_this.zjdz}:${_this.dk}`);
-            });
+            }, function () {});
 
-            tcp_server.on('connections', function (socket) {
-              Sockets[SocketID] = socket;
-              SocketID++;
-              _this.socket = Sockets
-               _this.clentip = []
-              for (var i in Sockets) {
-                console.log(i)
-                _this.clentip.push({
-                  ip: `${Sockets[i].remoteAddress}:${Sockets[i].remotePort}`,
-                  value: i
-                })
-              }
-            })
             // 处理客户端连接
             tcp_server.on('connection', function (socket) {
-
-              Sockets[SocketID] = socket;
-              SocketID++;
-
+              Sockets[socket.remotePort] = socket;
               _this.socket = Sockets
+              console.log(Sockets)
+              _this.clentip = []
               for (var i in Sockets) {
-                
                 _this.clentip.push({
                   ip: `${Sockets[i].remoteAddress}:${Sockets[i].remotePort}`,
                   value: i
                 })
               }
               socket.on('data', function (data) {
-                console.log(Sockets)
                 data = data.toString();
                 _this.jsdata = _this.jsdata + `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${data}`
               })
+              socket.on('close', function (e) { //这里防止连接出错，使用close而非end
+                delete Sockets[socket.remotePort]
+                // _this.clentip = _this.clentip.filter(item=>item.ip!=`${socket.remoteAddress}:${socket.remotePort}`)
+                _this.clentip = []
+                for (var i in Sockets) {
+                  _this.clentip.push({
+                    ip: `${Sockets[i].remoteAddress}:${Sockets[i].remotePort}`,
+                    value: i
+                  })
+                }
+              });
             })
-
-            tcp_server.on('error', function () {
-              console.log('tcp_server error!');
-            })
-
+            tcp_server.on('error', function () {})
             tcp_server.on('close', function () {
-              console.log('tcp_server close!');
               _this.bind = false
             })
             this.bind = true
           } else {
             tcp_server.on('close', function () {
-              console.log('tcp_server close!');
+
             })
             this.bind = false
           }
