@@ -60,14 +60,15 @@ const routes = [
         title:'网络调试助手',
         icon:'mdi-lan',
         component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetwork'),
-    },{
-        // 练习工具
-        path: '/tool/EToolNetworkTcp',
-        name: 'EToolNetworkTcp',
-        title:'网络调试助手',
-        icon:'mdi-lan',
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetworkTcp'),
     },
+    // {
+    //     // 练习工具
+    //     path: '/tool/EToolNetworkTcp',
+    //     name: 'EToolNetworkTcp',
+    //     title:'网络调试助手',
+    //     icon:'mdi-lan',
+    //     component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetworkTcp'),
+    // },
     {
       // 练习工具
       path: '/tool/lrMoveMindows',

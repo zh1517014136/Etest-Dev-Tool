@@ -29,7 +29,7 @@
       moveDom.onmousedown = e => {
         this.clientStartY = e.clientY;
         e.preventDefault();
-        console.log(123)
+       
         document.onmousemove = e => {
           this.moveHandle(e.clientY, this.letfDom);
         };

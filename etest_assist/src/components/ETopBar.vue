@@ -35,14 +35,14 @@
                 <v-list-item-icon>
                     <v-icon>mdi-lan</v-icon>
                 </v-list-item-icon>
-                <v-list-item-title>UDP网络助手</v-list-item-title>
+                <v-list-item-title>网络调试助手</v-list-item-title>
             </v-list-item> 
-            <v-list-item :to="{name: 'EToolNetworkTcp'}">
+            <!-- <v-list-item :to="{name: 'EToolNetworkTcp'}">
                 <v-list-item-icon>
                     <v-icon>mdi-lan</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title>TCP网络助手</v-list-item-title>
-            </v-list-item>
+            </v-list-item> -->
              <v-list-item :to="{name: 'lrMoveMindows'}">
                 <v-list-item-icon>
                     <v-icon>mdi-dock-window</v-icon>

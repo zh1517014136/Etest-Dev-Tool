@@ -29,7 +29,6 @@
       moveDom.onmousedown = e => {
         this.clientStartX = e.clientX;
         e.preventDefault();
-        console.log(123)
         document.onmousemove = e => {
           this.moveHandle(e.clientX, this.letfDom);
         };
