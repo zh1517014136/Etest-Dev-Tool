@@ -36,10 +36,10 @@
               </v-checkbox>
               <v-checkbox style="height:15px" v-model="checkbox3" :label="`接收区自动保存`">
               </v-checkbox>
-              <div class="mt-4">
+              <!-- <div class="mt-4">
                 <a class="mr-4" href="">静默接收</a>
                 <a href="">清除接收</a>
-              </div>
+              </div> -->
             </v-card>
           </div>
           <div class="mt-1" style="width:100%;height:36%; min-width:250px; min-height:250px">
@@ -54,10 +54,9 @@
               </v-checkbox>
               <v-checkbox style="height:15px" v-model="checkbox5" :label="`AT指令自动回车`">
               </v-checkbox>
-              <v-checkbox style="height:15px" v-model="checkbox6" :label="`自动发送校验位`">
-              </v-checkbox>
-              <v-checkbox style="height:15px" v-model="checkbox7" :label="`打开文件数据源`">
-              </v-checkbox>
+
+              <!-- <v-checkbox style="height:15px" v-model="checkbox7" :label="`打开文件数据源`">
+              </v-checkbox> -->
               <v-row class="px-3" align="center">
                 <v-checkbox v-model="checkbox8" @change="closeSetInitval" :label="`循环周期:`" hide-details
                   class="shrink mr-2 mt-0"></v-checkbox>
@@ -243,13 +242,44 @@
             });
             server.on('message', (msg, rinfo) => {
               if (_this.row == 1) {
-                var BuffMsg = Buffer.from(msg, 'hex')
-                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                //let BuffMsg  = msg.toString('ascii')
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+                if (this.checkbox1 == false && this.checkbox2 == false) {
+                  var BuffMsg = Buffer.from(msg, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.jsdata = _this.jsdata + `${BuffMsg}`
+                } else if (this.checkbox1 == true && this.checkbox2 == false) {
+                  var BuffMsg = Buffer.from(msg, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+                }
+                if (this.checkbox1 == false && this.checkbox2 == true) {
+                  var BuffMsg = Buffer.from(msg, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.jsdata = _this.jsdata + `\n ${BuffMsg}`
+                } else if (this.checkbox1 == true && this.checkbox2 == true) {
+                  var BuffMsg = Buffer.from(msg, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+                }
+
               } else if (_this.row == 2) {
-                let BuffMsg = msg.toString('hex')
-                _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+                if (this.checkbox1 == false && this.checkbox2 == false) {
+                  let BuffMsg = msg.toString('hex')
+                  _this.jsdata = _this.jsdata + `${BuffMsg}`
+                } else if (this.checkbox1 == true && this.checkbox2 == false) {
+                  let BuffMsg = msg.toString('hex')
+                  _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+                }
+                if (this.checkbox1 == false && this.checkbox2 == true) {
+                  let BuffMsg = msg.toString('hex')
+                  _this.jsdata = _this.jsdata + `\n ${BuffMsg}`
+                } else if (this.checkbox1 == true && this.checkbox2 == true) {
+                  let BuffMsg = msg.toString('hex')
+                  _this.jsdata = _this.jsdata + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+                }
               }
             });
             this.bind = true
@@ -277,13 +307,53 @@
             // 接收数据
             tcp_client.on('data', function (data) {
               if (_this.row == 1) {
-                var BuffMsg = Buffer.from(data, 'hex')
-                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                //let BuffMsg  = msg.toString('ascii')
-                _this.jsdata = _this.jsdata + `\n 收到 : \n ${BuffMsg}`
+                if (this.checkbox1 == false && this.checkbox2 == false) {
+                  var BuffMsg = Buffer.from(data, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.jsdata = _this.jsdata + `${BuffMsg}`
+                } else if (this.checkbox1 == true && this.checkbox2 == false) {
+                  var BuffMsg = Buffer.from(data, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.jsdata = _this.jsdata + `\n 收到 : \n ${BuffMsg}`
+                }
+                if (this.checkbox1 == false && this.checkbox2 == true) {
+                  var BuffMsg = Buffer.from(data, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.jsdata = _this.jsdata + `\n ${BuffMsg}`
+                } else if (this.checkbox1 == true && this.checkbox2 == true) {
+                  var BuffMsg = Buffer.from(data, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.jsdata = _this.jsdata + `\n 收到 : \n ${BuffMsg}`
+                }
+
+
+
+                // var BuffMsg = Buffer.from(data, 'hex')
+                // BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                // //let BuffMsg  = msg.toString('ascii')
+                // _this.jsdata = _this.jsdata + `\n 收到 : \n ${BuffMsg}`
               } else if (_this.row == 2) {
-                let BuffMsg = data.toString('hex')
-                _this.jsdata = _this.jsdata + `\n 收到 : \n ${BuffMsg}`
+                if (this.checkbox1 == false && this.checkbox2 == false) {
+                  let BuffMsg = data.toString('hex')
+                  _this.jsdata = _this.jsdata + `${BuffMsg}`
+                } else if (this.checkbox1 == true && this.checkbox2 == false) {
+                  let BuffMsg = data.toString('hex')
+                  _this.jsdata = _this.jsdata + `\n 收到 : \n ${BuffMsg}`
+                }
+                if (this.checkbox1 == false && this.checkbox2 == true) {
+                  let BuffMsg = data.toString('hex')
+                  _this.jsdata = _this.jsdata + `\n ${BuffMsg}`
+                } else if (this.checkbox1 == true && this.checkbox2 == true) {
+                  let BuffMsg = data.toString('hex')
+                  _this.jsdata = _this.jsdata + `\n 收到 : \n ${BuffMsg}`
+                }
+
+                // let BuffMsg = data.toString('hex')
+                // _this.jsdata = _this.jsdata + `\n 收到 : \n ${BuffMsg}`
               }
               // _this.jsdata = _this.jsdata + `\n 收到: \n ${data.toString()}`
             })
@@ -292,7 +362,7 @@
             tcp_client.on('end', function () {})
             tcp_client.on('error', function () {})
             tcp_client.on('close', function () {
-               console.log('else close  111111')
+              console.log('else close  111111')
             })
             this.bind = false
           }
@@ -319,15 +389,60 @@
               }
               socket.on('data', function (data) {
                 if (_this.row == 1) {
-                  var BuffMsg = Buffer.from(data, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.jsdata = _this.jsdata +
-                    `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                  if (this.checkbox1 == false && this.checkbox2 == false) {
+                    var BuffMsg = Buffer.from(data, 'hex')
+                    BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                    //let BuffMsg  = msg.toString('ascii')
+                    _this.jsdata = _this.jsdata + `${BuffMsg}`
+                  } else if (this.checkbox1 == true && this.checkbox2 == false) {
+                    var BuffMsg = Buffer.from(data, 'hex')
+                    BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                    //let BuffMsg  = msg.toString('ascii')
+                    _this.jsdata = _this.jsdata +
+                      `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                  }
+                  if (this.checkbox1 == false && this.checkbox2 == true) {
+                    var BuffMsg = Buffer.from(data, 'hex')
+                    BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                    //let BuffMsg  = msg.toString('ascii')
+                    _this.jsdata = _this.jsdata + `\n ${BuffMsg}`
+                  } else if (this.checkbox1 == true && this.checkbox2 == true) {
+                    var BuffMsg = Buffer.from(data, 'hex')
+                    BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                    //let BuffMsg  = msg.toString('ascii')
+                    _this.jsdata = _this.jsdata +
+                      `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                  }
+
+                  // var BuffMsg = Buffer.from(data, 'hex')
+                  // BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  // //let BuffMsg  = msg.toString('ascii')
+                  // _this.jsdata = _this.jsdata +
+                  //   `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
                 } else if (_this.row == 2) {
-                  let BuffMsg = data.toString('hex')
-                  _this.jsdata = _this.jsdata +
-                    `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+
+                  if (this.checkbox1 == false && this.checkbox2 == false) {
+                    let BuffMsg = data.toString('hex')
+                    _this.jsdata = _this.jsdata +
+                      `${BuffMsg}`
+                  } else if (this.checkbox1 == true && this.checkbox2 == false) {
+                    let BuffMsg = data.toString('hex')
+                    _this.jsdata = _this.jsdata +
+                      `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                  }
+                  if (this.checkbox1 == false && this.checkbox2 == true) {
+                    let BuffMsg = data.toString('hex')
+                    _this.jsdata = _this.jsdata +
+                      `\n ${BuffMsg}`
+                  } else if (this.checkbox1 == true && this.checkbox2 == true) {
+                    let BuffMsg = data.toString('hex')
+                    _this.jsdata = _this.jsdata +
+                      `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                  }
+
+                  // let BuffMsg = data.toString('hex')
+                  // _this.jsdata = _this.jsdata +
+                  //   `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
                 }
                 // data = data.toString();
                 // _this.jsdata = _this.jsdata + `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${data}`
@@ -377,9 +492,20 @@
                 var SendLen = SendBuff.length;
                 server.send(SendBuff, 0, SendLen, this.yczjdk, this.yczjip, function () {
                   if (_this.jsdata == "") {
-                    _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
+                    if (_this.checkbox1 == true) {
+
+                      _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} \n`
+
+
+                    }
                   } else {
-                    _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
+                    if (_this.checkbox1 == true) {
+
+                      _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} \n`
+
+
+
+                    }
                   }
                 });
               } else {
@@ -389,9 +515,18 @@
                   server.send(SendBuff, 0, SendLen, _this.yczjdk, _this.yczjip, function () {
                     // console.log('数据发送成功')
                     if (_this.jsdata == "") {
-                      _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
+                      if (_this.checkbox1 == true) {
+
+                        _this.jsdata = ` 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} \n`
+
+                      }
                     } else {
-                      _this.jsdata = _this.jsdata + `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} `
+                      if (_this.checkbox1 == true) {
+
+                        _this.jsdata = _this.jsdata +
+                          `\n 发送至: ${_this.yczjip}:${_this.yczjdk} \n ${_this.push} \n`
+
+                      }
                     }
                   });
                 }, _this.ms);
@@ -410,12 +545,20 @@
             if (SendBuff != "") {
               if (this.checkbox8 == false) {
                 tcp_client.write(SendBuff);
-                _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push}`
+                if (_this.checkbox1 == true) {
+
+                  _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push} \n`
+
+                }
               } else {
                 this.zidongfasong = setInterval(function () {
                   _this.zidong = true
                   tcp_client.write(SendBuff);
-                  _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push}`
+                  if (_this.checkbox1 == true) {
+
+                    _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push} \n`
+
+                  }
                 }, _this.ms);
               }
             } else {
@@ -432,12 +575,20 @@
             if (SendBuff != "") {
               if (this.checkbox8 == false) {
                 this.socket[this.changeip].write(SendBuff);
-                _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push}`
+                if (_this.checkbox1 == true) {
+
+                  _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push} \n`
+
+                }
               } else {
                 this.zidongfasong = setInterval(function () {
                   _this.zidong = true
                   this.socket[this.changeip].write(SendBuff);
-                  _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push}`
+                  if (_this.checkbox1 == true) {
+
+                    _this.jsdata = _this.jsdata + `\n 发送:\n ${this.push}`
+
+                  }
                 }, _this.ms);
               }
             } else {

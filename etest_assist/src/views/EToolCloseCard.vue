@@ -19,6 +19,9 @@
       },
       propsClose(data) {
         this.$emit('closeCard', data)
+      },
+      draggable(e) {
+        console.log(e)
       }
 
     },
