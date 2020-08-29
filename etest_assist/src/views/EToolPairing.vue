@@ -1,8 +1,8 @@
 <template>
   <div>
-     <v-card>
-    <close-card :items='items' @chenagCard="change" @closeCard="close"></close-card>
-     </v-card>
+    <v-card>
+      <close-card :items='items' @chenagCard="change" @closeCard="close" @moveData="move"></close-card>
+    </v-card>
   </div>
 </template>
 
@@ -66,6 +66,30 @@
         this.items = this.items.filter((item) => {
           return item != data
         })
+      },
+      move(data) {
+        console.log(data)
+        var index = this.items.findIndex(item1 => item1 == data.move)
+        var index1 = this.items.findIndex(item1 => item1 == data.code)
+        if (index < index1) {
+          var arr = this.items
+          arr = this.items.filter((item) => {
+            return item != data.move
+          })
+          console.log(arr)
+          arr.splice(arr.findIndex((item => item == data.code)) + 1, 0, data.move)
+          console.log(arr)
+          this.items = arr
+        } else {
+           var arr = this.items
+          arr = this.items.filter((item) => {
+            return item != data.move
+          })
+          console.log(arr)
+          arr.splice(arr.findIndex((item => item == data.code)), 0, data.move)
+          console.log(arr)
+          this.items = arr
+        }
       }
 
     },

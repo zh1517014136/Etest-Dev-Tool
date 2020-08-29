@@ -14,6 +14,9 @@
 <script>
 export default {
   props: ['selected_index'],
+  mounted:function(){
+       console.log(this.selected_index)
+  },
   data:function(){
     return {
       items:['01','02','03','04','05']

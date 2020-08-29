@@ -1,5 +1,7 @@
 <template>
+
   <div style="width:100%;height: calc(100vh - 32px);">
+    <e-top-tab :selected_index="selected_index" @select="on_select"></e-top-tab>
     <v-card height="100%" width="100%" style="min-height:698px;" tile>
       <div style="display:flex; flex-wrap: nowrap;height:100%">
         <div class="py-2 pl-4 pr-2" style="height:100%;width:25%;min-width:300px;min-height:698px">
@@ -138,6 +140,8 @@
 </template>
 <script>
   import EScriptEditor from "../components/widgets/EDataFormatEditor";
+  import ETopTab from "../components/ETopTabs";
+
 
   // var dgram = window.require('dgram');
   // var server = dgram.createSocket('udp4');
@@ -149,7 +153,7 @@
   export default {
     components: {
       "e-script-editor": EScriptEditor,
-
+      "e-top-tab": ETopTab,
     },
     mounted() {
       try {

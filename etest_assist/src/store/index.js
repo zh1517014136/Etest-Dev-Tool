@@ -4,6 +4,7 @@ import data_format from './modules/data_format'
 import tool_icons from './modules/tool_icons'
 import state_code from './modules/state_code'
 import routers_item from './modules/routers_item'
+import net_tool from './modules/net_tool'
 
 const {
   ipcRenderer
@@ -57,7 +58,8 @@ export default new Vuex.Store({
     data_format,
     tool_icons,
     state_code,
-    routers_item
+    routers_item,
+    net_tool
   },
 })
 
