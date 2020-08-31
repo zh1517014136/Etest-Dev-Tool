@@ -127,7 +127,10 @@ const mutations = {
     state.items[state.select].xylx = v
   },
   ipdz(state, v) {
-    state.items[state.select].ipdz = v
+    state.items.map((item,i)=>{
+      state.items[i].ipdz = v
+    })
+    
   },
   zjdz(state, v) {
     state.items[state.select].zjdz = v
@@ -155,6 +158,9 @@ const mutations = {
   },
   zidonghuiche(state, v) {
     state.items[state.select].zidonghuiche = v
+  },
+  baocun(state, v) {
+    state.items[state.select].baocun = v
   },
   zdfasong(state, v) {
     state.items[state.select].zdfasong = v
