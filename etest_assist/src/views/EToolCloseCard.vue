@@ -38,7 +38,7 @@
         }
         this.$emit('moveData', data)
       },
-      on_dragover: function (ev, item) {
+      on_dragover: function (ev) {
         ev.preventDefault();
         if (!this.by_drag) {
           return;

@@ -7,7 +7,7 @@ import {
 } from 'throttle-debounce';
 
 // 数据库文件名
-const kinds = ['dataformat', 'statemachine','statecode']
+const kinds = ['dataformat', 'statemachine','statecode','nettool']
 
 let _db;
 let _init = false; 
@@ -47,6 +47,7 @@ function close() {
 }
 
 function list(kind) {
+ 
     if(!_db || !_init) {
         return;
     }

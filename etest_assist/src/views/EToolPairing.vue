@@ -72,7 +72,7 @@
         var index = this.items.findIndex(item1 => item1 == data.move)
         var index1 = this.items.findIndex(item1 => item1 == data.code)
         if (index < index1) {
-          var arr = this.items
+          let arr = this.items
           arr = this.items.filter((item) => {
             return item != data.move
           })
@@ -81,7 +81,7 @@
           console.log(arr)
           this.items = arr
         } else {
-           var arr = this.items
+           let arr = this.items
           arr = this.items.filter((item) => {
             return item != data.move
           })

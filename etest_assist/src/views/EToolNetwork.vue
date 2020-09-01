@@ -39,8 +39,8 @@
                 </v-checkbox>
                 <v-checkbox style="height:15px" v-model="_huanhang" :label="`接收区自动换行`">
                 </v-checkbox>
-                <v-checkbox style="height:15px" v-model="_baocun" :label="`接收区自动保存`">
-                </v-checkbox>
+                <!-- <v-checkbox style="height:15px" v-model="_baocun" :label="`接收区自动保存`">
+                </v-checkbox> -->
                 <!-- <div class="mt-4">
                 <a class="mr-4" href="">静默接收</a>
                 <a href="">清除接收</a>
@@ -162,7 +162,7 @@
       "e-top-tab": ETopTab,
     },
 
-    mounted() {
+    beforeMount() {
       var interfaces = window.require('os').networkInterfaces();
       let arr = []
       for (var devName in interfaces) {
@@ -176,13 +176,67 @@
       }
       this.get_ip = arr
     },
+    // mounted: async function () {
+    //   let db_items = await this.$store.dispatch("db_list", {
+    //     kind: "nettool",
+    //   });
+    //   if (db_items) {
+    //     let len = db_items.length;
+    //     for (let index = 0; index < len; index++) {
+    //       this.$store.commit("net_tool/setItem", {
+    //         index: index,
+    //         value: db_items[index],
+    //       });
+    //     }
+    //   }
+    //   this.load_data(this.selected_index)
+    // },
+    beforeDestroy: async function () {
+      if (this._xylx === 'UDP') {
+        server.on('close', () => {
+          console.log('socket 已关闭');
+        })
+        server.close();
+      } else if (this._xylx === 'TCP Client') {
+        tcp_client.on('close', function () {
+          console.log('else close  111111')
+          tcp_client.destroy();
+        })
+        tcp_client.destroy(function () {});
+      } else if (this._xylx === 'TCP Server') {
+        for (var i in Sockets) {
+          Sockets[i].destroy(function () {
+            tcp_server.close(function () {
+              console.log('server  close')
+            })
+          });
+        }
+        tcp_server.close(function () {
+          console.log('server  close')
+        })
+      }
+      let state_items = this.$store.state.net_tool.items;
+      let len = state_items.length;
+      for (let index = 0; index < len; index++) {
+        let item = state_items[index];
+        item.bind = false
+        item.zidong = false
+        clearInterval(item.zidongfasong)
+        item.zidongfasong = undefined
+        item.id = index;
+        await this.$store.dispatch("db_update", {
+          kind: "nettool",
+          doc: item,
+        });
+      }
+
+    },
     computed: {
       selected_index: {
         get: function () {
           return this.$store.state.net_tool.select
         },
         set: function (v) {
-          // console.log(v)
           return this.$store.commit('net_tool/setSelect', v);
         },
       },
@@ -223,6 +277,7 @@
           return this.$store.state.net_tool.items[this.selected_index].bind;
         },
         set: function (v) {
+          console.log(v)
           return this.$store.commit("net_tool/bind", v);
         }
       },
@@ -274,14 +329,14 @@
           return this.$store.commit("net_tool/zidonghuiche", v);
         }
       },
-      _baocun: {
-        get: function () {
-          return this.$store.state.net_tool.items[this.selected_index].baocun;
-        },
-        set: function (v) {
-          return this.$store.commit("net_tool/baocun", v);
-        }
-      },
+      // _baocun: {
+      //   get: function () {
+      //     return this.$store.state.net_tool.items[this.selected_index].baocun;
+      //   },
+      //   set: function (v) {
+      //     return this.$store.commit("net_tool/baocun", v);
+      //   }
+      // },
       _zdfasong: {
         get: function () {
           return this.$store.state.net_tool.items[this.selected_index].zdfasong;
@@ -372,23 +427,114 @@
         },
       }
     },
+    watch: {
+      selected_index: function (v) {
 
-    data() {
-      return {
-
+        this.load_data(v);
       }
+    },
+    data() {
+      return {}
     },
     methods: {
       on_change(id, script) {
         this[id] = script
       },
+      load_data(idx) {
+        let o = this.$store.state.net_tool.items[idx];
+        this._xylx = o.xylx;
+        this.get_ip = o.ipdz;
+        this.zj_dz = o.zjdz;
+        this.d_k = o.dk;
+        this._bind = o.bind;
+        this.jieshou_leixing = o.jieshouleixing;
+        this.fasong_leixing = o.fasongleixing;
+        this._rizhi = o.rizhi;
+        this._huanhang = o.huanhang;
+        this._jiexizhuanyifu = o.jiexizhuanyifu;
+        this._zidonghuiche = o.zidonghuiche;
+        // this._baocun = o.baocun;
+        this._zdfasong = o.zdfasong;
+        this._zidong = o.zidong;
+        this._zidongfasong = o.zidongfasong;
+        this._clentip = o.clentip;
+        this._changeip = o.changeip;
+        this._socket = o.socket;
+        this._yczjip = o.yczjip;
+        this._ms = o.ms;
+        this.push_data = o.push;
+        this.js_data = o.jsdata;
+      },
       on_select(data) {
-        this.selected_index = data;
+        this.closeServer(data)
+        // _this.selected_index = data;
+      },
+      closeServer(data) {
+        let _this = this
+        if (this._bind === true) {
+          if (this._xylx === 'UDP') {
+            server.on('close', () => {
+              console.log('socket 已关闭');
+              _this._bind = false
+              _this._zidong = false
+              clearInterval(_this._zidongfasong)
+              _this._zidongfasong = undefined
+              _this.selected_index = data
+            })
+            server.close();
+          } else if (this._xylx === 'TCP Client') {
+            tcp_client.on('close', function () {
+              console.log('else close  111111')
+              tcp_client.destroy();
+              _this._bind = false
+              _this._zidong = false
+              clearInterval(_this._zidongfasong)
+              _this._zidongfasong = undefined
+              _this.selected_index = data
+
+            })
+            tcp_client.destroy(function () {
+              _this._bind = false
+              _this._zidong = false
+              clearInterval(_this._zidongfasong)
+              _this._zidongfasong = undefined
+              _this.selected_index = data
+            });
+          } else if (this._xylx === 'TCP Server') {
+            for (var i in Sockets) {
+              Sockets[i].destroy(function () {
+                tcp_server.close(function () {
+                  console.log('server  close')
+                  _this._bind = false
+                  _this._zidong = false
+                  clearInterval(_this._zidongfasong)
+                  _this._zidongfasong = undefined
+                  _this.selected_index = data
+                })
+              });
+            }
+            tcp_server.close(function () {
+              console.log('server  close')
+              _this._bind = false
+              _this._zidong = false
+              clearInterval(_this._zidongfasong)
+              _this._zidongfasong = undefined
+              _this.selected_index = data
+            })
+            this._bind = false
+            this._zidong = false
+            clearInterval(this._zidongfasong)
+            this._zidongfasong = undefined
+          }
+        } else {
+          this.selected_index = data
+        }
       },
       click() {
         var _this = this
         if (this._xylx == 'UDP') {
           if (this._bind == false) {
+
             server = dgram.createSocket('udp4');
             server.bind({
               address: _this.zj_dz,
@@ -398,7 +544,9 @@
             server.on('error', () => {
               server.close();
             });
-            server.on('listening', () => {
+            server.on('listening', function () {
+              console.log('服务已启动')
+              console.log(_this._bind)
               _this._bind = true
             });
             server.on('message', (msg, rinfo) => {
@@ -524,7 +672,7 @@
               tcp_client.destroy();
               _this._bind = false
             })
-            tcp_client.destroy(function(){
+            tcp_client.destroy(function () {
               _this._bind = false
             });
           }
@@ -631,11 +779,11 @@
                 })
               });
             }
-             tcp_server.close(function () {
-                console.log('server  close')
-                _this._bind = false
-              })
-              this._bind = false
+            tcp_server.close(function () {
+              console.log('server  close')
+              _this._bind = false
+            })
+            this._bind = false
           }
         }
       },

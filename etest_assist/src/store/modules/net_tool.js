@@ -123,6 +123,9 @@ const state = () => ({
   select:0
 })
 const mutations = {
+  setItem(state, info) {
+    state.items[info.index] = info.value;
+},
   xylx(state, v) {
     state.items[state.select].xylx = v
   },
@@ -130,7 +133,6 @@ const mutations = {
     state.items.map((item,i)=>{
       state.items[i].ipdz = v
     })
-    
   },
   zjdz(state, v) {
     state.items[state.select].zjdz = v
