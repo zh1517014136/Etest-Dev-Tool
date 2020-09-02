@@ -22,7 +22,10 @@ const state = () => ({
     zidongfasong: undefined,
     clentip: [],
     changeip: '',
-    socket: undefined,
+    socket: {},
+    server: undefined,
+    tcp_client: undefined,
+    tcp_server: undefined,
   }, {
     bind: false,
     ms: 1000,
@@ -46,7 +49,10 @@ const state = () => ({
     zidongfasong: undefined,
     clentip: [],
     changeip: '',
-    socket: undefined,
+    socket: {},
+    server: undefined,
+    tcp_client: undefined,
+    tcp_server: undefined,
   }, {
     bind: false,
     ms: 1000,
@@ -70,7 +76,10 @@ const state = () => ({
     zidongfasong: undefined,
     clentip: [],
     changeip: '',
-    socket: undefined,
+    socket: {},
+    server: undefined,
+    tcp_client: undefined,
+    tcp_server: undefined,
   }, {
     bind: false,
     ms: 1000,
@@ -94,7 +103,11 @@ const state = () => ({
     zidongfasong: undefined,
     clentip: [],
     changeip: '',
-    socket: undefined,
+    socket: {},
+    server: undefined,
+    tcp_client: undefined,
+    tcp_server: undefined,
+
   }, {
     bind: false,
     ms: 1000,
@@ -118,19 +131,23 @@ const state = () => ({
     zidongfasong: undefined,
     clentip: [],
     changeip: '',
-    socket: undefined,
+    socket: {},
+    server: undefined,
+    tcp_client: undefined,
+    tcp_server: undefined,
   }, ],
-  select:0
+  select: 0
 })
 const mutations = {
   setItem(state, info) {
-    state.items[info.index] = info.value;
-},
+    state.items = info;
+  },
   xylx(state, v) {
+
     state.items[state.select].xylx = v
   },
   ipdz(state, v) {
-    state.items.map((item,i)=>{
+    state.items.map((item, i) => {
       state.items[i].ipdz = v
     })
   },
@@ -200,7 +217,16 @@ const mutations = {
   },
   setSelect(state, value) {
     state.select = value;
-}
+  },
+  server(state, value) {
+    state.items[state.select].server = value
+  },
+  tcp_client(state, value) {
+    state.items[state.select].tcp_client = value
+  },
+  tcp_server(state, value) {
+    state.items[state.select].tcp_server = value
+  }
 }
 
 export default {
