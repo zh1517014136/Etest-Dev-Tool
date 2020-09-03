@@ -175,15 +175,15 @@
       }
       this.get_ip = arr
     },
-    // mounted: async function () {
-    //   let db_items = await this.$store.dispatch("db_list", {
-    //     kind: "nettool",
-    //   });
-    //   if (db_items) {
-    //     this.$store.commit("net_tool/setItem", db_items);
-    //   }
-    //   this.load_data(this.selected_index)
-    // },
+    mounted: async function () {
+      let db_items = await this.$store.dispatch("db_list", {
+        kind: "nettool",
+      });
+      if (db_items) {
+        this.$store.commit("net_tool/setItem", db_items);
+      }
+      // this.load_data(this.selected_index)
+    },
     beforeDestroy: async function () {
       let _this = this
       if (this._bind == true) {
@@ -453,31 +453,31 @@
       on_change(id, script) {
         this[id] = script
       },
-      load_data(idx) {
-        let o = this.$store.state.net_tool.items[idx];
-        this._xylx = o.xylx;
-        this.get_ip = o.ipdz;
-        this.zj_dz = o.zjdz;
-        this.d_k = o.dk;
-        this._bind = o.bind;
-        this.jieshou_leixing = o.jieshouleixing;
-        this.fasong_leixing = o.fasongleixing;
-        this._rizhi = o.rizhi;
-        this._huanhang = o.huanhang;
-        this._jiexizhuanyifu = o.jiexizhuanyifu;
-        this._zidonghuiche = o.zidonghuiche;
-        // this._baocun = o.baocun;
-        this._zdfasong = o.zdfasong;
-        this._zidong = o.zidong;
-        this._zidongfasong = o.zidongfasong;
-        this._clentip = o.clentip;
-        this._changeip = o.changeip;
-        this._socket = o.socket;
-        this._yczjip = o.yczjip;
-        this._ms = o.ms;
-        this.push_data = o.push;
-        this.js_data = o.jsdata;
-      },
+      // load_data(idx) {
+      //   let o = this.$store.state.net_tool.items[idx];
+      //   this._xylx = o.xylx;
+      //   this.get_ip = o.ipdz;
+      //   this.zj_dz = o.zjdz;
+      //   this.d_k = o.dk;
+      //   this._bind = o.bind;
+      //   this.jieshou_leixing = o.jieshouleixing;
+      //   this.fasong_leixing = o.fasongleixing;
+      //   this._rizhi = o.rizhi;
+      //   this._huanhang = o.huanhang;
+      //   this._jiexizhuanyifu = o.jiexizhuanyifu;
+      //   this._zidonghuiche = o.zidonghuiche;
+      //   // this._baocun = o.baocun;
+      //   this._zdfasong = o.zdfasong;
+      //   this._zidong = o.zidong;
+      //   this._zidongfasong = o.zidongfasong;
+      //   this._clentip = o.clentip;
+      //   this._changeip = o.changeip;
+      //   this._socket = o.socket;
+      //   this._yczjip = o.yczjip;
+      //   this._ms = o.ms;
+      //   this.push_data = o.push;
+      //   this.js_data = o.jsdata;
+      // },
       on_select(data) {
         // this.closeServer(data)
         this.selected_index = data

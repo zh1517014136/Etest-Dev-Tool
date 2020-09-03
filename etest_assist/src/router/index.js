@@ -11,6 +11,14 @@ const routes = [
         component: EEmpty
     }, 
     {
+      // 练习工具
+      path: '/tool/network',
+      name: 'EToolNetwork',
+      title:'网络调试助手',
+      icon:'mdi-lan',
+      component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetwork'),
+  },
+    {
 
         // 数据转换工具
         path: '/tool/dataformat',
@@ -35,32 +43,25 @@ const routes = [
 
         component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolStateCode'),
     },
-    {
-        // 组合配对工具
-        path: '/tool/pairing',
-        name: 'EToolPairing',
-        title:'组合配对工具',
-        icon:'mdi-rhombus-split-outline',
+    // {
+    //     // 组合配对工具
+    //     path: '/tool/pairing',
+    //     name: 'EToolPairing',
+    //     title:'组合配对工具',
+    //     icon:'mdi-rhombus-split-outline',
 
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolPairing'),
-    },
-    {
-        // 陆工大工具
-        path: '/tool/serialport',
-        name: 'EToolSerialport',
-        title:'串口调试助手',
-        icon:'mdi-serial-port',
+    //     component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolPairing'),
+    // },
+    // {
+    //     // 陆工大工具
+    //     path: '/tool/serialport',
+    //     name: 'EToolSerialport',
+    //     title:'串口调试助手',
+    //     icon:'mdi-serial-port',
 
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolSerialport'),
-    },
-    {
-        // 练习工具
-        path: '/tool/network',
-        name: 'EToolNetwork',
-        title:'网络调试助手',
-        icon:'mdi-lan',
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetwork'),
-    },
+    //     component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolSerialport'),
+    // },
+   
     // {
     //     // 练习工具
     //     path: '/tool/EToolNetworkTcp',
@@ -69,29 +70,29 @@ const routes = [
     //     icon:'mdi-lan',
     //     component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetworkTcp'),
     // },
-    {
-      // 练习工具
-      path: '/tool/lrMoveMindows',
-      name: 'lrMoveMindows',
-      title:'左右移动窗口',
-      icon:'mdi-dock-window',
-      component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/lrMoveMindows'),
-  },
-  {
-    // 练习工具
-    path: '/tool/tbMoveMindows',
-    name: 'tbMoveMindows',
-    title:'上下移动窗口',
-    icon:'mdi-dock-window',
-    component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/tbMoveMindows'),
-}, {
-    // 练习工具
-    path: '/tool/EToolCloseCard',
-    name: 'EToolCloseCard',
-    title:'可关闭卡片',
-    icon:'mdi-dock-window',
-    component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolCloseCard'),
-},
+//     {
+//       // 练习工具
+//       path: '/tool/lrMoveMindows',
+//       name: 'lrMoveMindows',
+//       title:'左右移动窗口',
+//       icon:'mdi-dock-window',
+//       component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/lrMoveMindows'),
+//   },
+//   {
+//     // 练习工具
+//     path: '/tool/tbMoveMindows',
+//     name: 'tbMoveMindows',
+//     title:'上下移动窗口',
+//     icon:'mdi-dock-window',
+//     component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/tbMoveMindows'),
+// }, {
+//     // 练习工具
+//     path: '/tool/EToolCloseCard',
+//     name: 'EToolCloseCard',
+//     title:'可关闭卡片',
+//     icon:'mdi-dock-window',
+//     component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolCloseCard'),
+// },
 ]
 
 const router = new VueRouter({
