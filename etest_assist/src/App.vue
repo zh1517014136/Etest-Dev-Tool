@@ -28,7 +28,7 @@
 <script>
   import ESysBar from "./components/ESysBar";
   import ETopBar from './components/ETopBar';
-  import ECard from './components/ECard';
+
 
 
 
@@ -37,7 +37,6 @@
     components: {
       "e-sys-bar": ESysBar,
       "e-top-bar": ETopBar,
-      "e-card": ECard,
     },
 
     data: () => ({

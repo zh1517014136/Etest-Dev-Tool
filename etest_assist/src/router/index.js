@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import EEmpty from '../components/EEmpty.vue'
 
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -43,6 +44,15 @@ const routes = [
 
         component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolStateCode'),
     },
+    {
+      // 状态机生成器
+      path: '/tool/read_me',
+      name: 'Readme',
+      title:'状态机生成器',
+      icon:'mdi-state-machine',
+
+      component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/Readme'),
+  },
     // {
     //     // 组合配对工具
     //     path: '/tool/pairing',
