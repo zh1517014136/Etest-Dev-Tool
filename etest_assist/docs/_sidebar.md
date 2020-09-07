@@ -1,3 +1,5 @@
-<!-- docs/_sidebar.md -->
-* [etset_tools使用说明](/)
-* [数据转换工具](EToolDataFormat)
+* [首页](/)
+* [安装配置](install)
+* [AutoTCG专业版的命令使用](use)
+* [参数说明](arguments)
+* [AutoTCG专业版的常见问题](question)

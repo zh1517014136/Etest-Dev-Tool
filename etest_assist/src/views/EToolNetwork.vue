@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div style="width:100%;height:48px;">
+    <!-- <div style="width:100%;height:48px;">
       <e-top-tab :selected_index="selected_index" @select="on_select"></e-top-tab>
-    </div>
-    <div style="width:100%;height: calc(100vh - 80px);">
+    </div> -->
+    <div style="width:100%;height: calc(100vh - 32px);">
       <v-card height="100%" width="100%" style="min-height:698px;" tile>
         <div style="display:flex; flex-wrap: nowrap;height:100%">
           <div class="py-2 pl-4 pr-2" style="height:100%;width:25%;min-width:300px;min-height:698px">
@@ -19,12 +19,12 @@
                 </v-select>
                 <v-text-field v-if="_xylx ==='TCP Client'" :disabled="_bind" class="my-0" v-model="zj_dz" attach dense
                   :label="_xylx=='TCP Client'?'(3)远程主机地址':'(3)本地主机地址'"></v-text-field>
-                <v-text-field :disabled="_bind" class="my-0" v-model="d_k" attach dense
+                <v-text-field :disabled="_bind" class="my-0" v-model="d_k" attach dense type="number"
                   :label="_xylx=='TCP Client'?'(3)远程主机端口':'(3)本地主机端口'"></v-text-field>
                 <div style="text-align:center;">
                   <v-btn block small @click="click">
                     <v-icon left :color="_bind==true?'red':undefined">mdi-lightbulb</v-icon>
-                    {{this._bind==false?'打开':'关闭'}}
+                    {{this._xylx === 'TCP Client'?'链接':this._bind==false?'打开':'关闭'}}
                   </v-btn>
                 </div>
               </v-card>
@@ -61,7 +61,6 @@
                 </v-checkbox>
                 <v-checkbox style="height:15px" v-model="_zidonghuiche" :label="`AT指令自动回车`">
                 </v-checkbox> -->
-
                 <!-- <v-checkbox style="height:15px" v-model="checkbox7" :label="`打开文件数据源`">
               </v-checkbox> -->
                 <v-row class="px-3" align="center">
@@ -105,7 +104,7 @@
                   </v-col>
                   <v-col v-else-if="this._xylx == 'TCP Server'" class="pa-0" cols="6">
                     <v-row v-if="_bind == true" class="py-0">
-                      <v-select class="my-0" v-model="_changeip" :label="'客户端'+_clentip.length" :items="_clentip"
+                      <v-select class="my-0" v-model="_changeip" :label="'客户端'+(_clentip.length-1)" :items="_clentip"
                         item-text="ip" item-value="value" dense attach>
                       </v-select>
                     </v-row>
@@ -149,7 +148,7 @@
 </template>
 <script>
   import EScriptEditor from "../components/widgets/EDataFormatEditor";
-  import ETopTab from "../components/ETopTabs";
+  // import ETopTab from "../components/ETopTabs";
 
   var dgram = window.require('dgram');
   var net = window.require('net');
@@ -158,10 +157,10 @@
   export default {
     components: {
       "e-script-editor": EScriptEditor,
-      "e-top-tab": ETopTab,
+      // "e-top-tab": ETopTab,
     },
 
-    beforeMount() {
+  mounted() {
       var interfaces = window.require('os').networkInterfaces();
       let arr = []
       for (var devName in interfaces) {
@@ -175,16 +174,18 @@
       }
       this.get_ip = arr
     },
-    mounted: async function () {
+    beforeMount: async function () {
       let db_items = await this.$store.dispatch("db_list", {
         kind: "nettool",
       });
-      if (db_items.length>0) {
+      if (db_items.length > 0) {
         this.$store.commit("net_tool/setItem", db_items);
       }
       this.load_data(this.selected_index)
     },
     beforeDestroy: async function () {
+      clearInterval(this.zidongfasong)
+      this.zidongfasong = undefined
       let _this = this
       if (this._bind == true) {
         if (this._xylx === 'UDP') {
@@ -202,8 +203,7 @@
           this._tcp_client.destroy(function () {});
         } else if (this._xylx === 'TCP Server') {
           for (var i in this._socket) {
-            this._socket[i].destroy(function () {
-            });
+            this._socket[i].destroy(function () {});
           }
           this._tcp_server.close(function () {
             console.log('_server close')
@@ -220,8 +220,8 @@
         item.tcp_client = undefined
         item.tcp_server = undefined
         item.server = undefined
-        clearInterval(item.zidongfasong)
-        item.zidongfasong = undefined
+        // clearInterval(item.zidongfasong)
+        // item.zidongfasong = undefined
         item.id = index;
         await this.$store.dispatch("db_update", {
           kind: "nettool",
@@ -342,14 +342,14 @@
           return this.$store.commit("net_tool/zidong", v);
         }
       },
-      _zidongfasong: {
-        get: function () {
-          return this.$store.state.net_tool.items[this.selected_index].zidongfasong;
-        },
-        set: function (v) {
-          return this.$store.commit("net_tool/zidongfasong", v);
-        }
-      },
+      // _zidongfasong: {
+      //   get: function () {
+      //     return this.$store.state.net_tool.items[this.selected_index].zidongfasong;
+      //   },
+      //   set: function (v) {
+      //     return this.$store.commit("net_tool/zidongfasong", v);
+      //   }
+      // },
       _clentip: {
         get: function () {
           return this.$store.state.net_tool.items[this.selected_index].clentip;
@@ -447,7 +447,9 @@
       }
     },
     data() {
-      return {}
+      return {
+        zidongfasong: undefined
+      }
     },
     methods: {
       on_change(id, script) {
@@ -468,7 +470,7 @@
         this._zidonghuiche = o.zidonghuiche;
         this._zdfasong = o.zdfasong;
         this._zidong = o.zidong;
-        this._zidongfasong = o.zidongfasong;
+        // this._zidongfasong = o.zidongfasong;
         this._clentip = o.clentip;
         this._changeip = o.changeip;
         this._socket = o.socket;
@@ -485,424 +487,481 @@
         this.selected_index = data
       },
 
-      click() {
+
+
+      udp() {
         var _this = this
-        if (this._xylx == 'UDP') {
-          if (this._bind == false) {
-
-            this._server = dgram.createSocket('udp4');
-            try {
-              this._server.bind({
-                address: _this.zj_dz,
-                port: _this.d_k,
-                exclusive: true
-              });
-              this._server.on('listening', function () {
-                console.log('服务已启动')
-                _this._bind = true
-              });
-            } catch (error) {
-              this.$store.commit("setMsgError", 'ip地址或端口号不正确');
-            }
-            // this._server.bind({
-            //   address: _this.zj_dz,
-            //   port: _this.d_k,
-            //   exclusive: true
-            // });
-            this._server.on('error', () => {
-              this._server.close();
+        if (this._bind == false) {
+          this._server = dgram.createSocket('udp4');
+          try {
+            this._server.bind({
+              address: _this.zj_dz,
+              port: _this.d_k,
+              exclusive: true
             });
-
-            this._server.on('message', (msg, rinfo) => {
-              if (_this.jieshou_leixing == 1) {
-                if (_this._rizhi == false && _this._huanhang == false) {
-                  let BuffMsg = Buffer.from(msg, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.js_data = _this.js_data + `${BuffMsg}`
-                } else if (_this._rizhi == true && _this._huanhang == false) {
-                  let BuffMsg = Buffer.from(msg, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.js_data = _this.js_data + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-                }
-                if (_this._rizhi == false && _this._huanhang == true) {
-                  let BuffMsg = Buffer.from(msg, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.js_data = _this.js_data + `\n ${BuffMsg}`
-                } else if (_this._rizhi == true && _this._huanhang == true) {
-                  let BuffMsg = Buffer.from(msg, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.js_data = _this.js_data + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-                }
-              } else if (_this.jieshou_leixing == 2) {
-                if (_this._rizhi == false && _this._huanhang == false) {
-                  let BuffMsg = msg.toString('hex')
-                  _this.js_data = _this.js_data + `${BuffMsg}`
-                } else if (_this._rizhi == true && _this._huanhang == false) {
-                  let BuffMsg = msg.toString('hex')
-                  _this.js_data = _this.js_data + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-                }
-                if (_this._rizhi == false && _this._huanhang == true) {
-                  let BuffMsg = msg.toString('hex')
-                  _this.js_data = _this.js_data + `\n ${BuffMsg}`
-                } else if (_this._rizhi == true && _this._huanhang == true) {
-                  let BuffMsg = msg.toString('hex')
-                  _this.js_data = _this.js_data + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
-                }
-              }
-            });
-
-          } else {
-            this._server = this._server.on('close', () => {
-              console.log('socket 已关闭');
-              _this._bind = false
-              _this._zidong = false
-              clearInterval(_this._zidongfasong)
-              _this._zidongfasong = undefined
-              _this._server = undefined
-            })
-            this._server = this._server.close();
-          }
-        } else if (this._xylx == 'TCP Client') {
-          if (this._bind == false) {
-
-            this._tcp_client = new net.Socket();
-            try {
-              var options = {
-                host: _this.zj_dz,
-                port: _this.d_k
-              }
-              // 连接 tcp _server
-              this._tcp_client.connect(options, function () {
-                console.log('connected to Server');
-                _this._tcp_client.write('hello _server');
-                _this._bind = true
-              })
-            } catch (error) {
-              this.$store.commit("setMsgError", 'ip地址或端口号不正确');
-            }
-            // var options = {
-            //   host: _this.zj_dz,
-            //   port: _this.d_k
-            // }
-            // // 连接 tcp _server
-            // this._tcp_client.connect(options, function () {
-            //   console.log('connected to Server');
-            //   _this._tcp_client.write('hello _server');
-            //   _this._bind = true
-            // })
-            // 接收数据
-            this._tcp_client.on('data', function (data) {
-              if (_this.jieshou_leixing == 1) {
-                if (_this._rizhi == false && _this._huanhang == false) {
-                  let BuffMsg = Buffer.from(data, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.js_data = _this.js_data + `${BuffMsg}`
-                } else if (_this._rizhi == true && _this._huanhang == false) {
-                  let BuffMsg = Buffer.from(data, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.js_data = _this.js_data + `\n 收到 : \n ${BuffMsg}`
-                }
-                if (_this._rizhi == false && _this._huanhang == true) {
-                  let BuffMsg = Buffer.from(data, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.js_data = _this.js_data + `\n ${BuffMsg}`
-                } else if (_this._rizhi == true && _this._huanhang == true) {
-                  let BuffMsg = Buffer.from(data, 'hex')
-                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                  //let BuffMsg  = msg.toString('ascii')
-                  _this.js_data = _this.js_data + `\n 收到 : \n ${BuffMsg}`
-                }
-              } else if (_this.jieshou_leixing == 2) {
-                if (_this._rizhi == false && _this._huanhang == false) {
-                  let BuffMsg = data.toString('hex')
-                  _this.js_data = _this.js_data + `${BuffMsg}`
-                } else if (_this._rizhi == true && _this._huanhang == false) {
-                  let BuffMsg = data.toString('hex')
-                  _this.js_data = _this.js_data + `\n 收到 : \n ${BuffMsg}`
-                }
-                if (_this._rizhi == false && _this._huanhang == true) {
-                  let BuffMsg = data.toString('hex')
-                  _this.js_data = _this.js_data + `\n ${BuffMsg}`
-                } else if (_this._rizhi == true && _this._huanhang == true) {
-                  let BuffMsg = data.toString('hex')
-                  _this.js_data = _this.js_data + `\n 收到 : \n ${BuffMsg}`
-                }
-              }
-            })
-            this._tcp_client.on('error', function (err) {
-              console.log('在于服务器连接或通信过程中发生了一个错误，错误代码为%s', err.code);
-              //当发生错误时，用destroy方法销毁该socket端口。确保不会再被利用
-               _this._tcp_client.destroy();
-               _this._bind = false
-            })
-          } else {
-            this._tcp_client.on('close', function () {
-              console.log('close')
-              console.log(_this._tcp_client)
-              _this._tcp_client.destroy();
-              _this._tcp_client = undefined
-              _this._bind = false
-            })
-            this._tcp_client.destroy(function () {
-              _this._bind = false
-              _this._tcp_client = undefined
-            });
-          }
-        } else if (this._xylx == 'TCP Server') {
-          if (this._bind == false) {
-
-            this._tcp_server = net.createServer();
-            try {
-              this._tcp_server.listen({
-                host: _this.zj_dz,
-                port: _this.d_k,
-                exclusive: true
-              }, function () {});
+            this._server.on('listening', function () {
+              console.log('服务已启动')
               _this._bind = true
-            } catch (error) {
-              this.$store.commit("setMsgError", 'ip地址或端口号不正确');
+            });
+          } catch (error) {
+            this.$store.commit("setMsgError", `${error}`);
+          }
+          this._server.on('error', () => {
+            this._server.close();
+          });
+          this._server.on('message', (msg, rinfo) => {
+            if (_this.jieshou_leixing == 1) {
+              if (_this._rizhi == false && _this._huanhang == false) {
+                let BuffMsg = Buffer.from(msg, 'hex')
+                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                //let BuffMsg  = msg.toString('ascii')
+                _this.js_data = _this.js_data + `${BuffMsg}`
+              } else if (_this._rizhi == true && _this._huanhang == false) {
+                let BuffMsg = Buffer.from(msg, 'hex')
+                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                //let BuffMsg  = msg.toString('ascii')
+                _this.js_data = _this.js_data + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              }
+              if (_this._rizhi == false && _this._huanhang == true) {
+                let BuffMsg = Buffer.from(msg, 'hex')
+                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                //let BuffMsg  = msg.toString('ascii')
+                _this.js_data = _this.js_data + `\n ${BuffMsg}`
+              } else if (_this._rizhi == true && _this._huanhang == true) {
+                let BuffMsg = Buffer.from(msg, 'hex')
+                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                //let BuffMsg  = msg.toString('ascii')
+                _this.js_data = _this.js_data + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              }
+            } else if (_this.jieshou_leixing == 2) {
+              if (_this._rizhi == false && _this._huanhang == false) {
+                let BuffMsg = msg.toString('hex')
+                _this.js_data = _this.js_data + `${BuffMsg}`
+              } else if (_this._rizhi == true && _this._huanhang == false) {
+                let BuffMsg = msg.toString('hex')
+                _this.js_data = _this.js_data + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              }
+              if (_this._rizhi == false && _this._huanhang == true) {
+                let BuffMsg = msg.toString('hex')
+                _this.js_data = _this.js_data + `\n ${BuffMsg}`
+              } else if (_this._rizhi == true && _this._huanhang == true) {
+                let BuffMsg = msg.toString('hex')
+                _this.js_data = _this.js_data + `\n 收到来自: ${rinfo.address}:${rinfo.port}\n ${BuffMsg}`
+              }
             }
-            // 处理客户端连接
-            this._tcp_server.on('connection', function (socket) {
-              console.log(_this._socket)
-              _this._socket[socket.remotePort] = socket;
-              _this._clentip = []
+          });
+        } else {
+          this._server = this._server.on('close', () => {
+            console.log('socket 已关闭');
+            _this._bind = false
+            _this._zidong = false
+            clearInterval(_this.zidongfasong)
+            _this.zidongfasong = undefined
+            _this._server = undefined
+          })
+          this._server = this._server.close();
+        }
+      },
+
+      client() {
+        var _this = this
+        if (this._bind == false) {
+          this._tcp_client = new net.Socket();
+          try {
+            var options = {
+              host: _this.zj_dz,
+              port: _this.d_k
+            }
+            this._tcp_client.connect(options, function () {
+              console.log('connected to Server');
+              _this._tcp_client.write('hello _server');
+              _this._bind = true
+            })
+          } catch (error) {
+            this.$store.commit("setMsgError", `${error}`);
+          }
+          this._tcp_client.on('data', function (data) {
+            if (_this.jieshou_leixing == 1) {
+              if (_this._rizhi == false && _this._huanhang == false) {
+                let BuffMsg = Buffer.from(data, 'hex')
+                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                //let BuffMsg  = msg.toString('ascii')
+                _this.js_data = _this.js_data + `${BuffMsg}`
+              } else if (_this._rizhi == true && _this._huanhang == false) {
+                let BuffMsg = Buffer.from(data, 'hex')
+                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                //let BuffMsg  = msg.toString('ascii')
+                _this.js_data = _this.js_data + `\n 收到 : \n ${BuffMsg}`
+              }
+              if (_this._rizhi == false && _this._huanhang == true) {
+                let BuffMsg = Buffer.from(data, 'hex')
+                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                //let BuffMsg  = msg.toString('ascii')
+                _this.js_data = _this.js_data + `\n ${BuffMsg}`
+              } else if (_this._rizhi == true && _this._huanhang == true) {
+                let BuffMsg = Buffer.from(data, 'hex')
+                BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                //let BuffMsg  = msg.toString('ascii')
+                _this.js_data = _this.js_data + `\n 收到 : \n ${BuffMsg}`
+              }
+            } else if (_this.jieshou_leixing == 2) {
+              if (_this._rizhi == false && _this._huanhang == false) {
+                let BuffMsg = data.toString('hex')
+                _this.js_data = _this.js_data + `${BuffMsg}`
+              } else if (_this._rizhi == true && _this._huanhang == false) {
+                let BuffMsg = data.toString('hex')
+                _this.js_data = _this.js_data + `\n 收到 : \n ${BuffMsg}`
+              }
+              if (_this._rizhi == false && _this._huanhang == true) {
+                let BuffMsg = data.toString('hex')
+                _this.js_data = _this.js_data + `\n ${BuffMsg}`
+              } else if (_this._rizhi == true && _this._huanhang == true) {
+                let BuffMsg = data.toString('hex')
+                _this.js_data = _this.js_data + `\n 收到 : \n ${BuffMsg}`
+              }
+            }
+          })
+          this._tcp_client.on('error', function (err) {
+            console.log('在于服务器连接或通信过程中发生了一个错误，错误代码为%s', err.code);
+            _this._tcp_client.destroy();
+            _this._bind = false
+          })
+        } else {
+          this._tcp_client.on('close', function () {
+            console.log('close')
+            console.log(_this._tcp_client)
+            _this._tcp_client.destroy();
+            _this._tcp_client = undefined
+            _this._bind = false
+          })
+          this._tcp_client.destroy(function () {
+            _this._bind = false
+            _this._tcp_client = undefined
+          });
+        }
+      },
+
+      server() {
+        var _this = this
+        if (this._bind == false) {
+          this._tcp_server = net.createServer();
+          try {
+            this._tcp_server.listen({
+              host: _this.zj_dz,
+              port: _this.d_k,
+              exclusive: true
+            }, function () {});
+            _this._bind = true
+          } catch (error) {
+            // this.$store.commit("setMsgError", 'ip地址或端口号不正确');
+            this.$store.commit("setMsgError", `${error}`);
+          }
+          // 处理客户端连接
+          this._tcp_server.on('connection', function (socket) {
+            console.log(_this._socket)
+            _this._socket[socket.remotePort] = socket;
+            _this._clentip = [{
+              ip: 'All',
+              value: ''
+            }]
+            for (var i in _this._socket) {
+              _this._clentip.push({
+                ip: `${_this._socket[i].remoteAddress}:${_this._socket[i].remotePort}`,
+                value: i
+              })
+            }
+            socket.on('data', function (data) {
+              if (_this.jieshou_leixing == 1) {
+                if (_this._rizhi == false && _this._huanhang == false) {
+                  let BuffMsg = Buffer.from(data, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.js_data = _this.js_data + `${BuffMsg}`
+                } else if (_this._rizhi == true && _this._huanhang == false) {
+                  let BuffMsg = Buffer.from(data, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.js_data = _this.js_data +
+                    `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                }
+                if (_this._rizhi == false && _this._huanhang == true) {
+                  let BuffMsg = Buffer.from(data, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.js_data = _this.js_data + `\n ${BuffMsg}`
+                } else if (_this._rizhi == true && _this._huanhang == true) {
+                  let BuffMsg = Buffer.from(data, 'hex')
+                  BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+                  //let BuffMsg  = msg.toString('ascii')
+                  _this.js_data = _this.js_data +
+                    `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                }
+              } else if (_this.jieshou_leixing == 2) {
+
+                if (_this._rizhi == false && _this._huanhang == false) {
+                  let BuffMsg = data.toString('hex')
+                  _this.js_data = _this.js_data +
+                    `${BuffMsg}`
+                } else if (_this._rizhi == true && _this._huanhang == false) {
+                  let BuffMsg = data.toString('hex')
+                  _this.js_data = _this.js_data +
+                    `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                }
+                if (_this._rizhi == false && _this._huanhang == true) {
+                  let BuffMsg = data.toString('hex')
+                  _this.js_data = _this.js_data +
+                    `\n ${BuffMsg}`
+                } else if (_this._rizhi == true && _this._huanhang == true) {
+                  let BuffMsg = data.toString('hex')
+                  _this.js_data = _this.js_data +
+                    `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
+                }
+              }
+            })
+            socket.on('close', function () { //这里防止连接出错，使用close而非end
+              delete _this._socket[socket.remotePort]
+              _this._clentip = [{
+                ip: 'All',
+                value: ''
+              }]
               for (var i in _this._socket) {
                 _this._clentip.push({
                   ip: `${_this._socket[i].remoteAddress}:${_this._socket[i].remotePort}`,
                   value: i
                 })
               }
-              socket.on('data', function (data) {
-                if (_this.jieshou_leixing == 1) {
-                  if (_this._rizhi == false && _this._huanhang == false) {
-                    let BuffMsg = Buffer.from(data, 'hex')
-                    BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                    //let BuffMsg  = msg.toString('ascii')
-                    _this.js_data = _this.js_data + `${BuffMsg}`
-                  } else if (_this._rizhi == true && _this._huanhang == false) {
-                    let BuffMsg = Buffer.from(data, 'hex')
-                    BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                    //let BuffMsg  = msg.toString('ascii')
-                    _this.js_data = _this.js_data +
-                      `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
-                  }
-                  if (_this._rizhi == false && _this._huanhang == true) {
-                    let BuffMsg = Buffer.from(data, 'hex')
-                    BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                    //let BuffMsg  = msg.toString('ascii')
-                    _this.js_data = _this.js_data + `\n ${BuffMsg}`
-                  } else if (_this._rizhi == true && _this._huanhang == true) {
-                    let BuffMsg = Buffer.from(data, 'hex')
-                    BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-                    //let BuffMsg  = msg.toString('ascii')
-                    _this.js_data = _this.js_data +
-                      `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
-                  }
-                } else if (_this.jieshou_leixing == 2) {
-
-                  if (_this._rizhi == false && _this._huanhang == false) {
-                    let BuffMsg = data.toString('hex')
-                    _this.js_data = _this.js_data +
-                      `${BuffMsg}`
-                  } else if (_this._rizhi == true && _this._huanhang == false) {
-                    let BuffMsg = data.toString('hex')
-                    _this.js_data = _this.js_data +
-                      `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
-                  }
-                  if (_this._rizhi == false && _this._huanhang == true) {
-                    let BuffMsg = data.toString('hex')
-                    _this.js_data = _this.js_data +
-                      `\n ${BuffMsg}`
-                  } else if (_this._rizhi == true && _this._huanhang == true) {
-                    let BuffMsg = data.toString('hex')
-                    _this.js_data = _this.js_data +
-                      `\n 收到: ${socket.remoteAddress}:${socket.remotePort} \n ${BuffMsg}`
-                  }
-                }
-              })
-              socket.on('close', function () { //这里防止连接出错，使用close而非end
-                delete _this._socket[socket.remotePort]
-                _this._clentip = []
-                for (var i in _this._socket) {
-                  _this._clentip.push({
-                    ip: `${_this._socket[i].remoteAddress}:${_this._socket[i].remotePort}`,
-                    value: i
-                  })
-                }
-              });
-              socket.on('error', function (err) {
-                console.log('与客户端通信或链接过程中发生了一个错误，错误代码为：%s', err.code);
-                //当发生错误时，用destroy方法销毁该socket端口。确保不会再被利用
-                socket.destroy();
-              })
+            });
+            socket.on('error', function (err) {
+              console.log('与客户端通信或链接过程中发生了一个错误，错误代码为：%s', err.code);
+              //当发生错误时，用destroy方法销毁该socket端口。确保不会再被利用
+              socket.destroy();
             })
-            this._tcp_server.on('error', function () {
-              _this._tcp_server.close(function () {
-                _this._bind = false
-              })
-            })
-          } else {
-            for (var i in this._socket) {
-              this._socket[i].destroy(function () {});
-            }
-            this._tcp_server.close(function () {
-              console.log(_this._tcp_server)
+          })
+          this._tcp_server.on('error', function () {
+            _this._tcp_server.close(function () {
               _this._bind = false
-              _this._tcp_server = undefined
-              _this._socket = {}
-              console.log(_this._tcp_server)
             })
-            // this._bind = false
+          })
+        } else {
+          for (var i in this._socket) {
+            this._socket[i].destroy(function () {});
           }
+          this._tcp_server.close(function () {
+            _this._bind = false
+            _this._tcp_server = undefined
+            _this._socket = {}
+          })
         }
       },
-      fasong() {
+      click() {
+        if (this._xylx == 'UDP') {
+          this.udp()
+        } else if (this._xylx == 'TCP Client') {
+          this.client()
+        } else if (this._xylx == 'TCP Server') {
+          this.server()
+        }
+      },
+
+
+
+      fsudp() {
         var _this = this
-        if (this._zdfasong == true && this._zidongfasong != undefined) {
-          this._zidong = false
-          clearInterval(this._zidongfasong)
-          this._zidongfasong = undefined
+        this._server.on('error', function () {})
+        // 发送消息
+        var SendBuff
+        if (this.fasong_leixing == 1) {
+          SendBuff = encoding.convert(this.push_data, "GBK")
+          // SendBuff = Buffer.from(this.push_data, 'ascii')
         } else {
-          if (this._xylx == 'UDP') {
-            // 发生异常触发
-            console.log(this._server)
-            this._server.on('error', function () {})
-            // 发送消息
-            var SendBuff
-            if (this.fasong_leixing == 1) {
-              SendBuff = encoding.convert(this.push_data, "GBK")
-              // SendBuff = Buffer.from(this.push_data, 'ascii')
-            } else {
-              SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
-            }
-            if (SendBuff != "") {
-              if (this._zdfasong == false) {
-                var SendLen = SendBuff.length;
-                try {
-                  this._server.send(SendBuff, 0, SendLen, this._yczjdk, this._yczjip, function () {
-                    if (_this.js_data == "") {
-                      if (_this._rizhi == true) {
-                        _this.js_data = ` 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
-                      }
-                    } else {
-                      if (_this._rizhi == true) {
-                        _this.js_data = _this.js_data +
-                          `\n 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
-                      }
-                    }
-                  });
-                } catch (error) {
-                  this.$store.commit("setMsgError", 'ip地址或端口号不正确');
-                }
-
-              } else {
-                try {
-                  this._zidongfasong = setInterval(function () {
-                    _this._zidong = true
-                    var SendLen = SendBuff.length;
-                    this._server.send(SendBuff, 0, SendLen, _this._yczjdk, _this._yczjip, function () {
-                      if (_this.js_data == "") {
-                        if (_this._rizhi == true) {
-                          _this.js_data = ` 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
-                        }
-                      } else {
-                        if (_this._rizhi == true) {
-
-                          _this.js_data = _this.js_data +
-                            `\n 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
-                        }
-                      }
-                    });
-                  }, _this._ms);
-                } catch (error) {
-                  this.$store.commit("setMsgError", 'ip地址或端口号不正确');
-                }
-              }
-            } else {
-              this.$store.commit("setMsgError", '无法发送空数据');
-            }
-          } else if (this._xylx == 'TCP Client') {
-            let SendBuff
-            if (this.fasong_leixing == 1) {
-              SendBuff = encoding.convert(this.push_data, "GBK")
-              // SendBuff = Buffer.from(this.push_data, 'ascii')
-            } else {
-              SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
-            }
-            if (SendBuff != "") {
-              if (this._zdfasong == false) {
-                try {
-                  this._tcp_client.write(SendBuff);
-                  if (_this._rizhi == true) {
-                    _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
-                  }
-                } catch (error) {
-                  this.$store.commit("setMsgError", 'ip地址或端口号不正确');
-                }
-              } else {
-                try {
-                  this._zidongfasong = setInterval(function () {
-                    _this._zidong = true
-                    this._tcp_client.write(SendBuff);
-                    if (_this._rizhi == true) {
-                      _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
-                    }
-                  }, _this._ms);
-                } catch (error) {
-                  this.$store.commit("setMsgError", 'ip地址或端口号不正确');
-                }
-              }
-
-            } else {
-              this.$store.commit("setMsgError", '无法发送空数据');
-            }
-          } else if (this._xylx == 'TCP Server') {
-            let SendBuff
+          SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+        }
+        if (SendBuff != "") {
+          if (this._zdfasong == false) {
+            var SendLen = SendBuff.length;
             try {
-              if (this.fasong_leixing == 1) {
-                SendBuff = encoding.convert(this.push_data, "GBK")
-                // SendBuff = Buffer.from(this.push_data, 'ascii')
-              } else {
-                SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+              this._server.send(SendBuff, 0, SendLen, this._yczjdk, this._yczjip, function () {
+                if (_this.js_data == "") {
+                  if (_this._rizhi == true) {
+                    _this.js_data = ` 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
+                  }
+                } else {
+                  if (_this._rizhi == true) {
+                    _this.js_data = _this.js_data +
+                      `\n 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
+                  }
+                }
+              });
+            } catch (error) {
+              this.$store.commit("setMsgError", 'ip地址或端口号不正确');
+            }
+          } else {
+            try {
+              _this.zidongfasong = setInterval(function () {
+                _this._zidong = true
+                var SendLen = SendBuff.length;
+                _this._server.send(SendBuff, 0, SendLen, _this._yczjdk, _this._yczjip, function () {
+                  if (_this.js_data == "") {
+                    if (_this._rizhi == true) {
+                      _this.js_data = ` 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
+                    }
+                  } else {
+                    if (_this._rizhi == true) {
+                      _this.js_data = _this.js_data +
+                        `\n 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
+                    }
+                  }
+                });
+              }, _this._ms);
+            } catch (error) {
+              this.$store.commit("setMsgError", `${error}`);
+            }
+          }
+        } else {
+          this.$store.commit("setMsgError", '无法发送空数据');
+        }
+      },
+
+
+
+
+      fsclient() {
+        var _this = this
+        let SendBuff
+        if (this.fasong_leixing == 1) {
+          SendBuff = encoding.convert(this.push_data, "GBK")
+          // SendBuff = Buffer.from(this.push_data, 'ascii')
+        } else {
+          SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+        }
+        if (SendBuff != "") {
+          if (this._zdfasong == false) {
+            try {
+              this._tcp_client.write(SendBuff);
+              if (_this._rizhi == true) {
+                _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
               }
-              if (SendBuff != "") {
-                if (this._zdfasong == false) {
+            } catch (error) {
+              this.$store.commit("setMsgError", 'ip地址或端口号不正确');
+            }
+          } else {
+            try {
+              _this.zidongfasong = setInterval(function () {
+                _this._zidong = true
+                this._tcp_client.write(SendBuff);
+                if (_this._rizhi == true) {
+                  _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
+                }
+              }, _this._ms);
+            } catch (error) {
+              this.$store.commit("setMsgError", `${error}`);
+            }
+          }
+        } else {
+          this.$store.commit("setMsgError", '无法发送空数据');
+        }
+      },
+
+
+
+      fsserver() {
+        var _this = this
+        let SendBuff
+        try {
+          if (this.fasong_leixing == 1) {
+            SendBuff = encoding.convert(this.push_data, "GBK")
+            // SendBuff = Buffer.from(this.push_data, 'ascii')
+          } else {
+            SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+          }
+          if (SendBuff != "") {
+            if (this._zdfasong == false) {
+              if (this._changeip === '') {
+                if (this._clentip.length == 1) {
+                  this.$store.commit("setMsgError", '未连接客户端');
+                } else {
+                  try {
+                    for (var i in this._socket) {
+                      this._socket[i].write(SendBuff);
+                      if (_this._rizhi == true) {
+                        _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
+                      }
+                    }
+                  } catch (error) {
+                    this.$store.commit("setMsgError", `${error}`);
+                  }
+                }
+              } else {
+                try {
                   this._socket[this._changeip].write(SendBuff);
                   if (_this._rizhi == true) {
                     _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
                   }
+                } catch (error) {
+                  this.$store.commit("setMsgError", `${error}`);
+                }
+              }
+            } else {
+              if (this._changeip === '') {
+                if (this._clentip.length == 1) {
+                  this.$store.commit("setMsgError", '未连接客户端');
                 } else {
-                  this._zidongfasong = setInterval(function () {
+                  try {
+                    _this.zidongfasong = setInterval(function () {
+                      _this._zidong = true
+                      for (var i in _this._socket) {
+                        _this._socket[i].write(SendBuff);
+                        if (_this._rizhi == true) {
+                          _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
+                        }
+                      }
+                    }, _this._ms);
+                  } catch (error) {
+                    this.$store.commit("setMsgError", `${error}`);
+                  }
+                }
+              } else {
+                try {
+                  _this.zidongfasong = setInterval(function () {
                     _this._zidong = true
                     _this._socket[_this._changeip].write(SendBuff);
                     if (_this._rizhi == true) {
                       _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data}`
                     }
                   }, _this._ms);
+                } catch (error) {
+                  this.$store.commit("setMsgError", `${error}`);
                 }
-              } else {
-                this.$store.commit("setMsgError", '无法发送空数据');
               }
-            } catch (error) {
-              this.$store.commit("setMsgError", 'ip地址或端口号不正确');
             }
-
+          } else {
+            this.$store.commit("setMsgError", '无法发送空数据');
+          }
+        } catch (error) {
+          this.$store.commit("setMsgError", 'ip地址或端口号不正确');
+        }
+      },
+      fasong() {
+        if (this._zdfasong == true && this.zidongfasong != undefined) {
+          this._zidong = false
+          clearInterval(this.zidongfasong)
+          this.zidongfasong = undefined
+        } else {
+          if (this._xylx == 'UDP') {
+            // 发生异常触发
+            this.fsudp()
+          } else if (this._xylx == 'TCP Client') {
+            this.fsclient
+          } else if (this._xylx == 'TCP Server') {
+            this.fsserver()
           }
         }
       },
       closeSetInitval: function (item) {
         if (item == false) {
           this._zidong = false
-          clearInterval(this._zidongfasong)
-          this._zidongfasong = undefined
+          clearInterval(this.zidongfasong)
+          this.zidongfasong = undefined
         }
       },
       closefs: function () {
