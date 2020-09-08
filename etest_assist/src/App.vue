@@ -1,14 +1,16 @@
 <template>
   <v-app>
-  <!-- 上面的图标（最小化，放大，关闭） -->
+    <!-- 上面的图标（最小化，放大，关闭） -->
     <e-sys-bar header="ETestTools" />
     <!-- 左侧导航栏 -->
     <e-top-bar> </e-top-bar>
     <!-- 路由 -->
+
     <v-main>
+      <!-- <e-card></e-card> -->
       <router-view />
     </v-main>
-     <v-snackbar top :timeout="touts" :color="tip_color" v-model="tip">
+    <v-snackbar top :timeout="touts" :color="tip_color" v-model="tip">
       {{ tip_msg }}
       <template v-slot:action="{ attrs }">
         <v-btn icon small @click="tip=false" v-bind="attrs">
@@ -27,6 +29,9 @@
   import ESysBar from "./components/ESysBar";
   import ETopBar from './components/ETopBar';
 
+
+
+
   export default {
     name: 'App',
     components: {
@@ -37,7 +42,7 @@
     data: () => ({
       //
     }),
-    
+
     computed: {
       tip: {
         get: function () {

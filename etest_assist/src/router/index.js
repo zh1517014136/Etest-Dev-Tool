@@ -5,50 +5,46 @@ import EEmpty from '../components/EEmpty.vue'
 Vue.use(VueRouter)
 
 const routes = [{
-        path: '/',
-        name: 'Home',
-        component: EEmpty
-    }, {
+    path: '/',
+    name: 'Home',
+    component: EEmpty
+  },
+  {
+    // 练习工具
+    path: '/tool/network',
+    name: 'EToolNetwork',
+    title: '网络调试助手',
+    icon: 'mdi-lan',
+    component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetwork'),
+  },
+  {
+    // 数据转换工具
+    path: '/tool/dataformat',
+    name: 'EToolDataFormat',
+    title: '数据转换工具',
+    icon: 'mdi-database',
+    component: () => import( /* webpackChunkName: "e_tool_dataformat" */ '../views/EToolDataFormat'),
+  }, {
+    // 图标库
+    path: '/tool/icons',
+    name: 'EToolIcons',
+    title: '图标库',
+    icon: 'mdi-simple-icons',
 
-        // 数据转换工具
-        path: '/tool/dataformat',
-        name: 'EToolDataFormat',
-        component: () => import( /* webpackChunkName: "e_tool_dataformat" */ '../views/EToolDataFormat'),
-    }, {
-        // 图标库
-        path: '/tool/icons',
-        name: 'EToolIcons',
-        component: () => import( /* webpackChunkName: "e_tool_icons" */ '../views/EToolIcons'),
-    }, {
-        // 状态机生成器
-        path: '/tool/state_code',
-        name: 'EToolStateCode',
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolStateCode'),
-    },
-    {
-        // 组合配对工具
-        path: '/tool/pairing',
-        name: 'EToolPairing',
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolPairing'),
-    },
-    {
-        // 陆工大工具
-        path: '/tool/serialport',
-        name: 'EToolSerialport',
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolSerialport'),
-    },
-    {
-        // 练习工具
-        path: '/tool/network',
-        name: 'EToolNetwork',
-        component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolNetwork'),
-    },
+    component: () => import( /* webpackChunkName: "e_tool_icons" */ '../views/EToolIcons'),
+  }, {
+    // 状态机生成器
+    path: '/tool/state_code',
+    name: 'EToolStateCode',
+    title: '状态机生成器',
+    icon: 'mdi-state-machine',
+
+    component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolStateCode'),
+  },
 ]
-
 const router = new VueRouter({
-    mode: 'hash',
-    base: process.env.BASE_URL,
-    routes
+  mode: 'hash',
+  base: process.env.BASE_URL,
+  routes
 })
-
 export default router
