@@ -240,18 +240,18 @@
     },
     methods: {
       click: function (data) {
+        
+          this.icon = data.name
+          this.edit_icon = data.name
+          const copy = new Clipboard('.' + data.name)
+          const _this = this
+          copy.on('success', function (e) {
+            e.clearSelection()
+            _this.snackbar = true
+          })
 
-        this.icon = data.name
-        this.edit_icon = data.name
-        const copy = new Clipboard('.' + data.name)
-        const _this = this
-        copy.on('success', function (e) {
-          e.clearSelection()
-          _this.snackbar = true
-        })
-
-        copy.on('error', () => {})
-
+          copy.on('error', () => {})
+       
       },
       input: function (value) {
         this.page = 1
