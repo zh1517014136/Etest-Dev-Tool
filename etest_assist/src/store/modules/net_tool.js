@@ -22,9 +22,7 @@ let item = {
   clentip: [{ip:'All',value:''}],
   changeip: '',
   socket: {},
-  server: undefined,
-  tcp_client: undefined,
-  tcp_server: undefined,
+
 }
 const state = () => ({
   items: [item, item, item, item, item],
@@ -110,15 +108,6 @@ const mutations = {
   setSelect(state, value) {
     state.select = value;
   },
-  server(state, value) {
-    state.items[state.select].server = value
-  },
-  tcp_client(state, value) {
-    state.items[state.select].tcp_client = value
-  },
-  tcp_server(state, value) {
-    state.items[state.select].tcp_server = value
-  }
 }
 export default {
   namespaced: true,

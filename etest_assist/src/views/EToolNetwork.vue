@@ -24,7 +24,7 @@
                 <div style="text-align:center;">
                   <v-btn block small @click="click">
                     <v-icon left :color="_bind==true?'red':undefined">mdi-lightbulb</v-icon>
-                    {{this._xylx === 'TCP Client'?'链接':this._bind==false?'打开':'关闭'}}
+                    {{this._bind !== false?'关闭':this._xylx === 'TCP Client'?'链接':'打开'}}
                   </v-btn>
                 </div>
               </v-card>
@@ -153,14 +153,16 @@
   var dgram = window.require('dgram');
   var net = window.require('net');
   var encoding = require('encoding')
-
+  var tcpServer
+  var server
+  var tcpClient
   export default {
     components: {
       "e-script-editor": EScriptEditor,
       // "e-top-tab": ETopTab,
     },
 
-  mounted() {
+    mounted() {
       var interfaces = window.require('os').networkInterfaces();
       let arr = []
       for (var devName in interfaces) {
@@ -189,24 +191,23 @@
       let _this = this
       if (this._bind == true) {
         if (this._xylx === 'UDP') {
-          this._server.on('close', () => {
+          server.on('close', () => {
             console.log('socket 已关闭');
           })
-          this._server.close();
+          server.close();
         } else if (this._xylx === 'TCP Client') {
-          this._tcp_client.on('close', function () {
+          tcpClient.on('close', function () {
             console.log('else close')
-            console.log(_this._tcp_client)
-            _this._tcp_client.destroy();
-
+            console.log(tcpClient)
+            tcpClient.destroy();
           })
-          this._tcp_client.destroy(function () {});
+          tcpClient.destroy(function () {});
         } else if (this._xylx === 'TCP Server') {
           for (var i in this._socket) {
             this._socket[i].destroy(function () {});
           }
-          this._tcp_server.close(function () {
-            console.log('_server close')
+          tcpServer.close(function () {
+            console.log('server close')
           })
         }
       }
@@ -217,9 +218,10 @@
         item.bind = false
         item.zidong = false
         item.socket = {}
-        item.tcp_client = undefined
-        item.tcp_server = undefined
-        item.server = undefined
+        item.clentip = [{
+          ip: 'All',
+          value: ''
+        }]
         // clearInterval(item.zidongfasong)
         // item.zidongfasong = undefined
         item.id = index;
@@ -342,14 +344,6 @@
           return this.$store.commit("net_tool/zidong", v);
         }
       },
-      // _zidongfasong: {
-      //   get: function () {
-      //     return this.$store.state.net_tool.items[this.selected_index].zidongfasong;
-      //   },
-      //   set: function (v) {
-      //     return this.$store.commit("net_tool/zidongfasong", v);
-      //   }
-      // },
       _clentip: {
         get: function () {
           return this.$store.state.net_tool.items[this.selected_index].clentip;
@@ -415,30 +409,6 @@
           return this.$store.commit("net_tool/jsdata", v)
         },
       },
-      _server: {
-        get: function () {
-          return this.$store.state.net_tool.items[this.selected_index].server;
-        },
-        set: function (v) {
-          return this.$store.commit("net_tool/server", v)
-        },
-      },
-      _tcp_client: {
-        get: function () {
-          return this.$store.state.net_tool.items[this.selected_index].tcp_client;
-        },
-        set: function (v) {
-          return this.$store.commit("net_tool/tcp_client", v)
-        },
-      },
-      _tcp_server: {
-        get: function () {
-          return this.$store.state.net_tool.items[this.selected_index].tcp_server;
-        },
-        set: function (v) {
-          return this.$store.commit("net_tool/tcp_server", v)
-        },
-      },
     },
     watch: {
       selected_index: function (v) {
@@ -478,9 +448,6 @@
         this._ms = o.ms;
         this.push_data = o.push;
         this.js_data = o.jsdata;
-        this._server = o.server;
-        this._tcp_client = o.tcp_client;
-        this._tcp_server = o.tcp_server;
       },
       on_select(data) {
         // this.closeServer(data)
@@ -492,24 +459,24 @@
       udp() {
         var _this = this
         if (this._bind == false) {
-          this._server = dgram.createSocket('udp4');
+          server = dgram.createSocket('udp4');
           try {
-            this._server.bind({
+            server.bind({
               address: _this.zj_dz,
               port: _this.d_k,
               exclusive: true
             });
-            this._server.on('listening', function () {
+            server.on('listening', function () {
               console.log('服务已启动')
               _this._bind = true
             });
           } catch (error) {
             this.$store.commit("setMsgError", `${error}`);
           }
-          this._server.on('error', () => {
-            this._server.close();
+          server.on('error', () => {
+            server.close();
           });
-          this._server.on('message', (msg, rinfo) => {
+          server.on('message', (msg, rinfo) => {
             if (_this.jieshou_leixing == 1) {
               if (_this._rizhi == false && _this._huanhang == false) {
                 let BuffMsg = Buffer.from(msg, 'hex')
@@ -551,36 +518,38 @@
             }
           });
         } else {
-          this._server = this._server.on('close', () => {
+          server.on('close', () => {
             console.log('socket 已关闭');
             _this._bind = false
             _this._zidong = false
             clearInterval(_this.zidongfasong)
             _this.zidongfasong = undefined
-            _this._server = undefined
           })
-          this._server = this._server.close();
+          server.close();
         }
       },
 
       client() {
         var _this = this
         if (this._bind == false) {
-          this._tcp_client = new net.Socket();
+          tcpClient = new net.Socket();
           try {
             var options = {
               host: _this.zj_dz,
               port: _this.d_k
             }
-            this._tcp_client.connect(options, function () {
+            tcpClient.connect(options, function () {
+
               console.log('connected to Server');
-              _this._tcp_client.write('hello _server');
+              tcpClient.write('hello server');
               _this._bind = true
             })
           } catch (error) {
             this.$store.commit("setMsgError", `${error}`);
+            tcpClient.destroy()
+
           }
-          this._tcp_client.on('data', function (data) {
+          tcpClient.on('data', function (data) {
             if (_this.jieshou_leixing == 1) {
               if (_this._rizhi == false && _this._huanhang == false) {
                 let BuffMsg = Buffer.from(data, 'hex')
@@ -621,32 +590,31 @@
               }
             }
           })
-          this._tcp_client.on('error', function (err) {
-            console.log('在于服务器连接或通信过程中发生了一个错误，错误代码为%s', err.code);
-            _this._tcp_client.destroy();
+          tcpClient.on('error', function (err) {
+            tcpClient.destroy();
             _this._bind = false
+
           })
         } else {
-          this._tcp_client.on('close', function () {
-            console.log('close')
-            console.log(_this._tcp_client)
-            _this._tcp_client.destroy();
-            _this._tcp_client = undefined
+          tcpClient.on('close', function () {
+
+            tcpClient.destroy();
+
             _this._bind = false
           })
-          this._tcp_client.destroy(function () {
+          tcpClient.destroy(function () {
             _this._bind = false
-            _this._tcp_client = undefined
+
           });
         }
       },
 
-      server() {
+      Server() {
         var _this = this
         if (this._bind == false) {
-          this._tcp_server = net.createServer();
+          tcpServer = net.createServer();
           try {
-            this._tcp_server.listen({
+            tcpServer.listen({
               host: _this.zj_dz,
               port: _this.d_k,
               exclusive: true
@@ -657,7 +625,7 @@
             this.$store.commit("setMsgError", `${error}`);
           }
           // 处理客户端连接
-          this._tcp_server.on('connection', function (socket) {
+          tcpServer.on('connection', function (socket) {
             console.log(_this._socket)
             _this._socket[socket.remotePort] = socket;
             _this._clentip = [{
@@ -737,8 +705,8 @@
               socket.destroy();
             })
           })
-          this._tcp_server.on('error', function () {
-            _this._tcp_server.close(function () {
+          tcpServer.on('error', function () {
+            tcpServer.close(function () {
               _this._bind = false
             })
           })
@@ -746,9 +714,12 @@
           for (var i in this._socket) {
             this._socket[i].destroy(function () {});
           }
-          this._tcp_server.close(function () {
+          tcpServer.close(function () {
+            console.log('关闭服务')
+
+            tcpServer.unref();
             _this._bind = false
-            _this._tcp_server = undefined
+
             _this._socket = {}
           })
         }
@@ -759,7 +730,7 @@
         } else if (this._xylx == 'TCP Client') {
           this.client()
         } else if (this._xylx == 'TCP Server') {
-          this.server()
+          this.Server()
         }
       },
 
@@ -767,7 +738,7 @@
 
       fsudp() {
         var _this = this
-        this._server.on('error', function () {})
+        server.on('error', function () {})
         // 发送消息
         var SendBuff
         if (this.fasong_leixing == 1) {
@@ -780,7 +751,7 @@
           if (this._zdfasong == false) {
             var SendLen = SendBuff.length;
             try {
-              this._server.send(SendBuff, 0, SendLen, this._yczjdk, this._yczjip, function () {
+              server.send(SendBuff, 0, SendLen, this._yczjdk, this._yczjip, function () {
                 if (_this.js_data == "") {
                   if (_this._rizhi == true) {
                     _this.js_data = ` 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
@@ -800,7 +771,7 @@
               _this.zidongfasong = setInterval(function () {
                 _this._zidong = true
                 var SendLen = SendBuff.length;
-                _this._server.send(SendBuff, 0, SendLen, _this._yczjdk, _this._yczjip, function () {
+                server.send(SendBuff, 0, SendLen, _this._yczjdk, _this._yczjip, function () {
                   if (_this.js_data == "") {
                     if (_this._rizhi == true) {
                       _this.js_data = ` 发送至: ${_this._yczjip}:${_this._yczjdk} \n ${_this.push_data} \n`
@@ -837,7 +808,7 @@
         if (SendBuff != "") {
           if (this._zdfasong == false) {
             try {
-              this._tcp_client.write(SendBuff);
+              tcpClient.write(SendBuff);
               if (_this._rizhi == true) {
                 _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
               }
@@ -848,7 +819,7 @@
             try {
               _this.zidongfasong = setInterval(function () {
                 _this._zidong = true
-                this._tcp_client.write(SendBuff);
+                tcpClient.write(SendBuff);
                 if (_this._rizhi == true) {
                   _this.js_data = _this.js_data + `\n 发送:\n ${_this.push_data} \n`
                 }
@@ -938,7 +909,7 @@
             this.$store.commit("setMsgError", '无法发送空数据');
           }
         } catch (error) {
-          this.$store.commit("setMsgError", 'ip地址或端口号不正确');
+          this.$store.commit("setMsgError", `${error}`);
         }
       },
       fasong() {
@@ -951,7 +922,7 @@
             // 发生异常触发
             this.fsudp()
           } else if (this._xylx == 'TCP Client') {
-            this.fsclient
+            this.fsclient()
           } else if (this._xylx == 'TCP Server') {
             this.fsserver()
           }
