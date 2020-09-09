@@ -41,6 +41,15 @@ const routes = [{
 
     component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolStateCode'),
   },
+  {
+    // 状态机生成器
+    path: '/tool/mackdown',
+    name: 'Mackdown',
+    title: '状态机生成器',
+    icon: 'mdi-state-machine',
+
+    component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/Mackdown'),
+  },
 ]
 const router = new VueRouter({
   mode: 'hash',

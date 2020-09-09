@@ -28,6 +28,7 @@ function createWindow() {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
       enableRemoteModule: true,
+      webviewTag:true,
     },
     simpleFullscreen: false,
     fullscreen: false,
