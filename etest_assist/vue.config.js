@@ -1,5 +1,6 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const MonacoLocalesPlugin = require('monaco-editor-locales-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   "transpileDependencies": [
@@ -19,8 +20,33 @@ module.exports = {
             "Command Palette": "命令面板"
           }
         }
-      })
+      }),
+      new HtmlWebpackPlugin({
+        filename: 'index.html',
+        template: 'src/lan/public/index.html',
+        inject: true
+      }),
+    
     ]
+  },
+
+
+  pages: {
+    lan: {
+      entry: 'src/lan/main.js', //页面的入口文件
+      template: 'src/lan/public/index.html', //页面的模板文件
+      filename: 'lan.html' //页面的出口名称，即build生成的文件名称
+    },
+
+    // page2: {
+    //   entry: 'src/icon/main.js',
+
+    //   template: 'public/icon.html',
+
+    //   filename: 'icon.html'
+
+    // }
+
   },
   pluginOptions: {
     // vue-cli-plugin-electron-builder 配置
@@ -42,8 +68,7 @@ module.exports = {
           }]
         },
         dmg: {
-          contents: [
-            {
+          contents: [{
               x: 410,
               y: 150,
               type: 'link',

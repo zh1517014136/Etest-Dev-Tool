@@ -25,12 +25,7 @@
                 </v-list-item-icon>
                 <v-list-item-title>状态机生成器</v-list-item-title>
             </v-list-item>  
-            <v-list-item :to="{name: 'Mackdown'}">
-                <v-list-item-icon>
-                    <v-icon>mdi-book</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Mackdown</v-list-item-title>
-            </v-list-item>
+           
         </v-list>
     </v-navigation-drawer>
 </template>
@@ -38,5 +33,12 @@
 <script>
     export default {
      
+
+
+     methods:{
+       jump:function(){
+
+       }
+     }
     }
 </script>

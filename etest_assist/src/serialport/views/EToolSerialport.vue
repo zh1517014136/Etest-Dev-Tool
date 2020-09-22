@@ -123,7 +123,7 @@
 </template>
 
 <script>
-    import ETopTab from "../components/ETopTabs";
+    import ETopTab from "../../components/ETopTabs";
     export default {
         components: {
             "e-top-tab": ETopTab,
