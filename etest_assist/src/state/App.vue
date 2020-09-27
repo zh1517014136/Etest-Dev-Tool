@@ -8,7 +8,8 @@
 
     <v-main>
       <!-- <e-card></e-card> -->
-      <router-view />
+      <!-- <router-view /> -->
+      <e-tool-stateCode></e-tool-stateCode>
     </v-main>
     <v-snackbar top :timeout="touts" :color="tip_color" v-model="tip">
       {{ tip_msg }}
@@ -29,6 +30,7 @@
 <script>
   import ESysBar from "./../components/ESysBar";
   import ETopBar from './../components/ETopBar';
+  import EToolStateCode from './views/EToolStateCode'
 
 
 
@@ -38,6 +40,7 @@
     components: {
       "e-sys-bar": ESysBar,
       "e-top-bar": ETopBar,
+      'e-tool-stateCode':EToolStateCode
     },
 
     data: () => ({

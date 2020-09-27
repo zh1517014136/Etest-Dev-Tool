@@ -23,7 +23,7 @@ module.exports = {
       }),
       new HtmlWebpackPlugin({
         filename: 'index.html',
-        template: 'src/lan/public/index.html',
+        template: 'public/index.html',
         inject: true
       }),
     
@@ -32,20 +32,41 @@ module.exports = {
 
 
   pages: {
+  
     lan: {
       entry: 'src/lan/main.js', //页面的入口文件
       template: 'src/lan/public/index.html', //页面的模板文件
       filename: 'lan.html' //页面的出口名称，即build生成的文件名称
     },
+    icon: {
+      entry: 'src/icon/main.js',
+      template: 'src/icon/public/index.html',
+      filename: 'icon.html'
 
-    // page2: {
-    //   entry: 'src/icon/main.js',
+    },
+    dataformat: {
+      entry: 'src/data/main.js',
+      template: 'src/data/public/index.html',
+      filename: 'dataformat.html'
 
-    //   template: 'public/icon.html',
+    },
+    state: {
+      entry: 'src/state/main.js',
+      template: 'src/state/public/index.html',
+      filename: 'state.html'
 
-    //   filename: 'icon.html'
+    },
+    serialport: {
+      entry: 'src/serialport/main.js',
+      template: 'src/serialport/public/index.html',
+      filename: 'serialport.html'
 
-    // }
+    },
+    index:{
+      entry: 'src/main.js', //页面的入口文件
+      template: 'public/index.html', //页面的模板文件
+      filename: 'index.html' //页面的出口名称，即build生成的文件名称
+    },
 
   },
   pluginOptions: {

@@ -67,6 +67,7 @@
                   <v-checkbox v-model="_zdfasong" @change="closeSetInitval" :label="`循环周期:`" hide-details
                     class="shrink mr-2 mt-0"></v-checkbox>
                   <v-text-field style="width:80px;" v-model="_ms" :disabled="!_zdfasong"></v-text-field>ms
+                   
                 </v-row>
               </v-card>
             </div>
@@ -98,7 +99,10 @@
                       <v-col class="pa-0" cols="6">
                         <v-text-field class="my-0" v-model="_yczjdk" attach dense label="远程主机端口号">
                         </v-text-field>
+                       
                       </v-col>
+
+                    
                     </v-row>
 
                   </v-col>
