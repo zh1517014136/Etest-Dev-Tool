@@ -32,7 +32,7 @@
           <v-icon>mdi-state-machine</v-icon>
         </v-list-item-icon>
         <v-list-item-title><a style="color:white;" href="../state/public/index.html">状态机生成器</a></v-list-item-title>
-      </v-list-item>
+      </v-list-item> -->
       
        <v-list-item>
         <v-list-item-icon>
@@ -40,10 +40,10 @@
         </v-list-item-icon>
         <v-list-item-title><a style="color:white;" href="../serialport/public/index.html">串口调试助手</a></v-list-item-title>
       </v-list-item>
-    </v-list> -->
+    </v-list>
 
      
-              <v-list-item>
+              <!-- <v-list-item>
 
         <v-list-item-icon>
           <v-icon>mdi-lan</v-icon>
@@ -77,7 +77,7 @@
         </v-list-item-icon>
         <v-list-item-title><a style="color:white;" href="./serialport.html">串口调试助手</a></v-list-item-title>
       </v-list-item>
-    </v-list>
+    </v-list> -->
       
   </v-navigation-drawer>
 </template>
