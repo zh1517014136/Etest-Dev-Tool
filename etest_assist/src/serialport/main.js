@@ -9,6 +9,8 @@ import ethex from '../language/script_hex';
 import complition from '../language/complition.js';
 import * as monaco from 'monaco-editor';
 
+
+
 Vue.config.productionTip = false;
 
 monaco.languages.register({id: 'etlua' });

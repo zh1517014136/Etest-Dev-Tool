@@ -16,7 +16,8 @@
                 <v-select :items="[110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 56000, 115200, 128000,
         256000, 'Customize'
       ]" v-model="_baud" label="波特率" dense attach></v-select>
-                <v-select :items="['NONE', 'ODD', 'EVEN', 'MARK', 'SPACE']" v-model="_check" label="校验位" dense attach></v-select>
+                <v-select :items="['NONE', 'ODD', 'EVEN', 'MARK', 'SPACE']" v-model="_check" label="校验位" dense attach>
+                </v-select>
                 <v-select :items="[5, 6, 7, 8]" v-model="_data_key" label="数据位" dense attach></v-select>
                 <v-select :items="[1, 1.5, 2]" v-model="_stop_key" label="停止位" dense attach></v-select>
                 <div style="text-align:center;">
@@ -126,6 +127,9 @@
 
 <script>
   // import ETopTab from "../../components/ETopTabs";
+  
+ var serialport = window.require('serialport');
+
   export default {
     components: {
       // "e-top-tab": ETopTab,
@@ -133,7 +137,6 @@
     computed: {
       _baud: {
         get: function () {
-          console.log(this.$store.state.serialport.baud)
           return this.$store.state.serialport.baud
         },
         set: function (v) {
@@ -245,15 +248,19 @@
           this.zidongfasong = undefined
         }
       },
-      click: function (i) {
-
-
+      click: function () {
+     serialport.list().then(
+    ports => {
+      //ports 串口
+      console.log(ports)
+    }
+  )
       },
 
-      closefs: function (i) {
+      closefs: function () {
 
       },
-      closejs: function (i) {
+      closejs: function () {
 
       },
     }
