@@ -11,12 +11,13 @@
               <v-card tile :elevation="0" style="width:100%; height:100%;">
                 <v-subheader style="height:24px">串口设置</v-subheader>
                 <v-divider class="mb-4"></v-divider>
-                <v-select :items="[1, 2, 3, 4, 5]" v-model="_serial" label="串口号" dense attach></v-select>
+                <v-select :items="serialportarr" v-model="_serial" label="串口号" item-text="comName" item-value="path"
+                  dense attach></v-select>
                 <div id="error"></div>
                 <v-select :items="[110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 56000, 115200, 128000,
         256000, 'Customize'
       ]" v-model="_baud" label="波特率" dense attach></v-select>
-                <v-select :items="['NONE', 'ODD', 'EVEN', 'MARK', 'SPACE']" v-model="_check" label="校验位" dense attach>
+                <v-select :items="['none', 'odd', 'even', 'mark', 'space']" v-model="_check" label="校验位" dense attach>
                 </v-select>
                 <v-select :items="[5, 6, 7, 8]" v-model="_data_key" label="数据位" dense attach></v-select>
                 <v-select :items="[1, 1.5, 2]" v-model="_stop_key" label="停止位" dense attach></v-select>
@@ -113,7 +114,7 @@
                   <!-- <v-textarea name="input-7-1" filled label="Label"  style="width:100%;height:100%"
                                         value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.">
                                     </v-textarea> -->
-                  <v-btn style="width:15%;height:100%" class="pa-0 ma-1 mb-1">发送
+                  <v-btn style="width:15%;height:100%" class="pa-0 ma-1 mb-1" @click="write">发送
                   </v-btn>
                 </div>
               </v-card>
@@ -127,9 +128,9 @@
 
 <script>
   // import ETopTab from "../../components/ETopTabs";
-  
- var serialport = window.require('serialport');
 
+  const serialport = window.require('serialport');
+  var port = undefined
   export default {
     components: {
       // "e-top-tab": ETopTab,
@@ -232,16 +233,30 @@
           return this.$store.commit('serialport/ms', v)
         }
       },
+      serialportarr: {
+        get: function () {
+          return this.$store.state.serialport.serialportarr
+        },
+        set: function (v) {
+          return this.$store.commit('serialport/serialportarr', v)
+        }
+      }
     },
 
     data: () => ({
       selected_index: 0,
-      zidongfasong: undefined
+      zidongfasong: undefined,
     }),
+    beforeMount: function () {
+      serialport.list().then(
+        ports => {
+          //ports 串口
+          this.serialportarr = ports
+          this._serial = this._serial === undefined ? ports[0].comName : this._serial
+        }
+      )
+    },
     methods: {
-      // on_select(data) {
-      //   this.selected_index = data;
-      // },
       closeSetInitval: function (item) {
         if (item == false) {
           clearInterval(this.zidongfasong)
@@ -249,12 +264,59 @@
         }
       },
       click: function () {
-     serialport.list().then(
-    ports => {
-      //ports 串口
-      console.log(ports)
-    }
-  )
+        if (!port) {
+          port = new serialport(this._serial, {
+            baudRate: this._baud, //波特率
+            dataBits: this._data_key, //数据位
+            parity: this._check, //校验
+            stopBits: this._stop_key, //停止位
+            flowControl: false,
+            autoOpen: false //不自动打开
+          }, false)
+          this.open()
+
+        } else {
+          if (port) {
+            port.close(function () {
+              console.log('端口已关闭')
+              port = undefined
+            });
+          }
+        }
+      },
+      open: function () {
+        var _this = this
+        port.on('error', (error) => {
+          console.log('Error: ', error.message);
+        })
+        port.open(function (error) {
+          if (error) {
+            console.log("打开端口" + _this._serial + "错误：" + error);
+          } else {
+            console.log("打开端口" + _this._serial + "成功");
+            _this.getck()
+            port.on('data', function (data) {
+              console.log('收到的数据: ' + data);
+            });
+          }
+        });
+      },
+      write: function () {
+        port.write("2334444",
+          // function (err, results) {
+          //   // console.log('err ' + err);
+          //   console.log('发送的数据');
+          // }
+        );
+      },
+      getck: function () {
+        port.get(function (err, data) {
+          console.log(err)
+          console.log(data)
+        })
+        //  port.set(function(data){
+        //   console.log(data)
+        //  })
       },
 
       closefs: function () {

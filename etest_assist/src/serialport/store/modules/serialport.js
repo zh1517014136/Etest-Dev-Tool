@@ -1,7 +1,7 @@
 const state = () => ({
-  serial:1,
+  serial: undefined,
   baud: 128000,
-  check: 'NONE',
+  check: 'none',
   data_key: 7,
   stop_key: 2,
   jieshou: 2,
@@ -21,6 +21,7 @@ const state = () => ({
   radios1: 'radio-1',
   radios2: 'radio-1',
   selected_index: 0,
+  serialportarr: []
 })
 
 const mutations = {
@@ -32,7 +33,7 @@ const mutations = {
   },
   check(state, value) {
     state.check = value
-  } ,
+  },
   data_key(state, value) {
     state.data_key = value
   },
@@ -41,13 +42,13 @@ const mutations = {
   },
   jieshou(state, value) {
     state.jieshou = value
-  }, 
+  },
   fasong(state, value) {
     state.fasong = value
   },
   rizhi(state, value) {
     state.rizhi = value
-  }, 
+  },
   huanhang(state, value) {
     state.huanhang = value
   },
@@ -56,10 +57,13 @@ const mutations = {
   },
   xunhuan(state, value) {
     state.xunhuan = value
-  },  
+  },
   ms(state, value) {
     state.ms = value
   },
+  serialportarr(state, value) {
+    state.serialportarr = value
+  }
 }
 
 export default {
