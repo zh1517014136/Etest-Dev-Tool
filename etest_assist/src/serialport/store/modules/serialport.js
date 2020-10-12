@@ -21,7 +21,8 @@ const state = () => ({
   radios1: 'radio-1',
   radios2: 'radio-1',
   selected_index: 0,
-  serialportarr: []
+  serialportarr: [],
+  open:false,
 })
 
 const mutations = {
@@ -63,6 +64,9 @@ const mutations = {
   },
   serialportarr(state, value) {
     state.serialportarr = value
+  },
+  open(state, value) {
+    state.open = value
   }
 }
 

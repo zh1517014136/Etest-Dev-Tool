@@ -11,18 +11,18 @@
               <v-card tile :elevation="0" style="width:100%; height:100%;">
                 <v-subheader style="height:24px">串口设置</v-subheader>
                 <v-divider class="mb-4"></v-divider>
-                <v-select :items="serialportarr" v-model="_serial" label="串口号" item-text="comName" item-value="path"
+                <v-select :items="serialportarr" :disabled='this._open' v-model="_serial" label="串口号" item-text="comName" item-value="path"
                   dense attach></v-select>
                 <div id="error"></div>
                 <v-select :items="[110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 56000, 115200, 128000,
-        256000, 'Customize'
-      ]" v-model="_baud" label="波特率" dense attach></v-select>
-                <v-select :items="['none', 'odd', 'even', 'mark', 'space']" v-model="_check" label="校验位" dense attach>
+        256000, 'Customize' 
+      ]" v-model="_baud" label="波特率" :disabled='this._open' dense attach></v-select>
+                <v-select :items="['none', 'odd', 'even', 'mark', 'space']" v-model="_check" :disabled='this._open' label="校验位" dense attach>
                 </v-select>
-                <v-select :items="[5, 6, 7, 8]" v-model="_data_key" label="数据位" dense attach></v-select>
-                <v-select :items="[1, 1.5, 2]" v-model="_stop_key" label="停止位" dense attach></v-select>
+                <v-select :items="[5, 6, 7, 8]" v-model="_data_key" label="数据位" :disabled='this._open' dense attach></v-select>
+                <v-select :items="[1, 1.5, 2]" v-model="_stop_key" label="停止位" :disabled='this._open' dense attach></v-select>
                 <div style="text-align:center;">
-                  <v-btn block small @click="click(1)">打开</v-btn>
+                  <v-btn block small @click="click(1)">{{this._open==true?'关闭':'打开'}}</v-btn>
                 </div>
               </v-card>
             </div>
@@ -131,6 +131,7 @@
 
   const serialport = window.require('serialport');
   var port = undefined
+
   export default {
     components: {
       // "e-top-tab": ETopTab,
@@ -240,6 +241,14 @@
         set: function (v) {
           return this.$store.commit('serialport/serialportarr', v)
         }
+      },
+      _open: {
+        get: function () {
+          return this.$store.state.serialport.open
+        },
+        set:function(v){
+          return this.$store.commit('serialport/open',v)
+        }
       }
     },
 
@@ -277,9 +286,11 @@
 
         } else {
           if (port) {
+            var _this = this
             port.close(function () {
               console.log('端口已关闭')
               port = undefined
+              _this._open=false
             });
           }
         }
@@ -294,6 +305,7 @@
             console.log("打开端口" + _this._serial + "错误：" + error);
           } else {
             console.log("打开端口" + _this._serial + "成功");
+            _this._open=true
             _this.getck()
             port.on('data', function (data) {
               console.log('收到的数据: ' + data);
@@ -302,21 +314,20 @@
         });
       },
       write: function () {
-        port.write("2334444",
-          // function (err, results) {
-          //   // console.log('err ' + err);
-          //   console.log('发送的数据');
-          // }
-        );
+        port.write("2334444");
       },
       getck: function () {
+        port.set({
+          cts: true,
+          dsr: false,
+          dtr: true,
+          rts: true,
+          brk: false
+        })
         port.get(function (err, data) {
           console.log(err)
           console.log(data)
         })
-        //  port.set(function(data){
-        //   console.log(data)
-        //  })
       },
 
       closefs: function () {
