@@ -11,16 +11,19 @@
               <v-card tile :elevation="0" style="width:100%; height:100%;">
                 <v-subheader style="height:24px">串口设置</v-subheader>
                 <v-divider class="mb-4"></v-divider>
-                <v-select :items="serialportarr" :disabled='this._open' v-model="_serial" label="串口号" item-text="comName" item-value="path"
-                  dense attach></v-select>
+                <v-select :items="serialportarr" :disabled='this._open' v-model="_serial" label="串口号"
+                  item-text="comName" item-value="path" dense attach></v-select>
                 <div id="error"></div>
                 <v-select :items="[110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 56000, 115200, 128000,
         256000, 'Customize' 
       ]" v-model="_baud" label="波特率" :disabled='this._open' dense attach></v-select>
-                <v-select :items="['none', 'odd', 'even', 'mark', 'space']" v-model="_check" :disabled='this._open' label="校验位" dense attach>
+                <v-select :items="['none', 'odd', 'even', 'mark', 'space']" v-model="_check" :disabled='this._open'
+                  label="校验位" dense attach>
                 </v-select>
-                <v-select :items="[5, 6, 7, 8]" v-model="_data_key" label="数据位" :disabled='this._open' dense attach></v-select>
-                <v-select :items="[1, 1.5, 2]" v-model="_stop_key" label="停止位" :disabled='this._open' dense attach></v-select>
+                <v-select :items="[5, 6, 7, 8]" v-model="_data_key" label="数据位" :disabled='this._open' dense attach>
+                </v-select>
+                <v-select :items="[1, 1.5, 2]" v-model="_stop_key" label="停止位" :disabled='this._open' dense attach>
+                </v-select>
                 <div style="text-align:center;">
                   <v-btn block small @click="click(1)">{{this._open==true?'关闭':'打开'}}</v-btn>
                 </div>
@@ -75,12 +78,16 @@
               </v-card>
             </div>
           </div>
-          <div class="py-2 pl-2 pr-2" style="height:100%;width:85%;min-height:600px ">
-            <div style="width:100%;height:67%;min-width:500px;">
+          <div class="py-2 pl-2 pr-2" style="height:100%;width:85%;min-height:650px ">
+            <div style="width:100%;height:67%;min-width:500px;min-height:520px">
               <v-card tile :elevation="0" style="width:100%; height:100%;">
                 <v-subheader style="height:24px">数据日志</v-subheader>
                 <v-divider></v-divider>
-                <v-sheet width="100%" height="90%" class="pa-0 ma-1 mb-1" style="border: 2px solid grey"></v-sheet>
+                <!-- <v-sheet width="100%" height="90%" class="pa-0 ma-1 mb-1" style="border: 2px solid grey"></v-sheet> -->
+                <v-sheet width="100%" class="pa-0 ma-0 mb-1" @keydown.stop
+                  style="height: calc(64vh - 52px);min-height:490px;">
+                  <e-script-editor id="js_data" :script="js_data" type="jsdata" @change="on_change" />
+                </v-sheet>
               </v-card>
             </div>
 
@@ -107,16 +114,30 @@
                   </v-col>
                 </v-row>
                 <v-divider></v-divider>
-                <div style="display:flex; lex-wrap: nowrap;width:100%;height:100%">
-                  <v-sheet width="85%" height="100%" class="pa-0 ma-1 mb-1" @keydown.stop
-                    style="border: 2px solid grey">
-                  </v-sheet>
-                  <!-- <v-textarea name="input-7-1" filled label="Label"  style="width:100%;height:100%"
-                                        value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.">
-                                    </v-textarea> -->
+                <!-- <div style="display:flex; lex-wrap: nowrap;width:100%;height:100%">
+                 <v-sheet width="85%" height="100%" class="pa-0 ma-1 mb-1" @keydown.stop
+                   style="border: 2px solid grey">
+                  </v-sheet> 
+
                   <v-btn style="width:15%;height:100%" class="pa-0 ma-1 mb-1" @click="write">发送
                   </v-btn>
-                </div>
+                </div>-->
+
+
+
+                <v-row class="pt-4 mt-2">
+                  <v-col class="pa-0  pl-3 pr-2" cols="10">
+                    <v-sheet width="100%" class="pa-0 ma-0 mb-1" @keydown.stop
+                      style="height: calc(11vh);min-height:85px;">
+                      <e-script-editor id="push_data" :script="push_data" type="push" @change="on_change" />
+                    </v-sheet>
+                  </v-col>
+                  <v-col class="pa-0  pr-3" cols="2">
+                    <v-btn class="ma-0 px-0 " style="height:calc(11vh);min-height:85px;" block @click="write"
+                      :disabled="!_open" outlined>{{this._zidong==false?'发送':'停止发送'}}
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-card>
             </div>
           </div>
@@ -128,12 +149,14 @@
 
 <script>
   // import ETopTab from "../../components/ETopTabs";
+  import EScriptEditor from "../../components/widgets/EDataFormatEditor";
 
+  var encoding = require('encoding')
   const serialport = window.require('serialport');
   var port = undefined
-
   export default {
     components: {
+      "e-script-editor": EScriptEditor,
       // "e-top-tab": ETopTab,
     },
     computed: {
@@ -246,10 +269,36 @@
         get: function () {
           return this.$store.state.serialport.open
         },
-        set:function(v){
-          return this.$store.commit('serialport/open',v)
+        set: function (v) {
+          return this.$store.commit('serialport/open', v)
         }
-      }
+
+      },
+      push_data: {
+        get: function () {
+          return this.$store.state.serialport.push;
+        },
+        set: function (v) {
+          return this.$store.commit("serialport/push", v)
+        },
+      },
+      _zidong: {
+        get: function () {
+          return this.$store.state.serialport.zidong;
+        },
+        set: function (v) {
+          return this.$store.commit("serialport/zidong", v)
+        },
+      },
+      js_data: {
+        get: function () {
+          return this.$store.state.serialport.jsdata;
+        },
+        set: function (v) {
+          // this.js_data = v; 
+          return this.$store.commit("serialport/jsdata", v)
+        },
+      },
     },
 
     data: () => ({
@@ -266,6 +315,9 @@
       )
     },
     methods: {
+      on_change(id, script) {
+        this[id] = script
+      },
       closeSetInitval: function (item) {
         if (item == false) {
           clearInterval(this.zidongfasong)
@@ -290,7 +342,7 @@
             port.close(function () {
               console.log('端口已关闭')
               port = undefined
-              _this._open=false
+              _this._open = false
             });
           }
         }
@@ -302,19 +354,58 @@
         })
         port.open(function (error) {
           if (error) {
-            console.log("打开端口" + _this._serial + "错误：" + error);
+            console.log();
+            _this.$store.commit("setMsgError", "打开端口" + _this._serial + "错误：" + error);
           } else {
-            console.log("打开端口" + _this._serial + "成功");
-            _this._open=true
+            _this._open = true
             _this.getck()
-            port.on('data', function (data) {
-              console.log('收到的数据: ' + data);
-            });
+          }
+        });
+
+      },
+      getdata: function () {
+        var _this = this
+        port.on('data', function (data) {
+          if (_this._jieshou == 1) {
+            let BuffMsg = Buffer.from(data, 'hex')
+            BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+            _this.showdata(BuffMsg)
+          } else {
+            let BuffMsg = data.toString('hex')
+            _this.showdata(BuffMsg)
           }
         });
       },
       write: function () {
-        port.write("2334444");
+        // 
+        var SendBuff
+        if (this.push_data !== '') {
+          if (this._fasong == 1) {
+            try {
+              SendBuff = encoding.convert(this.push_data, "GBK")
+            } catch (error) {
+              this.$store.commit("setMsgError", error);
+            }
+          } else {
+            try {
+              SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+            } catch (error) {
+              this.$store.commit("setMsgError", error);
+            }
+          }
+          port.write(SendBuff);
+          this.showfasong()
+        } else {
+          this.$store.commit("setMsgError", '无法发送空数据');
+        }
+
+
+      },
+      showfasong: function () {
+        this.js_data = this.js_data + `\n 发送:\n ${this.push_data} \n`
+      },
+      showdata: function (data) {
+        this.js_data = this.js_data + `\n 收到 : \n ${data} \n`
       },
       getck: function () {
         port.set({

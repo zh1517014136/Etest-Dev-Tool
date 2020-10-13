@@ -3,9 +3,9 @@ const state = () => ({
   baud: 128000,
   check: 'none',
   data_key: 7,
-  stop_key: 2,
-  jieshou: 2,
-  fasong: 2,
+  stop_key: 1,
+  jieshou: 1,
+  fasong: 1,
   rizhi: false,
   huanhang: false,
   zanting: false,
@@ -22,7 +22,10 @@ const state = () => ({
   radios2: 'radio-1',
   selected_index: 0,
   serialportarr: [],
-  open:false,
+  open: false,
+  push: '',
+  zidong: false,
+  jsdata: ''
 })
 
 const mutations = {
@@ -67,6 +70,15 @@ const mutations = {
   },
   open(state, value) {
     state.open = value
+  },
+  push(state, value) {
+    state.push = value
+  },
+  zidong(state, value) {
+    state.zidong = value
+  },
+  jsdata(state, value) {
+    state.jsdata = value
   }
 }
 
