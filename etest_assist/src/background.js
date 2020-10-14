@@ -4,6 +4,8 @@ import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import ipc from './database/ipc_main'
+
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 app.allowRendererProcessReuse= false
 // Keep a global reference of the window object, if you don't, the window will
@@ -37,6 +39,7 @@ function createWindow() {
     frame: false,
     backgroundColor: '#000000',
   })
+  win.webContents.openDevTools()
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

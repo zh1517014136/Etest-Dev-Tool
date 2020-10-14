@@ -11,6 +11,7 @@ import * as monaco from 'monaco-editor';
 
 
 
+
 Vue.config.productionTip = false;
 
 monaco.languages.register({id: 'etlua' });

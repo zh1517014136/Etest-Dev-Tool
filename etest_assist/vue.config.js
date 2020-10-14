@@ -56,12 +56,13 @@ module.exports = {
     //   filename: 'state.html'
 
     // },
+
     serialport: {
       entry: 'src/serialport/main.js',
       template: 'src/serialport/public/index.html',
       filename: 'serialport.html'
-
     },
+
     index:{
       entry: 'src/main.js', //页面的入口文件
       template: 'public/index.html', //页面的模板文件

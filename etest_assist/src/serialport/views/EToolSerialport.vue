@@ -25,7 +25,11 @@
                 <v-select :items="[1, 1.5, 2]" v-model="_stop_key" label="停止位" :disabled='this._open' dense attach>
                 </v-select>
                 <div style="text-align:center;">
-                  <v-btn block small @click="click(1)">{{this._open==true?'关闭':'打开'}}</v-btn>
+
+                  <v-btn block small @click="click(1)">
+                    <v-icon left :color="_open==true?'red':undefined">mdi-lightbulb</v-icon>
+                    {{this._open==true?'关闭':'打开'}}
+                  </v-btn>
                 </div>
               </v-card>
             </div>
@@ -57,7 +61,7 @@
               <v-card tile :elevation="0" style="width:100%; height:100%;">
                 <v-subheader style="height:24px">发送设置</v-subheader>
                 <v-divider></v-divider>
-                <v-radio-group style="height:15px" dense v-model="_fasong" row>
+                <v-radio-group style="height:15px" dense v-model="_fasong" @change="changefasongleixing" row>
                   <v-radio style="height:15px" dense label="ASCII" :value="1"></v-radio>
                   <v-radio style="height:15px" dense label="HEX" :value="2"></v-radio>
                 </v-radio-group>
@@ -110,6 +114,7 @@
                           <v-icon left>mdi-arrow-top-left</v-icon>清除
                         </v-btn>
                       </v-col>
+
                     </v-row>
                   </v-col>
                 </v-row>
@@ -118,7 +123,7 @@
                  <v-sheet width="85%" height="100%" class="pa-0 ma-1 mb-1" @keydown.stop
                    style="border: 2px solid grey">
                   </v-sheet> 
-
+ <child ref="child1"/>
                   <v-btn style="width:15%;height:100%" class="pa-0 ma-1 mb-1" @click="write">发送
                   </v-btn>
                 </div>-->
@@ -148,16 +153,13 @@
 </template>
 
 <script>
-  // import ETopTab from "../../components/ETopTabs";
   import EScriptEditor from "../../components/widgets/EDataFormatEditor";
-
   var encoding = require('encoding')
   const serialport = window.require('serialport');
-  var port = undefined
+  // var port = undefined
   export default {
     components: {
       "e-script-editor": EScriptEditor,
-      // "e-top-tab": ETopTab,
     },
     computed: {
       _baud: {
@@ -305,127 +307,214 @@
       selected_index: 0,
       zidongfasong: undefined,
     }),
+
+
+
     beforeMount: function () {
-      serialport.list().then(
-        ports => {
-          //ports 串口
-          this.serialportarr = ports
-          this._serial = this._serial === undefined ? ports[0].comName : this._serial
-        }
-      )
+      // serialport.list().then(
+      //   ports => {
+      //     //ports 串口
+      //     this.serialportarr = ports
+      //     this._serial = this._serial === undefined ? ports[0].comName : this._serial
+      //   }
+      // )
     },
+
+
+    beforeDestroy: function () {
+      //  alert(123)
+    },
+
+
     methods: {
+
+
       on_change(id, script) {
         this[id] = script
       },
+
+
+
       closeSetInitval: function (item) {
         if (item == false) {
+          this._zidong = false
           clearInterval(this.zidongfasong)
           this.zidongfasong = undefined
         }
       },
+
+
+
       click: function () {
-        if (!port) {
-          port = new serialport(this._serial, {
-            baudRate: this._baud, //波特率
-            dataBits: this._data_key, //数据位
-            parity: this._check, //校验
-            stopBits: this._stop_key, //停止位
-            flowControl: false,
-            autoOpen: false //不自动打开
-          }, false)
-          this.open()
+        // if (!port) {
+        //   port = new serialport(this._serial, {
+        //     baudRate: this._baud, //波特率
+        //     dataBits: this._data_key, //数据位
+        //     parity: this._check, //校验
+        //     stopBits: this._stop_key, //停止位
+        //     flowControl: false,
+        //     autoOpen: false //不自动打开
+        //   }, false)
+        //   this.open()
 
-        } else {
-          if (port) {
-            var _this = this
-            port.close(function () {
-              console.log('端口已关闭')
-              port = undefined
-              _this._open = false
-            });
-          }
-        }
+        // } else {
+        //   if (port) {
+        //     var _this = this
+        //     port.close(function () {
+        //       console.log('端口已关闭')
+        //       port = undefined
+        //       _this._open = false
+        //       if (_this._zidong == true) {
+        //         _this._zidong = false
+        //         clearInterval(_this.zidongfasong)
+        //         _this.zidongfasong = undefined
+        //       }
+        //     });
+        //   }
+        // }
       },
+
+
+
       open: function () {
-        var _this = this
-        port.on('error', (error) => {
-          console.log('Error: ', error.message);
-        })
-        port.open(function (error) {
-          if (error) {
-            console.log();
-            _this.$store.commit("setMsgError", "打开端口" + _this._serial + "错误：" + error);
-          } else {
-            _this._open = true
-            _this.getck()
-          }
-        });
+        // var _this = this
+        // port.on('error', (error) => {
+        //   console.log('Error: ', error.message);
+        // })
+        // port.open(function (error) {
+        //   if (error) {
+        //     console.log();
+        //     _this.$store.commit("setMsgError", "打开端口" + _this._serial + "错误：" + error);
+        //   } else {
+        //     _this._open = true
+        //     _this.getck()
+        //   }
+        //   port.on('data', function (data) {
+        //     console.log(data)
+        //     if (_this._jieshou == 1) {
+        //       let BuffMsg = Buffer.from(data, 'hex')
+        //       BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+        //       _this.showdata(BuffMsg)
+        //     } else {
+        //       let BuffMsg = data.toString('hex')
+        //       _this.showdata(BuffMsg)
+        //     }
+        //   });
+        // });
 
       },
-      getdata: function () {
-        var _this = this
-        port.on('data', function (data) {
-          if (_this._jieshou == 1) {
-            let BuffMsg = Buffer.from(data, 'hex')
-            BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-            _this.showdata(BuffMsg)
-          } else {
-            let BuffMsg = data.toString('hex')
-            _this.showdata(BuffMsg)
-          }
-        });
-      },
+
+
       write: function () {
-        // 
-        var SendBuff
-        if (this.push_data !== '') {
-          if (this._fasong == 1) {
-            try {
-              SendBuff = encoding.convert(this.push_data, "GBK")
-            } catch (error) {
-              this.$store.commit("setMsgError", error);
-            }
-          } else {
-            try {
-              SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
-            } catch (error) {
-              this.$store.commit("setMsgError", error);
-            }
-          }
-          port.write(SendBuff);
-          this.showfasong()
-        } else {
-          this.$store.commit("setMsgError", '无法发送空数据');
-        }
+        //
 
-
+        // var SendBuff
+        // if (this.push_data !== '') {
+        //   if (this._fasong == 1) {
+        //     try {
+        //       SendBuff = encoding.convert(this.push_data, "GBK")
+        //     } catch (error) {
+        //       this.$store.commit("setMsgError", error);
+        //     }
+        //   } else {
+        //     try {
+        //       SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+        //     } catch (error) {
+        //       this.$store.commit("setMsgError", error);
+        //     }
+        //   }
+        //   if (this._xunhuan == false) {
+        //     port.write(SendBuff);
+        //     this.showfasong()
+        //   } else {
+        //     this.zdfs(SendBuff)
+        //   }
+        // } else {
+        //   this.$store.commit("setMsgError", '无法发送空数据');
+        // }
       },
+
+
+      zdfs: function (SendBuff) {
+        // var _this = this
+        // if (this._zidong == true) {
+        //   this._zidong = false
+        //   clearInterval(this.zidongfasong)
+        //   this.zidongfasong = undefined
+        // } else {
+        //   this.zidongfasong = setInterval(function () {
+        //     _this._zidong = true
+        //     port.write(SendBuff);
+        //     _this.showfasong()
+        //   }, _this._ms);
+        // }
+      },
+
+
+
       showfasong: function () {
-        this.js_data = this.js_data + `\n 发送:\n ${this.push_data} \n`
+        // if (this._rizhi == true) {
+        //   this.js_data = this.js_data + `\n 发送:\n ${this.push_data} \n`
+        // }
       },
+
+
       showdata: function (data) {
-        this.js_data = this.js_data + `\n 收到 : \n ${data} \n`
+        // if (this._zanting == false) {
+        //   // this.js_data = this.js_data + `\n 收到 : \n ${data} \n`
+        //   if (this._rizhi == false && this._huanhang == false) {
+        //     this.js_data = this.js_data + `${data}`
+        //   } else if (this._rizhi == true && this._huanhang == false) {
+        //     this.js_data = this.js_data + `\n 收到: \n ${data}`
+        //   } else if (this._rizhi == false && this._huanhang == true) {
+        //     this.js_data = this.js_data + `\n ${data}`
+        //   } else if (this._rizhi == true && this._huanhang == true) {
+        //     this.js_data = this.js_data + `\n 收到: \n ${data} \n`
+        //   }
+        // }
       },
+
+
       getck: function () {
-        port.set({
-          cts: true,
-          dsr: false,
-          dtr: true,
-          rts: true,
-          brk: false
-        })
-        port.get(function (err, data) {
-          console.log(err)
-          console.log(data)
-        })
+        // port.set({
+        //   cts: true,
+        //   dsr: false,
+        //   dtr: true,
+        //   rts: true,
+        //   brk: false
+        // })
+        // port.get(function (err, data) {
+        //   console.log(err)
+        //   console.log(data)
+        // })
       },
+
+
+
+      changefasongleixing: function (e) {
+        // if (this.push_data != '') {
+        //   if (e == 2) {
+        //     let SendBuff = encoding.convert(this.push_data, "GBK")
+        //     this.push_data = SendBuff.toString('hex')
+        //   } else if (e == 1) {
+        //     let SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+        //     SendBuff = Buffer.from(SendBuff, 'hex')
+        //     this.push_data = encoding.convert(SendBuff, "UTF8", "GBK").toString()
+        //   }
+        // }
+      },
+
+
 
       closefs: function () {
-
+        this.push_data = ""
+        // this.$refs.child1.jump()
       },
-      closejs: function () {
 
+
+      closejs: function () {
+        this.js_data = ""
+        // this.$refs.child1.$emit('childClick','我是父组件')
       },
     }
 
