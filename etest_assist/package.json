@@ -10,7 +10,9 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "rebuild": "./node_modules/.bin/electron-rebuild.cmd",
+    "packager": "electron-packager . wbx --platform=win32 --arch=x64 --out ./dist --app-version=1.0.0"
   },
   "dependencies": {
     "@mdi/font": "^5.3.45",
@@ -24,7 +26,7 @@
     "monaco-editor": "^0.20.0",
     "monaco-editor-locales-plugin": "^0.0.3",
     "monaco-editor-webpack-plugin": "^1.9.0",
-    "serialport": "^8.0.6",
+    "serialport": "^8.0.8",
     "throttle-debounce": "^2.2.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",

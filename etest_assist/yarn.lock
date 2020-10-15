@@ -9139,7 +9139,7 @@ serialize-javascript@^4.0.0:
   dependencies:
     randombytes "^2.1.0"
 
-serialport@^8.0.6:
+serialport@^8.0.8:
   version "8.0.8"
   resolved "https://registry.npm.taobao.org/serialport/download/serialport-8.0.8.tgz#207fcd90dcf0e1c18311799c595b2a12e6dfe4fd"
   integrity sha1-IH/NkNzw4cGDEXmcWVsqEubf5P0=

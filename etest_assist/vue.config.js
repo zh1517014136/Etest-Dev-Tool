@@ -38,24 +38,24 @@ module.exports = {
     //   template: 'src/lan/public/index.html', //页面的模板文件
     //   filename: 'lan.html' //页面的出口名称，即build生成的文件名称
     // },
+
     // icon: {
     //   entry: 'src/icon/main.js',
     //   template: 'src/icon/public/index.html',
     //   filename: 'icon.html'
-
     // },
+
     // dataformat: {
     //   entry: 'src/data/main.js',
     //   template: 'src/data/public/index.html',
     //   filename: 'dataformat.html'
-
     // },
-    // state: {
-    //   entry: 'src/state/main.js',
-    //   template: 'src/state/public/index.html',
-    //   filename: 'state.html'
 
-    // },
+    state: {
+      entry: 'src/state/main.js',
+      template: 'src/state/public/index.html',
+      filename: 'state.html'
+    },
 
     serialport: {
       entry: 'src/serialport/main.js',
@@ -76,6 +76,7 @@ module.exports = {
       builderOptions: {
         // 设置打包之后的应用名称
         productName: 'etest_tools',
+      
         win: {
           icon: 'public/electron-icon/icon.ico',
           // 图标路径 windows系统中icon需要256*256的ico格式图片，更换应用图标亦在此处

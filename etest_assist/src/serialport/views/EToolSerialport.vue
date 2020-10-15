@@ -14,9 +14,9 @@
                 <v-select :items="serialportarr" :disabled='this._open' v-model="_serial" label="串口号"
                   item-text="comName" item-value="path" dense attach></v-select>
                 <div id="error"></div>
-                <v-select :items="[110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 56000, 115200, 128000,
+                <v-combobox @change="this.values" :items="[110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 56000, 115200, 128000,
         256000, 'Customize' 
-      ]" v-model="_baud" label="波特率" :disabled='this._open' dense attach></v-select>
+      ]" v-model="_baud" label="波特率" type="number" :disabled='this._open' dense attach></v-combobox>
                 <v-select :items="['none', 'odd', 'even', 'mark', 'space']" v-model="_check" :disabled='this._open'
                   label="校验位" dense attach>
                 </v-select>
@@ -156,15 +156,17 @@
   import EScriptEditor from "../../components/widgets/EDataFormatEditor";
   var encoding = require('encoding')
   const serialport = window.require('serialport');
-  // var port = undefined
+  var port = undefined
   export default {
     components: {
       "e-script-editor": EScriptEditor,
     },
+
+
     computed: {
       _baud: {
         get: function () {
-          return this.$store.state.serialport.baud
+          return this.$store.state.serialport.items.baud
         },
         set: function (v) {
           return this.$store.commit('serialport/baud', v)
@@ -172,7 +174,7 @@
       },
       _serial: {
         get: function () {
-          return this.$store.state.serialport.serial
+          return this.$store.state.serialport.items.serial
         },
         set: function (v) {
           return this.$store.commit('serialport/serial', v)
@@ -181,7 +183,7 @@
 
       _check: {
         get: function () {
-          return this.$store.state.serialport.check
+          return this.$store.state.serialport.items.check
         },
         set: function (v) {
           return this.$store.commit('serialport/check', v)
@@ -189,7 +191,7 @@
       },
       _data_key: {
         get: function () {
-          return this.$store.state.serialport.data_key
+          return this.$store.state.serialport.items.data_key
         },
         set: function (v) {
           return this.$store.commit('serialport/data_key', v)
@@ -197,7 +199,7 @@
       },
       _stop_key: {
         get: function () {
-          return this.$store.state.serialport.stop_key
+          return this.$store.state.serialport.items.stop_key
         },
         set: function (v) {
           return this.$store.commit('serialport/stop_key', v)
@@ -205,7 +207,7 @@
       },
       _jieshou: {
         get: function () {
-          return this.$store.state.serialport.jieshou
+          return this.$store.state.serialport.items.jieshou
         },
         set: function (v) {
           return this.$store.commit('serialport/jieshou', v)
@@ -213,7 +215,7 @@
       },
       _fasong: {
         get: function () {
-          return this.$store.state.serialport.fasong
+          return this.$store.state.serialport.items.fasong
         },
         set: function (v) {
           return this.$store.commit('serialport/fasong', v)
@@ -221,7 +223,7 @@
       },
       _rizhi: {
         get: function () {
-          return this.$store.state.serialport.rizhi
+          return this.$store.state.serialport.items.rizhi
         },
         set: function (v) {
           return this.$store.commit('serialport/rizhi', v)
@@ -229,7 +231,7 @@
       },
       _huanhang: {
         get: function () {
-          return this.$store.state.serialport.huanhang
+          return this.$store.state.serialport.items.huanhang
         },
         set: function (v) {
           return this.$store.commit('serialport/huanhang', v)
@@ -237,7 +239,7 @@
       },
       _zanting: {
         get: function () {
-          return this.$store.state.serialport.zanting
+          return this.$store.state.serialport.items.zanting
         },
         set: function (v) {
           return this.$store.commit('serialport/zanting', v)
@@ -245,7 +247,7 @@
       },
       _xunhuan: {
         get: function () {
-          return this.$store.state.serialport.xunhuan
+          return this.$store.state.serialport.items.xunhuan
         },
         set: function (v) {
           return this.$store.commit('serialport/xunhuan', v)
@@ -253,7 +255,7 @@
       },
       _ms: {
         get: function () {
-          return this.$store.state.serialport.ms
+          return this.$store.state.serialport.items.ms
         },
         set: function (v) {
           return this.$store.commit('serialport/ms', v)
@@ -261,7 +263,7 @@
       },
       serialportarr: {
         get: function () {
-          return this.$store.state.serialport.serialportarr
+          return this.$store.state.serialport.items.serialportarr
         },
         set: function (v) {
           return this.$store.commit('serialport/serialportarr', v)
@@ -269,7 +271,7 @@
       },
       _open: {
         get: function () {
-          return this.$store.state.serialport.open
+          return this.$store.state.serialport.items.open
         },
         set: function (v) {
           return this.$store.commit('serialport/open', v)
@@ -278,7 +280,7 @@
       },
       push_data: {
         get: function () {
-          return this.$store.state.serialport.push;
+          return this.$store.state.serialport.items.push;
         },
         set: function (v) {
           return this.$store.commit("serialport/push", v)
@@ -286,7 +288,7 @@
       },
       _zidong: {
         get: function () {
-          return this.$store.state.serialport.zidong;
+          return this.$store.state.serialport.items.zidong;
         },
         set: function (v) {
           return this.$store.commit("serialport/zidong", v)
@@ -294,7 +296,7 @@
       },
       js_data: {
         get: function () {
-          return this.$store.state.serialport.jsdata;
+          return this.$store.state.serialport.items.jsdata;
         },
         set: function (v) {
           // this.js_data = v; 
@@ -304,29 +306,90 @@
     },
 
     data: () => ({
-      selected_index: 0,
       zidongfasong: undefined,
     }),
 
 
 
-    beforeMount: function () {
-      // serialport.list().then(
-      //   ports => {
-      //     //ports 串口
-      //     this.serialportarr = ports
-      //     this._serial = this._serial === undefined ? ports[0].comName : this._serial
-      //   }
-      // )
+    mounted: function () {
+      serialport.list().then(
+        ports => {
+          //ports 串口
+          this.serialportarr = ports
+          this._serial = this._serial === undefined ? ports[0].comName : this._serial
+        }
+      )
+    },
+
+    beforeMount: async function () {
+      let db_items = await this.$store.dispatch("db_list", {
+        kind: "serialport",
+      });
+      if (db_items.length > 0) {
+        this.$store.commit("serialport/setItem", db_items);
+      }
+      this.load_data()
     },
 
 
-    beforeDestroy: function () {
-      //  alert(123)
+    beforeDestroy: async function () {
+      // clearInterval(this.zidongfasong)
+      // this.zidongfasong = undefined
+      let _this = this
+      port.close(function () {
+        console.log('端口已关闭')
+        port = undefined
+        _this._open = false
+        if (_this._zidong == true) {
+          _this._zidong = false
+          clearInterval(_this.zidongfasong)
+          _this.zidongfasong = undefined
+        }
+      });
+      let state_items = this.$store.state.serialport.items.items;
+      let len = state_items.length;
+      for (let index = 0; index < len; index++) {
+        let item = state_items[index];
+        item.open = false
+        item.zidong = false
+        item.id = index;
+        await this.$store.dispatch("db_update", {
+          kind: "serialport",
+          doc: item,
+        });
+      }
     },
+
+    watch: {
+      selected_index: function () {
+        this.load_data();
+      }
+    },
+
+
 
 
     methods: {
+
+      load_data() {
+        let o = this.$store.state.serialport.items;
+        this._serial = o.serial;
+        this._baud = o.baud;
+        this._check = o.check;
+        this._data_key = o.data_key;
+        this._stop_key = o.stop_key;
+        this._jieshou = o.jieshou;
+        this._fasong = o.fasong;
+        this._rizhi = o.rizhi;
+        this._huanhang = o.huanhang;
+        this._zanting = o.zanting;
+        this._xunhuan = o.xunhuan;
+        this._ms = o.ms;
+        this._open = o.open;
+        this.push_data = o.push;
+        this._zidong = o.zidong;
+        this.js_data = o.jsdata;
+      },
 
 
       on_change(id, script) {
@@ -346,61 +409,62 @@
 
 
       click: function () {
-        // if (!port) {
-        //   port = new serialport(this._serial, {
-        //     baudRate: this._baud, //波特率
-        //     dataBits: this._data_key, //数据位
-        //     parity: this._check, //校验
-        //     stopBits: this._stop_key, //停止位
-        //     flowControl: false,
-        //     autoOpen: false //不自动打开
-        //   }, false)
-        //   this.open()
+        if (!port) {
+          port = new serialport(this._serial, {
+            baudRate: this._baud, //波特率
+            dataBits: this._data_key, //数据位
+            parity: this._check, //校验
+            stopBits: this._stop_key, //停止位
+            flowControl: false,
+            autoOpen: false //不自动打开
+          }, false)
+          this.open()
 
-        // } else {
-        //   if (port) {
-        //     var _this = this
-        //     port.close(function () {
-        //       console.log('端口已关闭')
-        //       port = undefined
-        //       _this._open = false
-        //       if (_this._zidong == true) {
-        //         _this._zidong = false
-        //         clearInterval(_this.zidongfasong)
-        //         _this.zidongfasong = undefined
-        //       }
-        //     });
-        //   }
-        // }
+        } else {
+          if (port) {
+            var _this = this
+            port.close(function () {
+              console.log('端口已关闭')
+              port = undefined
+              _this._open = false
+              if (_this._zidong == true) {
+                _this._zidong = false
+                clearInterval(_this.zidongfasong)
+                _this.zidongfasong = undefined
+              }
+            });
+          }
+        }
       },
 
 
 
       open: function () {
-        // var _this = this
-        // port.on('error', (error) => {
-        //   console.log('Error: ', error.message);
-        // })
-        // port.open(function (error) {
-        //   if (error) {
-        //     console.log();
-        //     _this.$store.commit("setMsgError", "打开端口" + _this._serial + "错误：" + error);
-        //   } else {
-        //     _this._open = true
-        //     _this.getck()
-        //   }
-        //   port.on('data', function (data) {
-        //     console.log(data)
-        //     if (_this._jieshou == 1) {
-        //       let BuffMsg = Buffer.from(data, 'hex')
-        //       BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
-        //       _this.showdata(BuffMsg)
-        //     } else {
-        //       let BuffMsg = data.toString('hex')
-        //       _this.showdata(BuffMsg)
-        //     }
-        //   });
-        // });
+        var _this = this
+        port.on('error', (error) => {
+          console.log('Error: ', error.message);
+        })
+        port.open(function (error) {
+          if (error) {
+            console.log();
+            _this.$store.commit("setMsgError", "打开端口" + _this._serial + "错误：" + error);
+          } else {
+            console.log(port)
+            _this._open = true
+            _this.getck()
+          }
+          port.on('data', function (data) {
+            console.log(data)
+            if (_this._jieshou == 1) {
+              let BuffMsg = Buffer.from(data, 'hex')
+              BuffMsg = encoding.convert(BuffMsg, "UTF8", "GBK").toString()
+              _this.showdata(BuffMsg)
+            } else {
+              let BuffMsg = data.toString('hex')
+              _this.showdata(BuffMsg)
+            }
+          });
+        });
 
       },
 
@@ -408,100 +472,100 @@
       write: function () {
         //
 
-        // var SendBuff
-        // if (this.push_data !== '') {
-        //   if (this._fasong == 1) {
-        //     try {
-        //       SendBuff = encoding.convert(this.push_data, "GBK")
-        //     } catch (error) {
-        //       this.$store.commit("setMsgError", error);
-        //     }
-        //   } else {
-        //     try {
-        //       SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
-        //     } catch (error) {
-        //       this.$store.commit("setMsgError", error);
-        //     }
-        //   }
-        //   if (this._xunhuan == false) {
-        //     port.write(SendBuff);
-        //     this.showfasong()
-        //   } else {
-        //     this.zdfs(SendBuff)
-        //   }
-        // } else {
-        //   this.$store.commit("setMsgError", '无法发送空数据');
-        // }
+        var SendBuff
+        if (this.push_data !== '') {
+          if (this._fasong == 1) {
+            try {
+              SendBuff = encoding.convert(this.push_data, "GBK")
+            } catch (error) {
+              this.$store.commit("setMsgError", error);
+            }
+          } else {
+            try {
+              SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+            } catch (error) {
+              this.$store.commit("setMsgError", error);
+            }
+          }
+          if (this._xunhuan == false) {
+            port.write(SendBuff);
+            this.showfasong()
+          } else {
+            this.zdfs(SendBuff)
+          }
+        } else {
+          this.$store.commit("setMsgError", '无法发送空数据');
+        }
       },
 
 
       zdfs: function (SendBuff) {
-        // var _this = this
-        // if (this._zidong == true) {
-        //   this._zidong = false
-        //   clearInterval(this.zidongfasong)
-        //   this.zidongfasong = undefined
-        // } else {
-        //   this.zidongfasong = setInterval(function () {
-        //     _this._zidong = true
-        //     port.write(SendBuff);
-        //     _this.showfasong()
-        //   }, _this._ms);
-        // }
+        var _this = this
+        if (this._zidong == true) {
+          this._zidong = false
+          clearInterval(this.zidongfasong)
+          this.zidongfasong = undefined
+        } else {
+          this.zidongfasong = setInterval(function () {
+            _this._zidong = true
+            port.write(SendBuff);
+            _this.showfasong()
+          }, _this._ms);
+        }
       },
 
 
 
       showfasong: function () {
-        // if (this._rizhi == true) {
-        //   this.js_data = this.js_data + `\n 发送:\n ${this.push_data} \n`
-        // }
+        if (this._rizhi == true) {
+          this.js_data = this.js_data + `\n 发送:\n ${this.push_data} \n`
+        }
       },
 
 
       showdata: function (data) {
-        // if (this._zanting == false) {
-        //   // this.js_data = this.js_data + `\n 收到 : \n ${data} \n`
-        //   if (this._rizhi == false && this._huanhang == false) {
-        //     this.js_data = this.js_data + `${data}`
-        //   } else if (this._rizhi == true && this._huanhang == false) {
-        //     this.js_data = this.js_data + `\n 收到: \n ${data}`
-        //   } else if (this._rizhi == false && this._huanhang == true) {
-        //     this.js_data = this.js_data + `\n ${data}`
-        //   } else if (this._rizhi == true && this._huanhang == true) {
-        //     this.js_data = this.js_data + `\n 收到: \n ${data} \n`
-        //   }
-        // }
+        if (this._zanting == false) {
+          // this.js_data = this.js_data + `\n 收到 : \n ${data} \n`
+          if (this._rizhi == false && this._huanhang == false) {
+            this.js_data = this.js_data + `${data}`
+          } else if (this._rizhi == true && this._huanhang == false) {
+            this.js_data = this.js_data + `\n 收到: \n ${data}`
+          } else if (this._rizhi == false && this._huanhang == true) {
+            this.js_data = this.js_data + `\n ${data}`
+          } else if (this._rizhi == true && this._huanhang == true) {
+            this.js_data = this.js_data + `\n 收到: \n ${data} \n`
+          }
+        }
       },
 
 
       getck: function () {
-        // port.set({
-        //   cts: true,
-        //   dsr: false,
-        //   dtr: true,
-        //   rts: true,
-        //   brk: false
-        // })
-        // port.get(function (err, data) {
-        //   console.log(err)
-        //   console.log(data)
-        // })
+        port.set({
+          cts: true,
+          dsr: false,
+          dtr: true,
+          rts: true,
+          brk: false
+        })
+        port.get(function (err, data) {
+          console.log(err)
+          console.log(data)
+        })
       },
 
 
 
       changefasongleixing: function (e) {
-        // if (this.push_data != '') {
-        //   if (e == 2) {
-        //     let SendBuff = encoding.convert(this.push_data, "GBK")
-        //     this.push_data = SendBuff.toString('hex')
-        //   } else if (e == 1) {
-        //     let SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
-        //     SendBuff = Buffer.from(SendBuff, 'hex')
-        //     this.push_data = encoding.convert(SendBuff, "UTF8", "GBK").toString()
-        //   }
-        // }
+        if (this.push_data != '') {
+          if (e == 2) {
+            let SendBuff = encoding.convert(this.push_data, "GBK")
+            this.push_data = SendBuff.toString('hex')
+          } else if (e == 1) {
+            let SendBuff = Buffer.from(this.push_data.replace(/\s*/g, ""), 'hex')
+            SendBuff = Buffer.from(SendBuff, 'hex')
+            this.push_data = encoding.convert(SendBuff, "UTF8", "GBK").toString()
+          }
+        }
       },
 
 
@@ -516,6 +580,10 @@
         this.js_data = ""
         // this.$refs.child1.$emit('childClick','我是父组件')
       },
+      values: function (v) {
+        console.log(v)
+        this._baud = Number(v)
+      }
     }
 
   }

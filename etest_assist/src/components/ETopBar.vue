@@ -68,21 +68,21 @@
           <v-icon>mdi-database</v-icon>
         </v-list-item-icon>
         <v-list-item-title><a style="color:white;" href="./dataformat.html">数据转换工具</a></v-list-item-title>
-      </v-list-item>
+      </v-list-item>-->
       <v-list-item>
         <v-list-item-icon>
           <v-icon>mdi-state-machine</v-icon>
         </v-list-item-icon>
         <v-list-item-title><a style="color:white;" href="./state.html">状态机生成器</a></v-list-item-title>
       </v-list-item>
-      -->
+     
        <v-list-item>
         <v-list-item-icon>
           <v-icon>mdi-align-vertical-center</v-icon>
         </v-list-item-icon>
         <v-list-item-title><a style="color:white;" href="./serialport.html">串口调试助手</a></v-list-item-title>
       </v-list-item>
-    </v-list> 
+    </v-list>  
       
   </v-navigation-drawer>
 </template>
