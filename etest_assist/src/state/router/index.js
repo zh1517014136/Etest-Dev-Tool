@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import EEmpty from '../../components/EEmpty.vue'
+// import EEmpty from '../../components/EEmpty.vue'
 
 Vue.use(VueRouter)
 
 const routes = [{
     path: '/',
     name: 'Home',
-    component: EEmpty
+    component: () => import( /* webpackChunkName: "e_tool_statecode" */ '../views/EToolStateCode'),
   },
   // {
   //   // 练习工具

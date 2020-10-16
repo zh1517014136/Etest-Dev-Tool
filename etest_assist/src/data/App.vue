@@ -27,8 +27,8 @@
   }
 </style>
 <script>
-  import ESysBar from "./../components/ESysBar";
-  import ETopBar from './../components/ETopBar';
+  import ESysBar from "./components/ESysBar";
+  import ETopBar from './components/ETopBar';
   import EToolDataFormat from './views/EToolDataFormat'
 
 

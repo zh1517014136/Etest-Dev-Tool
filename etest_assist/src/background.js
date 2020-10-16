@@ -3,7 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
-import ipc from './database/ipc_main'
+// import ipc from './database/ipc_main'
 
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -14,7 +14,7 @@ let win
 // 数据库
 const db_path = app.getPath('userData');
 // console.log(db_path)
-ipc.open(db_path);
+// ipc.open(db_path);
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -61,9 +61,9 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    ipc.close().then(() =>{
-      app.quit()
-    })
+    // ipc.close().then(() =>{
+    //   app.quit()
+    // })
   }
 })
 
@@ -103,17 +103,17 @@ if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {
-        ipc.close().then(() =>{
-          app.quit()
-        })
+        // ipc.close().then(() =>{
+        //   app.quit()
+        // })
         
       }
     })
   } else {
     process.on('SIGTERM', () => {
-      ipc.close().then(() =>{
-        app.quit()
-      })
+      // ipc.close().then(() =>{
+      //   app.quit()
+      // })
     })
   }
 }

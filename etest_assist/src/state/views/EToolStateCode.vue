@@ -70,10 +70,10 @@
     }
 </style>
 <script>
-    import EScriptEditor from '../../components/widgets/EDataFormatEditor';
+    import EScriptEditor from '../components/widgets/EDataFormatEditor';
     import yaml from 'js-yaml';
-    import helper from '../../helper/helper';
-    import ETopTab from "../../components/ETopTabs";
+    import helper from '../helper/helper';
+    import ETopTab from "../components/ETopTabs";
     import mermaid from 'mermaid';
 
     export default {

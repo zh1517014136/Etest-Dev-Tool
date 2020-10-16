@@ -125,7 +125,7 @@
 </template>
 
 <script>
-  import Icons from '../../helper/icons'
+  import Icons from '../helper/icons'
   import Clipboard from 'clipboard'
   export default {
     mounted: function () {

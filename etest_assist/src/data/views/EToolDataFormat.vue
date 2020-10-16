@@ -92,8 +92,8 @@
 
 <script>
     import XLSX from "xlsx";
-    import EScriptEditor from "../../components/widgets/EDataFormatEditor";
-    import ETopTab from "../../components/ETopTabs";
+    import EScriptEditor from "../components/widgets/EDataFormatEditor";
+    import ETopTab from "../components/ETopTabs";
 
     import yaml from "js-yaml";
 

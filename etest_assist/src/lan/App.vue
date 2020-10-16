@@ -12,7 +12,7 @@
         <e-tool-network/>
       <!-- </router-view> -->
     </v-main>
-    <v-snackbar top :timeout="touts" :color="tip_color" v-model ="tip">
+    <v-snackbar top :timeout="touts" :color="tip_color" v-model="tip">
       {{ tip_msg }}
       <template v-slot:action="{ attrs }">
         <v-btn icon small @click="tip=false" v-bind="attrs">
@@ -28,8 +28,8 @@
   }
 </style>
 <script>
-  import ESysBar from "./../components/ESysBar";
-  import ETopBar from './../components/ETopBar';
+  import ESysBar from "./components/ESysBar";
+  import ETopBar from './components/ETopBar';
   import EToolNetwork from './views/EToolNetwork'
 
 

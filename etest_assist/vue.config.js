@@ -30,41 +30,42 @@ module.exports = {
     ]
   },
 
-
   pages: {
+
+    serialport: {
+      entry: 'src/serialport/main.js',
+      template: 'public/serialport.html',
+      filename: 'serialport.html'
+    },
 
     lan: {
       entry: 'src/lan/main.js', //页面的入口文件
-      template: 'src/lan/public/index.html', //页面的模板文件
+      template: 'public/index.html', //页面的模板文件
       filename: 'lan.html' //页面的出口名称，即build生成的文件名称
     },
 
     icon: {
       entry: 'src/icon/main.js',
-      template: 'src/icon/public/index.html',
+      template: 'public/index.html',
       filename: 'icon.html'
     },
 
     dataformat: {
       entry: 'src/data/main.js',
-      template: 'src/data/public/index.html',
+      template: 'public/index.html',
       filename: 'dataformat.html'
     },
 
     state: {
       entry: 'src/state/main.js',
-      template: 'src/state/public/index.html',
+      template: 'public/index.html',
       filename: 'state.html'
     },
 
-    serialport: {
-      entry: 'src/serialport/main.js',
-      template: 'src/serialport/public/index.html',
-      filename: 'serialport.html'
-    },
+  
 
     index: {
-      entry: 'src/main.js', //页面的入口文件
+      entry: 'src/index/main.js', //页面的入口文件
       template: 'public/index.html', //页面的模板文件
       filename: 'index.html' //页面的出口名称，即build生成的文件名称
     },

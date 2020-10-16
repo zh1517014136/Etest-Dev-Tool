@@ -153,7 +153,7 @@
 </template>
 
 <script>
-  import EScriptEditor from "../../components/widgets/EDataFormatEditor";
+  import EScriptEditor from "../components/widgets/EDataFormatEditor";
   var encoding = require('encoding')
   const serialport = window.require('serialport');
   var port = undefined

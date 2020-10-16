@@ -151,7 +151,7 @@
   </div>
 </template>
 <script>
-  import EScriptEditor from "../../components/widgets/EDataFormatEditor";
+  import EScriptEditor from "../components/widgets/EDataFormatEditor";
   // import ETopTab from "../../components/ETopTabs";
 
   var dgram = window.require('dgram');
