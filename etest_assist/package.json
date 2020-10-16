@@ -10,9 +10,7 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps",
-    "rebuild": "./node_modules/.bin/electron-rebuild.cmd",
-    "packager": "electron-packager . wbx --platform=win32 --arch=x64 --out ./dist --app-version=1.0.0"
+    "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@mdi/font": "^5.3.45",

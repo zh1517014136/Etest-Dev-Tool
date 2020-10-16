@@ -39,7 +39,7 @@ function createWindow() {
     frame: false,
     backgroundColor: '#000000',
   })
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

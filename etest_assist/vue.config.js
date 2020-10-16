@@ -26,30 +26,30 @@ module.exports = {
         template: 'public/index.html',
         inject: true
       }),
-    
+
     ]
   },
 
 
   pages: {
-  
-    // lan: {
-    //   entry: 'src/lan/main.js', //页面的入口文件
-    //   template: 'src/lan/public/index.html', //页面的模板文件
-    //   filename: 'lan.html' //页面的出口名称，即build生成的文件名称
-    // },
 
-    // icon: {
-    //   entry: 'src/icon/main.js',
-    //   template: 'src/icon/public/index.html',
-    //   filename: 'icon.html'
-    // },
+    lan: {
+      entry: 'src/lan/main.js', //页面的入口文件
+      template: 'src/lan/public/index.html', //页面的模板文件
+      filename: 'lan.html' //页面的出口名称，即build生成的文件名称
+    },
 
-    // dataformat: {
-    //   entry: 'src/data/main.js',
-    //   template: 'src/data/public/index.html',
-    //   filename: 'dataformat.html'
-    // },
+    icon: {
+      entry: 'src/icon/main.js',
+      template: 'src/icon/public/index.html',
+      filename: 'icon.html'
+    },
+
+    dataformat: {
+      entry: 'src/data/main.js',
+      template: 'src/data/public/index.html',
+      filename: 'dataformat.html'
+    },
 
     state: {
       entry: 'src/state/main.js',
@@ -63,7 +63,7 @@ module.exports = {
       filename: 'serialport.html'
     },
 
-    index:{
+    index: {
       entry: 'src/main.js', //页面的入口文件
       template: 'public/index.html', //页面的模板文件
       filename: 'index.html' //页面的出口名称，即build生成的文件名称
@@ -73,10 +73,12 @@ module.exports = {
   pluginOptions: {
     // vue-cli-plugin-electron-builder 配置
     electronBuilder: {
+      externals: ['serialport'],
+      nodeModulesPath: ['./node_modules'],
+
       builderOptions: {
         // 设置打包之后的应用名称
         productName: 'etest_tools',
-      
         win: {
           icon: 'public/electron-icon/icon.ico',
           // 图标路径 windows系统中icon需要256*256的ico格式图片，更换应用图标亦在此处
@@ -90,11 +92,20 @@ module.exports = {
             ]
           }]
         },
+        linux: {
+          // 设置linux的图标
+          icon: 'resources/ico/icon.png',
+          target: 'AppImage'
+        },
+        mac: {
+          icon: 'resources/ico/icon.icns'
+        },
+        
         dmg: {
           contents: [{
-              x: 410,
-              y: 150,
-              type: 'link',
+            x: 410,
+            y: 150,
+            type: 'link',
               path: '/Applications'
             },
             {
@@ -104,14 +115,7 @@ module.exports = {
             }
           ]
         },
-        linux: {
-          // 设置linux的图标
-          icon: 'resources/ico/icon.png',
-          target: 'AppImage'
-        },
-        mac: {
-          icon: 'resources/ico/icon.icns'
-        },
+       
         files: ['**/*'],
         extraResources: {
           // 拷贝dll等静态文件到指定位置,否则打包之后回出现找不大dll的问题
