@@ -6,7 +6,7 @@
     <div style="width:100%;height: calc(100vh - 32px); min-height:680px;">
       <v-card height="100%" width="100%" tile>
         <div style="display:flex; lex-wrap: nowrap;height:100%">
-          <div class="py-2 pl-4 pr-2" style="height:100%;width:15%;min-width:300px; min-height:600px ">
+          <div class="py-2 pl-4 pr-2" style="height:100%;width:15%;width:275px; min-height:600px ">
             <div style="width:100%;height:47%;min-width:250px;">
               <v-card tile :elevation="0" style="width:100%; height:100%;">
                 <v-subheader style="height:24px">串口设置</v-subheader>
@@ -82,34 +82,37 @@
               </v-card>
             </div>
           </div>
-          <div class="py-2 pl-2 pr-2" style="height:100%;width:85%;min-height:650px ">
-            <div style="width:100%;height:67%;min-width:500px;min-height:520px">
+
+
+
+          <div class="py-2 pl-2 pr-8 " style="height:100%;width:84%;min-height:650px min-width:450px">
+            <div style="width:100%;height:72%;min-height:520px">
               <v-card tile :elevation="0" style="width:100%; height:100%;">
                 <v-subheader style="height:24px">数据日志</v-subheader>
                 <v-divider></v-divider>
                 <!-- <v-sheet width="100%" height="90%" class="pa-0 ma-1 mb-1" style="border: 2px solid grey"></v-sheet> -->
                 <v-sheet width="100%" class="pa-0 ma-0 mb-1" @keydown.stop
-                  style="height: calc(64vh - 52px);min-height:490px;">
+                  style="height: calc(67vh - 52px);min-height:490px; ">
                   <e-script-editor id="js_data" :script="js_data" type="jsdata" @change="on_change" />
                 </v-sheet>
               </v-card>
             </div>
 
-            <div class="mt-2" style="width:100%;height:20%;min-width:500px">
+            <div class="mt-2" style="width:100%;height:27%;min-width:450px">
               <v-card tile :elevation="0" style="width:100%; height:100%;">
                 <v-row class="py-0">
-                  <v-col class="pa-0" cols="2">
+                  <v-col class="pa-0" cols="9">
                     <v-subheader style="height:44px">数据发送</v-subheader>
                   </v-col>
-                  <v-col class="pa-0 ml-6" cols="3">
+                  <v-col style='text-align:right' cols="3">
                     <v-row class="py-0">
                       <!-- v-if="_bind == true" -->
-                      <v-col class="pa-0" cols="6" style="text-align:center;">
+                      <v-col class="pa-0 " cols="6" style="text-align:center;">
                         <v-btn small @click="closefs">
                           <v-icon left>mdi-arrow-bottom-left</v-icon>清除
                         </v-btn>
                       </v-col>
-                      <v-col class="pa-0" cols="6" style="text-align:center;">
+                      <v-col class="pa-0 " cols="6" style="text-align:center;">
                         <v-btn small @click="closejs">
                           <v-icon left>mdi-arrow-top-left</v-icon>清除
                         </v-btn>
@@ -119,16 +122,6 @@
                   </v-col>
                 </v-row>
                 <v-divider></v-divider>
-                <!-- <div style="display:flex; lex-wrap: nowrap;width:100%;height:100%">
-                 <v-sheet width="85%" height="100%" class="pa-0 ma-1 mb-1" @keydown.stop
-                   style="border: 2px solid grey">
-                  </v-sheet> 
- <child ref="child1"/>
-                  <v-btn style="width:15%;height:100%" class="pa-0 ma-1 mb-1" @click="write">发送
-                  </v-btn>
-                </div>-->
-
-
 
                 <v-row class="pt-4 mt-2">
                   <v-col class="pa-0  pl-3 pr-2" cols="10">

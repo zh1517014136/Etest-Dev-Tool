@@ -40,25 +40,25 @@ module.exports = {
 
     lan: {
       entry: 'src/lan/main.js', //页面的入口文件
-      template: 'public/index.html', //页面的模板文件
+      template: 'public/lan.html', //页面的模板文件
       filename: 'lan.html' //页面的出口名称，即build生成的文件名称
     },
 
     icon: {
       entry: 'src/icon/main.js',
-      template: 'public/index.html',
+      template: 'public/icon.html',
       filename: 'icon.html'
     },
 
     dataformat: {
       entry: 'src/data/main.js',
-      template: 'public/index.html',
+      template: 'public/dataformat.html',
       filename: 'dataformat.html'
     },
 
     state: {
       entry: 'src/state/main.js',
-      template: 'public/index.html',
+      template: 'public/state.html',
       filename: 'state.html'
     },
 
