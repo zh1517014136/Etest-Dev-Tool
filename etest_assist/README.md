@@ -42,7 +42,7 @@
         |   |   |-- script_bin.js
         |   |   |-- script_hex.js
         |   |   |-- script_lua.js
-        |   |-- plugins                                vuetify.js ui库
+        |   |-- plugins                                vuetify.js ui样式库
         |   |   |-- vuetify.js
         |   |-- router                                 router路由
         |   |   |-- index.js
